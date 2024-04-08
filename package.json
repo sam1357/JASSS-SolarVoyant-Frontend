@@ -6,20 +6,31 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint-fix": "next lint --fix",
+    "prettier": "prettier -w src",
+    "prettier-fix": "prettier -c src"
   },
   "dependencies": {
+    "@aws-sdk/client-lambda": "^3.549.0",
     "@chakra-ui/next-js": "^2.2.0",
     "@chakra-ui/react": "^2.8.2",
+    "@chakra-ui/styled-system": "^2.9.2",
+    "@chakra-ui/theme-tools": "^2.1.2",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
+    "@hookform/resolvers": "^3.3.4",
     "@saas-ui/charts": "^0.11.1",
     "@saas-ui/react": "^2.6.2",
-    "framer-motion": "^11.0.16",
+    "@saas-ui/theme": "^2.3.4",
     "next": "14.1.4",
+    "next-auth": "^4.24.7",
     "react": "^18",
     "react-dom": "^18",
-    "react-icons": "^5.0.1"
+    "react-hook-form": "^7.51.2",
+    "react-icons": "^5.0.1",
+    "sharp": "^0.33.3",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -27,6 +38,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.1.4",
+    "prettier": "^2.8.6",
     "typescript": "^5"
   }
 }
