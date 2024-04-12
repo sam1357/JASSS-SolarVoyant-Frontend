@@ -1,4 +1,4 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { Box, Card, Heading } from "@chakra-ui/react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@src/authOptions";
 
@@ -7,8 +7,11 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <Box>
+      <Box h="100%">
         <Heading>Welcome, {session?.user?.name}! 👋</Heading>
+        <Card minH="40%" minW="40%">
+          Hello
+        </Card>
       </Box>
     </>
   );

@@ -1,8 +1,4 @@
-import {
-  LambdaClient,
-  InvokeCommand,
-  InvocationType,
-} from "@aws-sdk/client-lambda";
+import { LambdaClient, InvokeCommand, InvocationType } from "@aws-sdk/client-lambda";
 import { GROUP_NAME } from "@src/constants";
 import { testJSON } from "@utils/utils";
 import { NextResponse } from "next/server";
@@ -49,9 +45,7 @@ class LambdaInvoker {
         );
       }
 
-      const summarisedRes = JSON.parse(
-        lambdaRes?.Payload?.transformToString() as string
-      );
+      const summarisedRes = JSON.parse(lambdaRes?.Payload?.transformToString() as string);
 
       if (!summarisedRes || summarisedRes.statusCode === 500) {
         return NextResponse.json(

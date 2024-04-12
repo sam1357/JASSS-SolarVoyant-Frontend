@@ -8,9 +8,7 @@ export default async function DashboardSettingsPage() {
   return (
     <>
       <Box>
-        <Heading>
-          Welcome, {session?.user?.name}! This is the settings page.👋
-        </Heading>
+        <Heading>Welcome, {session?.user?.name}! This is the settings page.👋</Heading>
       </Box>
     </>
   );

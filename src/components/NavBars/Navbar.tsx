@@ -38,9 +38,7 @@ const Navbar: React.FC<{ session: Session }> = ({ session }) => {
     <NavbarShell
       position="sticky"
       backdropFilter="blur(10px)"
-      backgroundColor={`rgba(0, 0, 0, ${
-        colorMode === "light" ? "0.1" : "0.4"
-      })`}
+      backgroundColor={`rgba(0, 0, 0, ${colorMode === "light" ? "0.1" : "0.4"})`}
       height={`${NAVBAR_HEIGHT}px`}
     >
       <NavbarBrand>
@@ -50,11 +48,7 @@ const Navbar: React.FC<{ session: Session }> = ({ session }) => {
       <NavbarContent display={{ base: "none", sm: "flex" }}>
         {PAGES.map((item, index) => (
           <NavbarItem key={index}>
-            <NavbarLink
-              isActive={pathname === item.href}
-              color="foreground"
-              href={item.href}
-            >
+            <NavbarLink isActive={pathname === item.href} color="foreground" href={item.href}>
               {item.name}
             </NavbarLink>
           </NavbarItem>
@@ -90,11 +84,7 @@ const Navbar: React.FC<{ session: Session }> = ({ session }) => {
             <NavbarContent flexDirection="column" justifyContent="stretch">
               {PAGES.map((item, index) => (
                 <NavbarItem key={index} width="full">
-                  <NavbarLink
-                    href={item.href}
-                    width="full"
-                    justifyContent="start"
-                  >
+                  <NavbarLink href={item.href} width="full" justifyContent="start">
                     {item.name}
                   </NavbarLink>
                 </NavbarItem>
