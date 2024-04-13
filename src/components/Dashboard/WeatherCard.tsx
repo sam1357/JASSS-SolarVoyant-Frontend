@@ -5,9 +5,11 @@ import { getDayOfWeek } from "./utils";
 import { useEffect, useState } from "react";
 
 interface WeatherCardProps {
-  index: 0 | 1 | 2 | 3 | 4 | 5 | 6; // day of week
+  index: number; // day of week
   data: DashboardData;
 }
+
+type Index = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 const WeatherCard: React.FC<WeatherCardProps> = ({ index, data }) => {
   const [day, setDay] = useState("");
@@ -30,7 +32,7 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ index, data }) => {
         </Heading>
         <Center>
           <Image
-            src={data[index].weather_code.image}
+            src={data[index as Index].weather_code.image}
             alt="Weather image"
             style={{ maxWidth: "100%" }}
             marginBottom={-2}
