@@ -58,4 +58,26 @@ export class Api {
 
     return res;
   }
+
+  // static async setUserData(
+  //   userID: string,
+  //   info: { [field: string]: string },
+  // ): Promise<Response> {
+  //   console.log('OHOHIHO')
+  //   const lambdaInvoker = new LambdaInvoker();
+  //   const res = await lambdaInvoker.invokeLambda(
+  //     {
+  //       httpMethod: "PATCH",
+  //       path: `/${process.env.STAGING_ENV}/user-data/set`,
+  //       body: JSON.stringify({
+  //         userID: userID,
+  //         info: info,
+  //       }),
+  //     },
+  //     DEFAULT_USER_DATA_LAMBDA
+  //   );
+  //   return res;
+  // }
 }
+
+//handleGetInfo
