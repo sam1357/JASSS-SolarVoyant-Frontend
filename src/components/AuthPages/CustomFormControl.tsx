@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  FormControl,
-  FormLabel,
-  Input,
-  FormErrorMessage,
-  FormHelperText,
-} from "@chakra-ui/react";
+import { FormControl, FormLabel, Input, FormErrorMessage, FormHelperText } from "@chakra-ui/react";
 
 interface CustomFormControlProps {
   errors: any;
@@ -35,9 +29,7 @@ const CustomFormControl: React.FC<CustomFormControlProps> = ({
           {(helperText && helperText.length !== 0 && helperText) || " "}
         </FormHelperText>
       ) : (
-        <FormErrorMessage>
-          {(errors[name] && errors[name].message) || " "}
-        </FormErrorMessage>
+        <FormErrorMessage>{(errors[name] && errors[name].message) || " "}</FormErrorMessage>
       )}
     </FormControl>
   );

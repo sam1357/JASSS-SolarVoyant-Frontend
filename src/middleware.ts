@@ -15,8 +15,7 @@ export async function middleware(req: NextRequest) {
       break;
     case "/signup":
     case "/login":
-      if (token)
-        return NextResponse.redirect(new URL("/dashboard/overview", req.url));
+      if (token) return NextResponse.redirect(new URL("/dashboard/overview", req.url));
       break;
     default:
       break;

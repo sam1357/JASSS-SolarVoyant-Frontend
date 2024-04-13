@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Tooltip,
-} from "@chakra-ui/react";
+import { IconButton, Menu, MenuButton, MenuItem, MenuList, Tooltip } from "@chakra-ui/react";
 import { GrNotification } from "react-icons/gr";
 
 export default function NotificationMenu() {

@@ -32,10 +32,7 @@ interface LoginSubmitValues {
 
 const schema = yup
   .object({
-    email: yup
-      .string()
-      .required("Email is required.")
-      .email("Please provide a valid email."),
+    email: yup.string().required("Email is required.").email("Please provide a valid email."),
     password: yup.string().required("Password is required."),
   })
   .required();
@@ -91,24 +88,11 @@ export default function LoginPage() {
   return (
     <Grid templateColumns="repeat(3, 1fr)" minHeight={"100%"}>
       <Hide below="md">
-        <GridItem
-          w="100%"
-          position="relative"
-          bgGradient="linear(to-r, #FAD262, #FFECBA)"
-        >
-          <Image
-            src="/login.svg"
-            alt="Solar panel"
-            fill
-            style={{ objectFit: "cover" }}
-          />
+        <GridItem w="100%" position="relative" bgGradient="linear(to-r, #FAD262, #FFECBA)">
+          <Image src="/login.svg" alt="Solar panel" fill style={{ objectFit: "cover" }} />
         </GridItem>
       </Hide>
-      <GridItem
-        alignItems="center"
-        display="flex"
-        colSpan={{ base: 3, sm: 3, md: 2 }}
-      >
+      <GridItem alignItems="center" display="flex" colSpan={{ base: 3, sm: 3, md: 2 }}>
         <Container>
           <Stack gap={5}>
             <Heading size="2xl" color="blue.500">
@@ -133,17 +117,8 @@ export default function LoginPage() {
                   register={register}
                   inputComponent={PasswordInput}
                 />
-                <Container
-                  paddingY={2}
-                  paddingX={0}
-                  display="flex"
-                  justifyContent="right"
-                >
-                  <Link
-                    href="/forgot-password"
-                    fontWeight={700}
-                    paddingBottom={7}
-                  >
+                <Container paddingY={2} paddingX={0} display="flex" justifyContent="right">
+                  <Link href="/forgot-password" fontWeight={700} paddingBottom={7}>
                     Forgot Password?
                   </Link>
                 </Container>

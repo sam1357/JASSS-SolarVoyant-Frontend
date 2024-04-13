@@ -4,7 +4,12 @@ import { fonts } from "@styles/fonts";
 import { ColorModeScript } from "@chakra-ui/react";
 
 export const metadata: Metadata = {
-  title: "SolarVoyant",
+  title: {
+    template: "%s | SolarVoyant",
+    default: "SolarVoyant",
+  },
+  description:
+    "SolarVoyant is a tool that helps you understand the solar potential of your property.",
 };
 
 export default function RootLayout({

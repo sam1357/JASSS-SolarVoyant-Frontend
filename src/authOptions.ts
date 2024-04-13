@@ -43,11 +43,7 @@ export const authOptions = {
   callbacks: {
     async signIn({ user, account }: { account: any; user: any }) {
       if (account.provider === "google") {
-        const res = await Api.handleOauth(
-          user.email,
-          account.provider,
-          user.name
-        );
+        const res = await Api.handleOauth(user.email, account.provider, user.name);
 
         if (res.status !== 200) {
           throw new Error((await res.json()).message);
@@ -55,22 +51,14 @@ export const authOptions = {
       }
       return true;
     },
-    async jwt({
-      token,
-      user,
-      account,
-    }: {
-      token: any;
-      user: any;
-      account: any;
-    }) {
+    async jwt({ token, user, account }: { token: any; user: any; account: any }) {
       if (account && user) {
         if (account.provider === "credentials") {
           // return id directly from user object
           return {
             ...token,
             id: user.id,
-            name: user.username,
+            name: user.username.username,
           };
         }
         // for OAuth, we must get our own ID by calling the database
