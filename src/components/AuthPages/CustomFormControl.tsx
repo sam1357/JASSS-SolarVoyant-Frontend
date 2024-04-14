@@ -26,7 +26,7 @@ const CustomFormControl: React.FC<CustomFormControlProps> = ({
   register,
   helperText,
   inputComponent: InputComponent = Input,
-  defaultValue
+  defaultValue,
 }) => {
   return (
     <FormControl isInvalid={!!errors[name]}>

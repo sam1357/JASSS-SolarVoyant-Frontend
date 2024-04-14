@@ -59,25 +59,49 @@ export class Api {
     return res;
   }
 
-  // static async setUserData(
-  //   userID: string,
-  //   info: { [field: string]: string },
-  // ): Promise<Response> {
-  //   console.log('OHOHIHO')
-  //   const lambdaInvoker = new LambdaInvoker();
-  //   const res = await lambdaInvoker.invokeLambda(
-  //     {
-  //       httpMethod: "PATCH",
-  //       path: `/${process.env.STAGING_ENV}/user-data/set`,
-  //       body: JSON.stringify({
-  //         userID: userID,
-  //         info: info,
-  //       }),
-  //     },
-  //     DEFAULT_USER_DATA_LAMBDA
-  //   );
-  //   return res;
-  // }
-}
+  static async setUserData(
+    userID: string,
+    info: { [field: string]: string }
+  ): Promise<Response> {
+    const res = await fetch("/api/changeUserData", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userID: userID,
+        info: info,
+      }),
+    });
 
-//handleGetInfo
+    return res;
+  }
+
+  static async changePassword(
+    email: string,
+    oldPassword: string,
+    newPassword: string
+  ): Promise<Response> {
+    const res = await fetch("/api/changePassword", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email,
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+      }),
+    });
+
+    return res;
+  }
+
+  static async deleteUser(userID: string): Promise<Response> {
+    const res = await fetch("/api/deleteUser", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userID: userID,
+      }),
+    });
+
+    return res;
+  }
+}

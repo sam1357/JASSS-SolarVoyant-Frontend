@@ -70,7 +70,7 @@ export const authOptions = {
           return {
             ...token,
             id: user.id,
-            name: user.username.username,
+            name: user.username,
           };
         }
         // for OAuth, we must get our own ID by calling the database
