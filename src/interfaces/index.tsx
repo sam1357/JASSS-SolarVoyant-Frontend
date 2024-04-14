@@ -94,7 +94,7 @@ export interface TimeObject {
   timezone: string;
 }
 
-export interface JSONData {
+export interface retrieveReturnObject {
   data_source: string;
   dataset_type: string;
   dataset_id: string;
@@ -122,6 +122,8 @@ export interface Attributes {
   shortwave_radiation: number;
   temperature_2m: number;
   daylight_duration: number;
+  sunshine_duration: number;
+  cloud_cover: number;
   [key: string]: Location | Units | number | undefined | string;
 }
 
@@ -136,23 +138,95 @@ export interface WmoData {
   night: WeatherCode;
 }
 
-export interface TodayData {
-  suburb: string;
-  units: Units;
+export interface Conditions {
   temperature_2m: number;
   daylight_hours: string;
+  sunshine_hours: string;
   solar_radiation: number;
-  weather_code: WeatherCode;
+  cloud_cover: number;
 }
 
-export interface DashboardData {
-  0: TodayData;
-  1: { weather_code: WeatherCode };
-  2: { weather_code: WeatherCode };
-  3: { weather_code: WeatherCode };
-  4: { weather_code: WeatherCode };
-  5: { weather_code: WeatherCode };
-  6: { weather_code: WeatherCode };
+// Used for the Weather Stats Card in Overview Page
+export interface currentWeatherData {
+  suburb: string;
+  units: Units;
+  weather_code: WeatherCode;
+  current_conditions: Conditions;
+}
+
+// Used for Weekly Overview Graph Overview Page
+export interface weeklyOverviewGraphData {
+  0: AverageConditions;
+  1: AverageConditions;
+  2: AverageConditions;
+  3: AverageConditions;
+  4: AverageConditions;
+  5: AverageConditions;
+  6: AverageConditions;
+}
+
+// Used for Weekly Overview Graph in Overview Page
+export interface AverageConditions {
+  units: Units;
+  average_conditions: Conditions;
+}
+
+// Used for the Weather Card Set in Forecast Page
+export interface WeekWeatherCodes {
+  0: WeatherCode;
+  1: WeatherCode;
+  2: WeatherCode;
+  3: WeatherCode;
+  4: WeatherCode;
+  5: WeatherCode;
+  6: WeatherCode;
+}
+
+// Used for Day Overview Graph in Forecast Page
+export interface NextWeekHourlyGraph {
+  "0": HourlyConditions;
+  "1": HourlyConditions;
+  "2": HourlyConditions;
+  "3": HourlyConditions;
+  "4": HourlyConditions;
+  "5": HourlyConditions;
+  "6": HourlyConditions;
+}
+
+// Used for Day Overview Graph in Forecast Page
+export interface HourlyConditions {
+  temperature_2m: number[];
+  solar_radiation: number[];
+  cloud_cover: number[];
+}
+
+// Return Objects for Analyse
+export interface AnalyseReturnObject {
+  "time_object": TimeObject,
+  "location": Location,
+  "units": Units,
+  "analytics": MeanAttributes | ModeWeatherCode
+}
+
+// Return Objects for Analyse
+export interface MeanAttributes {
+  "temperature_2m": MeanData;
+  "daylight_hours": MeanData;
+  "sunshine_hours": MeanData;
+  "solar_radiation": MeanData;
+  "cloud_cover": MeanData;
+}
+
+// Return Objects for Analyse
+export interface MeanData {
+  "mean": number
+}
+
+// Return Objects for Analyse
+export interface ModeWeatherCode {
+  "weather_code": {
+    "mode": number[]
+  }
 }
 
 export interface GaugeLabels {

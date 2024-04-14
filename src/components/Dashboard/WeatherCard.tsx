@@ -1,12 +1,12 @@
 "use client";
 import { Card, CardBody, Box, Heading, Text, Image, Center } from "@chakra-ui/react";
-import { DashboardData } from "@interfaces/index";
+import { WeekWeatherCodes } from "@interfaces/index";
 import { getDayOfWeek } from "./utils";
 import { useEffect, useState } from "react";
 
 interface WeatherCardProps {
   index: number; // day of week
-  data: DashboardData;
+  data: WeekWeatherCodes;
 }
 
 type Index = 0 | 1 | 2 | 3 | 4 | 5 | 6;
@@ -32,7 +32,7 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ index, data }) => {
         </Heading>
         <Center>
           <Image
-            src={data[index as Index].weather_code.image}
+            src={data[index as Index].image}
             alt="Weather image"
             style={{ maxWidth: "100%" }}
             marginBottom={-2}
