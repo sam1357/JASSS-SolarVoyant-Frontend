@@ -17,14 +17,16 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogOverlay,
+  Link,
 } from "@chakra-ui/react";
 import CustomFormControl from "./AuthPages/CustomFormControl";
-import { Persona, PersonaAvatar, useForm } from "@saas-ui/react";
+import { PasswordInput, Persona, PersonaAvatar, useForm } from "@saas-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Session } from "@src/interfaces";
 import { Api } from "@utils/Api";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface CustomUserDataContainerProps {
   session: Session;
@@ -57,6 +59,7 @@ const passwordSchema = yup.object({
 const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
   session,
 }) => {
+  const router = useRouter();
   const toast = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
@@ -160,19 +163,15 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
         }
       });
     }
-
-    // Your API call to delete the account comes here
-
-    // If successful, notify the user and take further actions (logout, redirect, etc.)
   };
 
   return (
-    <Box w="90%" p={4} borderWidth="1px" borderRadius="lg" mx={"auto"}>
+    <Box w="80%" p={4} borderWidth="1px" borderRadius="lg" mx={"auto"} mt={"10"}>
       <Stack width={"95%"} mt={2} mx={"auto"} spacing={1}>
         <Text fontSize="xl">
           <b>Account Details</b>
         </Text>
-        <Text fontSize="md">Manage your solarvoyant profile</Text>
+        <Text fontSize="md">Manage your SolarVoyant profile</Text>
         <Divider mt={2} />
       </Stack>
       <Box
@@ -194,7 +193,7 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
             </Box>
             <Box>
               <Text fontSize="xl">
-                <b>{session?.user?.name}</b>
+                {session?.user?.name}
               </Text>
               <Text fontSize="md">{session?.user?.email}</Text>
             </Box>
@@ -231,12 +230,20 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
         </form>
 
         <Stack width={"100%"} mt={2} mx={"auto"} spacing={1}>
-          <Text fontSize="md">
-            <b>Change Password</b>
-          </Text>
-          <Text fontSize="sm">
-            You can change your password if you have forgotten it.
-          </Text>
+      <Text fontSize="md">
+        <b>You can change your existing password below.</b>
+      </Text>
+      <Text fontSize="sm">
+        If you have forgotten your password, please {' '}
+        <Link
+          color="blue.500"
+          fontWeight="semibold"
+          onClick={() => router.push('/forgotPassword')}
+          cursor="pointer"
+        >
+          click here
+        </Link>.
+      </Text>
         </Stack>
 
         <form onSubmit={handleSubmitPassword(onPasswordSubmit)}>
@@ -255,6 +262,7 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
                 defaultValue=""
                 helperText=""
                 register={registerPassword}
+                inputComponent={PasswordInput}
               />
             </GridItem>
 
@@ -272,6 +280,7 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
                 defaultValue=""
                 helperText=""
                 register={registerPassword}
+                inputComponent={PasswordInput}
               />
             </GridItem>
           </Grid>
