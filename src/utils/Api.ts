@@ -17,10 +17,12 @@ import {
   AnalyseReturnObject,
   AverageConditions,
   MeanData,
-  weeklyOverviewGraphData,
+  AverageDailyInWeekWeatherData,
   ModeWeatherCode,
   MeanAttributes,
   WeekWeatherCodes,
+  Units,
+  Conditions,
 } from "@src/interfaces";
 import { ErrorWithStatus } from "./ErroWithStatus";
 import { getCurrentHour } from "@components/Dashboard/utils";
@@ -243,46 +245,54 @@ export class Api {
   /**
    * Gets average weather conditions for every day in the next 7 days.
    * Useful for the Weekly Overview Graph in Overview Page and Gauge Cards in Forecast Page
-   * @returns {Promise<weeklyOverviewGraphData>} - weather data for the next 7 days
+   * @returns {Promise<AverageDailyInWeekWeatherData>} - weather data for the next 7 days
    */
-  static async getDailyAverageConditionsOfWeekData(): Promise<weeklyOverviewGraphData> {
-    let weekGraphArray: AverageConditions[] = [];
+  static async getDailyAverageConditionsOfWeekData(): Promise<AverageDailyInWeekWeatherData> {
+    let avgDailyConditionsArray: Conditions[] = [];
+    let units: Units | undefined = undefined;
 
     for (let i = 0; i < 7; i++) {
       // (1) Call Analyse to get Average Weather Conditions for One Day
       let res: AnalyseReturnObject = await Api.getAverageWeatherData(i, i);
 
+      if (i === 0) {
+        units = res.units;
+      }
+
       // In case daily event is unavailable, pick the day before
-      if (i === 6 && res.analytics as MeanAttributes === undefined) {
-        let previous = weekGraphArray[5];
-        weekGraphArray.push(previous);
-        console.log("Last Daily Event is Missing!");
+      if (i === 6 && (res.analytics as MeanAttributes) === undefined) {
+        let previous = avgDailyConditionsArray[5];
+        avgDailyConditionsArray.push(previous);
+        console.log("WARN: Last Daily Event is Missing!");
         break;
       }
 
-      // (2) Add to weekGraphArray
-      let dayData: AverageConditions = {
-        units: res.units,
-        average_conditions: {
-          temperature_2m: (res.analytics as MeanAttributes).temperature_2m.mean,
-          daylight_hours: (res.analytics as MeanAttributes).daylight_hours.mean.toString(),
-          sunshine_hours: (res.analytics as MeanAttributes).sunshine_hours.mean.toString(),
-          solar_radiation: (res.analytics as MeanAttributes).solar_radiation.mean,
-          cloud_cover: (res.analytics as MeanAttributes).cloud_cover.mean,
-        },
+      // In case units is still undefined
+      if (units === undefined) {
+        throw new ErrorWithStatus("Units field is missing", 500);
+      }
+
+      // (2) Add to avgDailyConditionsArray
+      let dayData: Conditions = {
+        temperature_2m: (res.analytics as MeanAttributes).temperature_2m.mean,
+        daylight_hours: (res.analytics as MeanAttributes).daylight_hours.mean.toString(),
+        sunshine_hours: (res.analytics as MeanAttributes).sunshine_hours.mean.toString(),
+        solar_radiation: (res.analytics as MeanAttributes).solar_radiation.mean,
+        cloud_cover: (res.analytics as MeanAttributes).cloud_cover.mean,
       };
-      weekGraphArray.push(dayData);
+      avgDailyConditionsArray.push(dayData);
     }
 
     // (3) Return result
-    const result: weeklyOverviewGraphData = {
-      "0": weekGraphArray[0],
-      "1": weekGraphArray[1],
-      "2": weekGraphArray[2],
-      "3": weekGraphArray[3],
-      "4": weekGraphArray[4],
-      "5": weekGraphArray[5],
-      "6": weekGraphArray[6],
+    const result: AverageDailyInWeekWeatherData = {
+      "units": units as Units,
+      "0": avgDailyConditionsArray[0],
+      "1": avgDailyConditionsArray[1],
+      "2": avgDailyConditionsArray[2],
+      "3": avgDailyConditionsArray[3],
+      "4": avgDailyConditionsArray[4],
+      "5": avgDailyConditionsArray[5],
+      "6": avgDailyConditionsArray[6],
     };
     return result;
   }
@@ -338,7 +348,7 @@ export class Api {
       let res: AnalyseReturnObject = await Api.getModeWeatherCode(i, i);
 
       // In case the daily event is missing, pick the day before
-      if (i === 6 && res.analytics as ModeWeatherCode === undefined) {
+      if (i === 6 && (res.analytics as ModeWeatherCode) === undefined) {
         let previous = weatherCodeArray[5];
         weatherCodeArray.push(previous);
         console.log("Last Daily Event is Missing!");
@@ -364,33 +374,33 @@ export class Api {
     const result: WeekWeatherCodes = {
       "0": {
         "image": wmoData[weatherCodeArray[0]][dayOrNight].image,
-        "description": wmoData[weatherCodeArray[0]][dayOrNight].description
+        "description": wmoData[weatherCodeArray[0]][dayOrNight].description,
       },
       "1": {
         "image": wmoData[weatherCodeArray[1]]["day"].image,
-        "description": wmoData[weatherCodeArray[1]]["day"].description
+        "description": wmoData[weatherCodeArray[1]]["day"].description,
       },
       "2": {
         "image": wmoData[weatherCodeArray[2]]["day"].image,
-        "description": wmoData[weatherCodeArray[2]]["day"].description
+        "description": wmoData[weatherCodeArray[2]]["day"].description,
       },
       "3": {
         "image": wmoData[weatherCodeArray[3]]["day"].image,
-        "description": wmoData[weatherCodeArray[3]]["day"].description
+        "description": wmoData[weatherCodeArray[3]]["day"].description,
       },
       "4": {
         "image": wmoData[weatherCodeArray[4]]["day"].image,
-        "description": wmoData[weatherCodeArray[4]]["day"].description
+        "description": wmoData[weatherCodeArray[4]]["day"].description,
       },
       "5": {
         "image": wmoData[weatherCodeArray[5]]["day"].image,
-        "description": wmoData[weatherCodeArray[5]]["day"].description
+        "description": wmoData[weatherCodeArray[5]]["day"].description,
       },
       "6": {
         "image": wmoData[weatherCodeArray[6]]["day"].image,
-        "description": wmoData[weatherCodeArray[6]]["day"].description
+        "description": wmoData[weatherCodeArray[6]]["day"].description,
       },
-    }
+    };
     return result;
   }
 
@@ -418,7 +428,7 @@ export class Api {
             weather_code: "mean",
             daylight_duration: "mean",
             sunshine_duration: "mean",
-            cloud_cover: "mean"
+            cloud_cover: "mean",
           },
         },
       },
@@ -426,7 +436,7 @@ export class Api {
     );
     return await res.json();
   }
-  
+
   // HELPER FUNCTION for getWeekWeatherCodeData
   static async getModeWeatherCode(
     start_day_offset: number,
@@ -441,12 +451,11 @@ export class Api {
           startDate: formatDate(addDays(new Date(), start_day_offset)),
           endDate: formatDate(addDays(new Date(), end_day_offset)),
           address: "21 Hinemoa Street",
-          attributes:
-            "weather_code",
+          attributes: "weather_code",
         },
         body: {
           query: {
-            weather_code: "mode"
+            weather_code: "mode",
           },
         },
       },

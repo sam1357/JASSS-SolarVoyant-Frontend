@@ -85,7 +85,7 @@ export interface Location {
 }
 
 export interface Units {
-  time: string;
+  // time: string;
   [key: string]: string | number | undefined;
 }
 
@@ -149,26 +149,20 @@ export interface Conditions {
 // Used for the Weather Stats Card in Overview Page
 export interface currentWeatherData {
   suburb: string;
-  units: Units;
   weather_code: WeatherCode;
   current_conditions: Conditions;
 }
 
 // Used for Weekly Overview Graph Overview Page
-export interface weeklyOverviewGraphData {
-  0: AverageConditions;
-  1: AverageConditions;
-  2: AverageConditions;
-  3: AverageConditions;
-  4: AverageConditions;
-  5: AverageConditions;
-  6: AverageConditions;
-}
-
-// Used for Weekly Overview Graph in Overview Page
-export interface AverageConditions {
+export interface AverageDailyInWeekWeatherData {
   units: Units;
-  average_conditions: Conditions;
+  0: Conditions;
+  1: Conditions;
+  2: Conditions;
+  3: Conditions;
+  4: Conditions;
+  5: Conditions;
+  6: Conditions;
 }
 
 // Used for the Weather Card Set in Forecast Page
@@ -184,15 +178,43 @@ export interface WeekWeatherCodes {
 
 // Used for Day Overview Graph in Forecast Page
 export interface NextWeekHourlyGraph {
-  "0": HourlyConditions;
-  "1": HourlyConditions;
-  "2": HourlyConditions;
-  "3": HourlyConditions;
-  "4": HourlyConditions;
-  "5": HourlyConditions;
-  "6": HourlyConditions;
+  units: Units;
+  0: DayConditions;
+  1: DayConditions;
+  2: DayConditions;
+  3: DayConditions;
+  4: DayConditions;
+  5: DayConditions;
+  6: DayConditions;
 }
 
+export interface DayConditions {
+  0: HourlyConditions;
+  1: HourlyConditions;
+  2: HourlyConditions;
+  3: HourlyConditions;
+  4: HourlyConditions;
+  5: HourlyConditions;
+  6: HourlyConditions;
+  7: HourlyConditions;
+  8: HourlyConditions;
+  9: HourlyConditions;
+  10: HourlyConditions;
+  11: HourlyConditions;
+  12: HourlyConditions;
+  13: HourlyConditions;
+  14: HourlyConditions;
+  15: HourlyConditions;
+  16: HourlyConditions;
+  17: HourlyConditions;
+  18: HourlyConditions;
+  19: HourlyConditions;
+  20: HourlyConditions;
+  21: HourlyConditions;
+  22: HourlyConditions;
+  23: HourlyConditions;
+  24: HourlyConditions;
+}
 // Used for Day Overview Graph in Forecast Page
 export interface HourlyConditions {
   temperature_2m: number[];
