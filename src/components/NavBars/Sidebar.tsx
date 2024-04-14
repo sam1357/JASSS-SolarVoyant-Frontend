@@ -44,8 +44,8 @@ const DASHBOARD_PAGES = [
     icon: <BiSolidBarChartAlt2 />,
   },
   {
-    name: "Chloropleth Map",
-    href: "/dashboard/chloropleth-map",
+    name: "Choropleth Map",
+    href: "/dashboard/choropleth-map",
     icon: <BiSolidMapAlt />,
   },
   { name: "My Energy Data", href: "/dashboard/data", icon: <IoMdPerson /> },
@@ -172,10 +172,7 @@ export default function Sidebar() {
   return (
     <>
       <Show above="lg">
-        <Box
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
+        <Box onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
           <SidebarShell
             toggleBreakpoint={false}
             variant={isOpen ? "default" : "compact"}
@@ -189,9 +186,7 @@ export default function Sidebar() {
               {isOpen && (
                 <Tooltip label={isPinned ? "Unpin sidebar" : "Pin sidebar"}>
                   <IconButton
-                    icon={
-                      isPinned ? <PiPushPinFill /> : <PiPushPinSlashLight />
-                    }
+                    icon={isPinned ? <PiPushPinFill /> : <PiPushPinSlashLight />}
                     aria-label="Pin sidebar"
                     onClick={togglePin}
                     position="fixed"
@@ -208,7 +203,7 @@ export default function Sidebar() {
       </Show>
       <Show below="lg">
         <SidebarShell toggleBreakpoint="lg" height="100%">
-          <SidebarToggleButton />
+          <SidebarToggleButton top="7px" />
           <SidebarContents isOpen={true} />
         </SidebarShell>
       </Show>

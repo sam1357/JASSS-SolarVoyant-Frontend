@@ -37,10 +37,7 @@ const schema = yup
       .string()
       .required("Username is required.")
       .matches(/^[\w]+$/, "Username can only contain alphanumeric characters"),
-    email: yup
-      .string()
-      .required("Email is required.")
-      .email("Please provide a valid email."),
+    email: yup.string().required("Email is required.").email("Please provide a valid email."),
     password: yup
       .string()
       .required("Password is required.")
@@ -63,62 +60,47 @@ export default function SignupPage() {
   } = useForm<RegisterSubmitValues>({ resolver: yupResolver(schema) });
 
   const onSubmit = async (data: RegisterSubmitValues) => {
-    await Api.register(data.username, data.email, data.password).then(
-      async (res) => {
-        if (res?.status !== 200) {
-          toast({
-            title: "Error",
-            description: (await res.json()).error,
-            status: "error",
-            position: "top",
-            duration: 4000,
-            isClosable: true,
-          });
-        } else {
-          await signIn("credentials", {
-            email: data.email,
-            password: data.password,
-            redirect: false,
-          }).then((res) => {
-            if (res?.status !== 200) {
-              toast({
-                title: "Error",
-                description: res?.error,
-                status: "error",
-                position: "top",
-                duration: 4000,
-                isClosable: true,
-              });
-            } else {
-              router.push("/dashboard/overview");
-            }
-          });
-        }
+    await Api.register(data.username, data.email, data.password).then(async (res) => {
+      if (res?.status !== 200) {
+        toast({
+          title: "Error",
+          description: (await res.json()).error,
+          status: "error",
+          position: "top",
+          duration: 4000,
+          isClosable: true,
+        });
+      } else {
+        await signIn("credentials", {
+          email: data.email,
+          password: data.password,
+          redirect: false,
+        }).then((res) => {
+          if (res?.status !== 200) {
+            toast({
+              title: "Error",
+              description: res?.error,
+              status: "error",
+              position: "top",
+              duration: 4000,
+              isClosable: true,
+            });
+          } else {
+            router.push("/dashboard/overview");
+          }
+        });
       }
-    );
+    });
   };
 
   return (
     <Grid templateColumns="repeat(3, 1fr)" minHeight={"100%"}>
       <Hide below="md">
-        <GridItem
-          w="100%"
-          position="relative"
-          bgGradient="linear(to-r, #FAD262, #FFECBA)"
-        >
-          <Image
-            src="/signup.svg"
-            alt="Solar panels"
-            fill
-            style={{ objectFit: "cover" }}
-          />
+        <GridItem w="100%" position="relative" bgGradient="linear(to-r, #FAD262, #FFECBA)">
+          <Image src="/signup.svg" alt="Solar panels" fill style={{ objectFit: "cover" }} />
         </GridItem>
       </Hide>
-      <GridItem
-        alignItems="center"
-        display="flex"
-        colSpan={{ base: 3, sm: 3, md: 2 }}
-      >
+      <GridItem alignItems="center" display="flex" colSpan={{ base: 3, sm: 3, md: 2 }}>
         <Container>
           <Stack gap={5}>
             <Heading size="2xl" color="blue.500">
@@ -161,12 +143,7 @@ export default function SignupPage() {
                   helperText="Re-type your password."
                   inputComponent={PasswordInput}
                 />
-                <Button
-                  w="100%"
-                  marginTop={9}
-                  isLoading={isSubmitting}
-                  type="submit"
-                >
+                <Button w="100%" marginTop={9} isLoading={isSubmitting} type="submit">
                   Create Account
                 </Button>
                 <Text paddingTop={5}>
