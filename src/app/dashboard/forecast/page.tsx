@@ -10,8 +10,8 @@ export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
   const result: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek();
   const result2: NextWeekHourlyGraph = await Api.getHourlyWeatherDataOfWeek();
-  console.log(result2);
 
+  console.log(result2);
 
   // TODO: Still working on organising this, setup below is just to show how to pass data
   return (

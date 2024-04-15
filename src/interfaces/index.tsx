@@ -232,11 +232,11 @@ export interface AnalyseReturnObject {
 
 // Return Objects for Analyse
 export interface MeanAttributes {
-  "temperature_2m": MeanData;
-  "daylight_hours": MeanData;
-  "sunshine_hours": MeanData;
-  "solar_radiation": MeanData;
-  "cloud_cover": MeanData;
+  temperature_2m: MeanData;
+  daylight_duration: MeanData;
+  sunshine_duration: MeanData;
+  shortwave_radiation: MeanData;
+  cloud_cover: MeanData;
 }
 
 // Return Objects for Analyse

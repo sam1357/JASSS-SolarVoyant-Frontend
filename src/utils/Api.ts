@@ -208,7 +208,7 @@ export class Api {
     if (events[currentHour] !== undefined) {
       currentHourAttributes = events[currentHour].attributes;
     } else {
-      console.log(`WARN: Current Hour Data is Missing!`);
+      console.log(`WARN from getCurrentWeatherData: Current Hour Data is Missing!`);
       currentHourAttributes = events[currentHour - 1].attributes;
     }
 
@@ -251,6 +251,8 @@ export class Api {
       // (1) Call Analyse to get Average Weather Conditions for One Day
       let res: AnalyseReturnObject = await Api.getAverageWeatherData(i, i);
 
+      // console.log(res);
+
       if (i === 0) {
         units = res.units;
       }
@@ -259,7 +261,7 @@ export class Api {
       if ((res.analytics as MeanAttributes) === undefined) {
         let previous = avgDailyConditionsArray[i - 1];
         avgDailyConditionsArray.push(previous);
-        console.log(`WARN: Daily Event ${i} is Missing!`);
+        console.log(`WARN from getDailyAverageConditionsDataOfWeek: Day Event ${i} is Missing!`);
         continue;
       }
 
@@ -271,9 +273,9 @@ export class Api {
       // (2) Add to avgDailyConditionsArray
       let dayData: Conditions = {
         temperature_2m: (res.analytics as MeanAttributes).temperature_2m.mean,
-        daylight_hours: (res.analytics as MeanAttributes).daylight_hours.mean.toString(),
-        sunshine_hours: (res.analytics as MeanAttributes).sunshine_hours.mean.toString(),
-        solar_radiation: (res.analytics as MeanAttributes).solar_radiation.mean,
+        daylight_hours: (res.analytics as MeanAttributes).daylight_duration.mean.toString(),
+        sunshine_hours: (res.analytics as MeanAttributes).sunshine_duration.mean.toString(),
+        solar_radiation: (res.analytics as MeanAttributes).shortwave_radiation.mean,
         cloud_cover: (res.analytics as MeanAttributes).cloud_cover.mean,
       };
       avgDailyConditionsArray.push(dayData);
@@ -326,7 +328,7 @@ export class Api {
     if (events[currentHour] !== undefined) {
       currentWeatherCode = events[currentHour].attributes.weather_code;
     } else {
-      console.log(`WARN: Current Hour Data is Missing!`);
+      console.log(`WARN from getWeatherCodeDataOfWeek: Current Hour Data is Missing!`);
       currentWeatherCode = events[events.length - 1].attributes.weather_code;
     }
 
@@ -341,7 +343,7 @@ export class Api {
       if ((res.analytics as ModeWeatherCode) === undefined) {
         let previous = weatherCodeArray[i - 1];
         weatherCodeArray.push(previous);
-        console.log(`WARN: Daily Event ${i} is Missing!`);
+        console.log(`WARN from getWeatherCodeDataOfWeek: Day Event ${i} is Missing!`);
         continue;
       }
 
@@ -402,7 +404,7 @@ export class Api {
         if (eventsArr[j] === undefined) {
           let prevHourlyConditions: HourlyConditions = dayArr[j - 1];
           dayArr.push(prevHourlyConditions);
-          console.log(`WARN: Current Hour Data is Missing!`);
+          console.log(`WARN from getHourlyWeatherDataOfWeek: Hour Data ${j} of Day ${i} is Missing!`);
           continue;
         }
 
@@ -411,7 +413,7 @@ export class Api {
           if (i === 0 && j === 0) {
             units = eventsArr[j].attributes.units;
           }
-          // Get Hourly Conditions and ADd them to Day Array
+          // Get Hourly Conditions and Add them to Day Array
           let hourlyConditionsObj: HourlyConditions = {
             temperature_2m: eventsArr[j].attributes.temperature_2m,
             solar_radiation: eventsArr[j].attributes.shortwave_radiation,
@@ -449,6 +451,11 @@ export class Api {
         23: dayArr[23],
       }
 
+      // In case an daily event is missing, pick the day before
+      if (dayObj[0] === undefined) {
+        dayObj = weekArr[i - 1];
+        console.log(`WARN from getHourlyWeatherDataOfWeek: Day Data ${i} is Missing!`);
+      }
       // Add Day Conditions to Week Arr
       weekArr.push(dayObj);
     }
