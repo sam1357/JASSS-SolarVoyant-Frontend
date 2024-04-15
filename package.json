@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@aws-sdk/client-lambda": "^3.549.0",
+    "@chakra-ui/color-mode": "^2.2.0",
+    "@chakra-ui/layout": "^2.3.1",
     "@chakra-ui/next-js": "^2.2.0",
     "@chakra-ui/react": "^2.8.2",
     "@chakra-ui/styled-system": "^2.9.2",
@@ -27,6 +29,7 @@
     "@saas-ui/react": "^2.6.2",
     "@saas-ui/theme": "^2.3.4",
     "chakra-react-select": "^4.7.6",
+    "chakra-ui-steps": "^2.1.0",
     "date-fns-tz": "^3.0.1",
     "next": "14.1.4",
     "next-auth": "^4.24.7",
