@@ -94,7 +94,7 @@ export interface TimeObject {
   timezone: string;
 }
 
-export interface retrieveReturnObject {
+export interface RetrieveReturnObject {
   data_source: string;
   dataset_type: string;
   dataset_id: string;
@@ -149,6 +149,7 @@ export interface Conditions {
 // Used for the Weather Stats Card in Overview Page
 export interface currentWeatherData {
   suburb: string;
+  units: Units;
   weather_code: WeatherCode;
   current_conditions: Conditions;
 }
@@ -213,13 +214,12 @@ export interface DayConditions {
   21: HourlyConditions;
   22: HourlyConditions;
   23: HourlyConditions;
-  24: HourlyConditions;
 }
 // Used for Day Overview Graph in Forecast Page
 export interface HourlyConditions {
-  temperature_2m: number[];
-  solar_radiation: number[];
-  cloud_cover: number[];
+  temperature_2m: number;
+  solar_radiation: number;
+  cloud_cover: number;
 }
 
 // Return Objects for Analyse
