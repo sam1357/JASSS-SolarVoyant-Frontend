@@ -4,13 +4,20 @@ import { authOptions } from "@src/authOptions";
 import { AverageDailyInWeekWeatherData, currentWeatherData } from "@src/interfaces";
 import { Api } from "@utils/Api";
 import StatsCard from "@components/Dashboard/StatsCard";
+import store, { setInsightData } from "@src/store";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
   const statsCardData: currentWeatherData = await Api.getCurrentWeatherData();
   const weeklyOverviewGraphData: AverageDailyInWeekWeatherData = await Api.getDailyAverageConditionsDataOfWeek();
 
-  console.log(weeklyOverviewGraphData);
+  // Get Insights Data
+  if (Object.keys(store.getState().insightData).length === 0) {
+    let insightData = await Api.getInsightDataOfWeek();
+    store.dispatch(setInsightData(insightData));
+  }
+  const insightData = store.getState().insightData;
+
   // TODO: Still working on organising this, setup below is just to show how to pass data
   return (
     <>

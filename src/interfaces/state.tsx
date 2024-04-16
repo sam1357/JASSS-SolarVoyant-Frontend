@@ -1,4 +1,4 @@
-import { ChoroplethColourValueMapping } from ".";
+import { ChoroplethColourValueMapping, NextWeekHourlyData } from ".";
 
 export interface LatLng {
   lat: number;
@@ -20,4 +20,5 @@ export interface State {
   lastClickedFeature: LastClickedFeature;
   suburbsData: { [key: string]: number };
   choroplethMapping: ChoroplethColourValueMapping[];
+  insightData: NextWeekHourlyData | {};
 }

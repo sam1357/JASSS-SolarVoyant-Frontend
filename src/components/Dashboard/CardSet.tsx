@@ -2,7 +2,6 @@
 import { Flex } from "@chakra-ui/react";
 import WeatherCard from "./WeatherCard";
 import { WeekWeatherCodes } from "@src/interfaces";
-// import { DashboardData } from "@interfaces/index";
 
 interface CardSetProps {
   data: WeekWeatherCodes;

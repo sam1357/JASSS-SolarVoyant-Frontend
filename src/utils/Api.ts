@@ -22,8 +22,9 @@ import {
   Units,
   Conditions,
   DayConditions,
-  NextWeekHourlyGraph,
-  HourlyConditions,
+  NextWeekHourlyData,
+  GraphHourlyConditions,
+  InsightHourlyConditions,
 } from "@src/interfaces";
 import { ErrorWithStatus } from "./ErroWithStatus";
 import { getCurrentHour } from "@components/Dashboard/utils";
@@ -229,9 +230,15 @@ export class Api {
       },
       "current_conditions": {
         "temperature_2m": currentHourAttributes.temperature_2m,
-        "daylight_hours": ((currentDayAttributes as Attributes).daylight_duration / (60 * 60)).toFixed(0),
-        "sunshine_hours": ((currentDayAttributes as Attributes).sunshine_duration / (60 * 60)).toFixed(0),
-        "solar_radiation": currentHourAttributes.shortwave_radiation,
+        "daylight_hours": (
+          (currentDayAttributes as Attributes).daylight_duration /
+          (60 * 60)
+        ).toFixed(0),
+        "sunshine_hours": (
+          (currentDayAttributes as Attributes).sunshine_duration /
+          (60 * 60)
+        ).toFixed(0),
+        "shortwave_radiation": currentHourAttributes.shortwave_radiation,
         "cloud_cover": currentHourAttributes.cloud_cover,
       },
     };
@@ -275,7 +282,7 @@ export class Api {
         temperature_2m: (res.analytics as MeanAttributes).temperature_2m.mean,
         daylight_hours: (res.analytics as MeanAttributes).daylight_duration.mean.toString(),
         sunshine_hours: (res.analytics as MeanAttributes).sunshine_duration.mean.toString(),
-        solar_radiation: (res.analytics as MeanAttributes).shortwave_radiation.mean,
+        shortwave_radiation: (res.analytics as MeanAttributes).shortwave_radiation.mean,
         cloud_cover: (res.analytics as MeanAttributes).cloud_cover.mean,
       };
       avgDailyConditionsArray.push(dayData);
@@ -311,7 +318,7 @@ export class Api {
     let events: Event[] = weatherData.events;
     let currentWeatherCode: number = -1;
     const currentHour = getCurrentHour();
-    
+
     // for (let i = 0; i < events.length; i++) {
     //   let eventHour: number = new Date(events[i].time_object.timestamp).getHours();
     //   if (eventHour === currentHour && events[i].event_type === "hourly") {
@@ -334,7 +341,7 @@ export class Api {
 
     //// (c) Add Current Weather Code to Array
     weatherCodeArray.push(currentWeatherCode);
-    
+
     // (2) Get Mode Weather Code for the Following 6 Days
     for (let i = 1; i < 7; i++) {
       let res: AnalyseReturnObject = await Api.getModeWeatherCode(i, i);
@@ -389,12 +396,17 @@ export class Api {
     return result;
   }
 
-  static async getHourlyWeatherDataOfWeek(): Promise<NextWeekHourlyGraph> {
+  /**
+   * Gets hourly weather conditions for every day in the next 7 days.
+   * Useful for the day overview graph in Forecast page
+   * @returns
+   */
+  static async getHourlyWeatherDataOfWeek(): Promise<NextWeekHourlyData> {
     let weekArr: DayConditions[] = [];
     let units: Units | undefined = undefined;
     for (let i = 0; i < 7; i++) {
       // (1) Retrieve Weather Conditions for each day in a week
-      let dayArr: HourlyConditions[] = [];
+      let dayArr: GraphHourlyConditions[] = [];
       let res: RetrieveReturnObject = await Api.retrieveWeatherData(i, i, "temperature_2m, shortwave_radiation, cloud_cover");
       let eventsArr: Event[] = res.events;
 
@@ -402,9 +414,11 @@ export class Api {
         
         // In case an hourly event is missing, pick the hour before
         if (eventsArr[j] === undefined) {
-          let prevHourlyConditions: HourlyConditions = dayArr[j - 1];
+          let prevHourlyConditions: GraphHourlyConditions = dayArr[j - 1];
           dayArr.push(prevHourlyConditions);
-          console.log(`WARN from getHourlyWeatherDataOfWeek: Hour Data ${j} of Day ${i} is Missing!`);
+          console.log(
+            `WARN from getHourlyWeatherDataOfWeek: Hour Data ${j} of Day ${i} is Missing!`
+          );
           continue;
         }
 
@@ -414,11 +428,11 @@ export class Api {
             units = eventsArr[j].attributes.units;
           }
           // Get Hourly Conditions and Add them to Day Array
-          let hourlyConditionsObj: HourlyConditions = {
+          let hourlyConditionsObj: GraphHourlyConditions = {
             temperature_2m: eventsArr[j].attributes.temperature_2m,
             solar_radiation: eventsArr[j].attributes.shortwave_radiation,
-            cloud_cover: eventsArr[j].attributes.cloud_cover
-          }
+            cloud_cover: eventsArr[j].attributes.cloud_cover,
+          };
           dayArr.push(hourlyConditionsObj);
         }
       }
@@ -458,13 +472,13 @@ export class Api {
       }
       // Add Day Conditions to Week Arr
       weekArr.push(dayObj);
-    }
+    };
 
     if (weekArr.length !== 7) {
       throw new ErrorWithStatus("Week Array has the Incorrect Length", 500)
-    }
+    };
 
-    const result: NextWeekHourlyGraph = {
+    const result: NextWeekHourlyData = {
       units: units as Units,
       0: weekArr[0],
       1: weekArr[1],
@@ -473,7 +487,117 @@ export class Api {
       4: weekArr[4],
       5: weekArr[5],
       6: weekArr[6],
-    }
+    };
+    return result;
+  }
+
+  /**
+   * Gets hourly weather conditions for precipitation_probability and weather codes
+   * Useful for insights in Forecast Page and Overview Page
+   */
+  static async getInsightDataOfWeek(): Promise<NextWeekHourlyData> {
+    let weekArr: DayConditions[] = [];
+    let units: Units | undefined = undefined;
+    for (let i = 0; i < 7; i++) {
+      // (0) Get Weather Code Images and Description
+      const wmoData: WmoData[] = await Api.retrieveWmoData();
+      
+      // (1) Retrieve Weather Conditions for each day in a week
+      let dayArr: InsightHourlyConditions[] = [];
+      let res: RetrieveReturnObject = await Api.retrieveWeatherData(i, i, "weather_code, precipitation_probability");
+      let eventsArr: Event[] = res.events;
+      
+      for (let j = 0; j < eventsArr.length; j++) {
+        
+        // In case an hourly event is missing, pick the hour before
+        if (eventsArr[j] === undefined) {
+          let prevHourlyConditions: InsightHourlyConditions = dayArr[j - 1];
+          dayArr.push(prevHourlyConditions);
+          console.log(
+            `WARN from getInsightDataOfWeek: Hour Data ${j} of Day ${i} is Missing!`
+          );
+          continue;
+        }
+        
+        // (2) Retrieve hourly condition for each hour in a day
+        if (eventsArr[j].event_type === "hourly") {
+          if (i === 0 && j === 0) {
+            units = eventsArr[j].attributes.units;
+          }
+          
+          // Get hour of the event
+          let eventTimeStamp = res.events[j].time_object.timestamp;
+          let charTIndex = eventTimeStamp.indexOf("T");
+          let hourStr = eventTimeStamp.substring(charTIndex + 1, charTIndex + 3);
+          let currentHour = parseInt(hourStr, 10);
+
+          // Determine if current hour is day or night
+          const dayOrNight: "day" | "night" = currentHour < 6 || currentHour > 18 ? "night" : "day";
+          
+          // Get Hourly Conditions and Add them to Day Array
+          // console.log(currentHour)
+          let hourlyConditionsObj: InsightHourlyConditions = {
+            weather_code: {
+              image: wmoData[eventsArr[j].attributes.weather_code][dayOrNight].image,
+              description: wmoData[eventsArr[j].attributes.weather_code][dayOrNight].description,
+            }, 
+            precipitation_probability: eventsArr[j].attributes.precipitation_probability,
+          };
+          dayArr.push(hourlyConditionsObj);
+        }
+      }
+
+      // Create Day Conditions Object from Day Arr
+      let dayObj: DayConditions = {
+        0: dayArr[0],
+        1: dayArr[1],
+        2: dayArr[2],
+        3: dayArr[3],
+        4: dayArr[4],
+        5: dayArr[5],
+        6: dayArr[6],
+        7: dayArr[7],
+        8: dayArr[8],
+        9: dayArr[9],
+        10: dayArr[10],
+        11: dayArr[11],
+        12: dayArr[12],
+        13: dayArr[13],
+        14: dayArr[14],
+        15: dayArr[15],
+        16: dayArr[16],
+        17: dayArr[17],
+        18: dayArr[18],
+        19: dayArr[19],
+        20: dayArr[20],
+        21: dayArr[21],
+        22: dayArr[22],
+        23: dayArr[23],
+      }
+
+      // In case an daily event is missing, pick the day before
+      if (dayObj[0] === undefined) {
+        dayObj = weekArr[i - 1];
+        console.log(`WARN from getInsightDataOfWeek: Day Data ${i} is Missing!`);
+      }
+      // Add Day Conditions to Week Arr
+      weekArr.push(dayObj);
+    };
+
+    if (weekArr.length !== 7) {
+      throw new ErrorWithStatus("Week Array has the Incorrect Length", 500)
+    };
+
+    const result: NextWeekHourlyData = {
+      units: units as Units,
+      0: weekArr[0],
+      1: weekArr[1],
+      2: weekArr[2],
+      3: weekArr[3],
+      4: weekArr[4],
+      5: weekArr[5],
+      6: weekArr[6],
+    };
     return result;
   }
 
@@ -492,7 +616,7 @@ export class Api {
           endDate: formatDate(addDays(new Date(), end_day_offset)),
           address: "21 Hinemoa Street",
           attributes:
-            "temperature_2m, shortwave_radiation, weather_code, daylight_duration, sunshine_duration, cloud_cover",
+            "temperature_2m, shortwave_radiation, weather_code, daylight_duration, sunshine_duration, cloud_cover, precipitation_probability",
         },
         body: {
           query: {
@@ -597,7 +721,7 @@ export class Api {
   //   // Convert UTC Date to AEST
   //   currentDate.setUTCHours(currentDate.getUTCHours() + 10);
 
-  //   // Convert Date to String 
+  //   // Convert Date to String
   //   let currentDateStr = currentDate.toISOString();
   //   return currentDateStr = currentDateStr.split("T")[0];
   // }

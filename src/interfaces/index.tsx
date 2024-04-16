@@ -115,7 +115,7 @@ export interface Event {
   attributes: Attributes;
 }
 
-export interface Attributes {
+export interface Attributes { // Backend Return Object
   location: Location;
   units: Units;
   weather_code: number;
@@ -124,6 +124,7 @@ export interface Attributes {
   daylight_duration: number;
   sunshine_duration: number;
   cloud_cover: number;
+  precipitation_probability: number;
   [key: string]: Location | Units | number | undefined | string;
 }
 
@@ -142,7 +143,7 @@ export interface Conditions {
   temperature_2m: number;
   daylight_hours: string;
   sunshine_hours: string;
-  solar_radiation: number;
+  shortwave_radiation: number;
   cloud_cover: number;
 }
 
@@ -178,7 +179,7 @@ export interface WeekWeatherCodes {
 }
 
 // Used for Day Overview Graph in Forecast Page
-export interface NextWeekHourlyGraph {
+export interface NextWeekHourlyData {
   units: Units;
   0: DayConditions;
   1: DayConditions;
@@ -190,36 +191,41 @@ export interface NextWeekHourlyGraph {
 }
 
 export interface DayConditions {
-  0: HourlyConditions;
-  1: HourlyConditions;
-  2: HourlyConditions;
-  3: HourlyConditions;
-  4: HourlyConditions;
-  5: HourlyConditions;
-  6: HourlyConditions;
-  7: HourlyConditions;
-  8: HourlyConditions;
-  9: HourlyConditions;
-  10: HourlyConditions;
-  11: HourlyConditions;
-  12: HourlyConditions;
-  13: HourlyConditions;
-  14: HourlyConditions;
-  15: HourlyConditions;
-  16: HourlyConditions;
-  17: HourlyConditions;
-  18: HourlyConditions;
-  19: HourlyConditions;
-  20: HourlyConditions;
-  21: HourlyConditions;
-  22: HourlyConditions;
-  23: HourlyConditions;
+  0: GraphHourlyConditions | InsightHourlyConditions;
+  1: GraphHourlyConditions | InsightHourlyConditions;
+  2: GraphHourlyConditions | InsightHourlyConditions;
+  3: GraphHourlyConditions | InsightHourlyConditions;
+  4: GraphHourlyConditions | InsightHourlyConditions;
+  5: GraphHourlyConditions | InsightHourlyConditions;
+  6: GraphHourlyConditions | InsightHourlyConditions;
+  7: GraphHourlyConditions | InsightHourlyConditions;
+  8: GraphHourlyConditions | InsightHourlyConditions;
+  9: GraphHourlyConditions | InsightHourlyConditions;
+  10: GraphHourlyConditions | InsightHourlyConditions;
+  11: GraphHourlyConditions | InsightHourlyConditions;
+  12: GraphHourlyConditions | InsightHourlyConditions;
+  13: GraphHourlyConditions | InsightHourlyConditions;
+  14: GraphHourlyConditions | InsightHourlyConditions;
+  15: GraphHourlyConditions | InsightHourlyConditions;
+  16: GraphHourlyConditions | InsightHourlyConditions;
+  17: GraphHourlyConditions | InsightHourlyConditions;
+  18: GraphHourlyConditions | InsightHourlyConditions;
+  19: GraphHourlyConditions | InsightHourlyConditions;
+  20: GraphHourlyConditions | InsightHourlyConditions;
+  21: GraphHourlyConditions | InsightHourlyConditions;
+  22: GraphHourlyConditions | InsightHourlyConditions;
+  23: GraphHourlyConditions | InsightHourlyConditions;
 }
 // Used for Day Overview Graph in Forecast Page
-export interface HourlyConditions {
+export interface GraphHourlyConditions {
   temperature_2m: number;
   solar_radiation: number;
   cloud_cover: number;
+}
+
+export interface InsightHourlyConditions {
+  weather_code: WeatherCode;
+  precipitation_probability: number;
 }
 
 // Return Objects for Analyse
@@ -237,6 +243,7 @@ export interface MeanAttributes {
   sunshine_duration: MeanData;
   shortwave_radiation: MeanData;
   cloud_cover: MeanData;
+  precipitation_probability: MeanData;
 }
 
 // Return Objects for Analyse

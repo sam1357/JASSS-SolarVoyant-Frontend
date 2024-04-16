@@ -61,7 +61,7 @@ const StatsCard: React.FC<StatsCardProps> = ({ data }) => {
               Solar Irradiance
             </Text>
             <Text fontSize="md" textAlign="center">
-              {data.current_conditions.solar_radiation} W/m²
+              {data.current_conditions.shortwave_radiation} W/m²
             </Text>
           </Box>
           <Divider height="65px" orientation="vertical" color={`rgba(31, 31, 31)`} />
