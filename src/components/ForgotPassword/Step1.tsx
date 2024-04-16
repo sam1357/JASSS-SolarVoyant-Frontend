@@ -3,7 +3,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import { Button, Container, Heading, Stack, Text, useToast } from "@chakra-ui/react";
+import { Button, Heading, Stack, Text, useToast } from "@chakra-ui/react";
 import CustomFormControl from "../AuthPages/CustomFormControl";
 
 export interface Step1Value {
@@ -17,7 +17,7 @@ export interface Step1Props {
 
 export const Step1Schema = yup
   .object({
-    email: yup.string().required("Email is required."),
+    email: yup.string().required("Email is required.").email("Email is invalid."),
   })
   .required();
 
@@ -35,7 +35,7 @@ export const Step1: React.FC<Step1Props> = ({ increaseStep, setEmail }) => {
   const {
     handleSubmit,
     register,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<Step1Value>({ resolver: yupResolver(Step1Schema) });
 
   const onSubmit = async (data: Step1Value) => {
@@ -75,11 +75,9 @@ export const Step1: React.FC<Step1Props> = ({ increaseStep, setEmail }) => {
         />
       </Stack>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Container paddingTop={100}>
-          <Button w="100%" type="submit">
-            Send Password Reset Email
-          </Button>
-        </Container>
+        <Button w="100%" type="submit" top={4} isLoading={isSubmitting}>
+          Send Password Reset Email
+        </Button>
       </form>
     </Stack>
   );

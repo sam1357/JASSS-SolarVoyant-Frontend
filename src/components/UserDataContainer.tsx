@@ -230,7 +230,7 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
             <Link
               color="blue.500"
               fontWeight="semibold"
-              onClick={() => router.push("/forgotPassword")}
+              onClick={() => router.push("/forgot-password")}
               cursor="pointer"
             >
               click here
