@@ -9,7 +9,9 @@
     "lint": "next lint",
     "lint-fix": "next lint --fix",
     "prettier": "prettier -w src",
-    "prettier-fix": "prettier -c src"
+    "prettier-fix": "prettier -c src",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "dependencies": {
     "@aws-sdk/client-lambda": "^3.549.0",
@@ -45,8 +47,10 @@
     "@types/node": "^20",
     "@types/react": "^18.2.67",
     "@types/react-dom": "^18",
+    "cypress": "^13.7.3",
     "eslint": "^8",
     "eslint-config-next": "14.1.4",
+    "eslint-plugin-cypress": "^2.15.1",
     "prettier": "^2.8.6",
     "typescript": "^5"
   }

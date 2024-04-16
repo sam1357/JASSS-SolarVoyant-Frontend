@@ -5,10 +5,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@src/authOptions";
 import { Box } from "@chakra-ui/react";
 
-export const metadata = {
-  title: "Authentication",
-};
-
 export default async function RootLayout({
   children,
 }: Readonly<{

@@ -56,9 +56,7 @@ const passwordSchema = yup.object({
   newPassword: yup.string().required("Please re-type your password."),
 });
 
-const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
-  session,
-}) => {
+const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) => {
   const router = useRouter();
   const toast = useToast();
   const [isOpen, setIsOpen] = useState(false);
@@ -111,31 +109,29 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
 
   const onPasswordSubmit = async (data: PasswordFormData) => {
     if (session?.user?.email) {
-      await Api.changePassword(
-        session.user.email,
-        data.currentPassword,
-        data.newPassword
-      ).then(async (res) => {
-        if (res?.status !== 200) {
-          toast({
-            title: "Error",
-            description: (await res.json()).error,
-            status: "error",
-            position: "top",
-            duration: 4000,
-            isClosable: true,
-          });
-        } else {
-          toast({
-            title: "Success",
-            description: "Password was successfully changed",
-            status: "success",
-            position: "top",
-            duration: 4000,
-            isClosable: true,
-          });
+      await Api.changePassword(session.user.email, data.currentPassword, data.newPassword).then(
+        async (res) => {
+          if (res?.status !== 200) {
+            toast({
+              title: "Error",
+              description: (await res.json()).error,
+              status: "error",
+              position: "top",
+              duration: 4000,
+              isClosable: true,
+            });
+          } else {
+            toast({
+              title: "Success",
+              description: "Password was successfully changed",
+              status: "success",
+              position: "top",
+              duration: 4000,
+              isClosable: true,
+            });
+          }
         }
-      });
+      );
     }
   };
 
@@ -174,39 +170,28 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
         <Text fontSize="md">Manage your SolarVoyant profile</Text>
         <Divider mt={2} />
       </Stack>
-      <Box
-        width={"95%"}
-        mx={"auto"}
-        alignItems="center"
-        justifyContent="center"
-      >
+      <Box width={"95%"} mx={"auto"} alignItems="center" justifyContent="center">
         <form onSubmit={handleSubmitUser(onUserSubmit)}>
           <Flex align="center" gap={4} mt={8}>
             <Box>
               <Persona>
-                <PersonaAvatar
-                  name={session?.user?.name}
-                  src={session?.user?.image}
-                  size="lg"
-                />
+                <PersonaAvatar name={session?.user?.name} src={session?.user?.image} size="lg" />
               </Persona>
             </Box>
             <Box>
-              <Text fontSize="xl">
-                {session?.user?.name}
-              </Text>
+              <Text fontSize="xl">{session?.user?.name}</Text>
               <Text fontSize="md">{session?.user?.email}</Text>
             </Box>
           </Flex>
 
           <Grid templateColumns="repeat(2, 1fr)" gap={6} mt={8}>
-            <GridItem>
+            <GridItem colSpan={{ base: 2, lg: 1 }}>
               <Text fontSize="md">
                 <b>Username</b>
               </Text>
               <Text fontSize="sm">Enter your new username</Text>
             </GridItem>
-            <GridItem>
+            <GridItem colSpan={{ base: 2, lg: 1 }}>
               <CustomFormControl
                 errors={userErrors}
                 name="username"
@@ -218,9 +203,16 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
             </GridItem>
           </Grid>
 
-          <Flex justify="right" align="center" gap={4} mt={8}>
+          <Flex
+            w={{ base: "100%", lg: "auto" }}
+            justify={{ base: "center", lg: "right" }}
+            align="center"
+            mt={4}
+            mb={6}
+          >
             <Button
               isLoading={isSubmittingUser}
+              w={{ base: "100%", lg: "auto" }}
               type="submit"
               onClick={handleSubmitUser(onUserSubmit)}
             >
@@ -228,33 +220,34 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
             </Button>
           </Flex>
         </form>
-
+        <Divider />
         <Stack width={"100%"} mt={2} mx={"auto"} spacing={1}>
-      <Text fontSize="md">
-        <b>You can change your existing password below.</b>
-      </Text>
-      <Text fontSize="sm">
-        If you have forgotten your password, please {' '}
-        <Link
-          color="blue.500"
-          fontWeight="semibold"
-          onClick={() => router.push('/forgotPassword')}
-          cursor="pointer"
-        >
-          click here
-        </Link>.
-      </Text>
+          <Text fontSize="md">
+            <b>You can change your existing password below.</b>
+          </Text>
+          <Text fontSize="sm">
+            If you have forgotten your password, please{" "}
+            <Link
+              color="blue.500"
+              fontWeight="semibold"
+              onClick={() => router.push("/forgotPassword")}
+              cursor="pointer"
+            >
+              click here
+            </Link>
+            .
+          </Text>
         </Stack>
 
         <form onSubmit={handleSubmitPassword(onPasswordSubmit)}>
           <Grid templateColumns="repeat(2, 1fr)" gap={6} mt={8}>
-            <GridItem>
+            <GridItem colSpan={{ base: 2, lg: 1 }}>
               <Text fontSize="md">
                 <b>Current Password</b>
               </Text>
               <Text fontSize="sm">Enter your current password</Text>
             </GridItem>
-            <GridItem>
+            <GridItem colSpan={{ base: 2, lg: 1 }}>
               <CustomFormControl
                 errors={passwordErrors}
                 name="currentPassword"
@@ -266,13 +259,13 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
               />
             </GridItem>
 
-            <GridItem>
+            <GridItem colSpan={{ base: 2, lg: 1 }}>
               <Text fontSize="md">
                 <b>New Password</b>
               </Text>
               <Text fontSize="sm">Enter your new password</Text>
             </GridItem>
-            <GridItem>
+            <GridItem colSpan={{ base: 2, lg: 1 }}>
               <CustomFormControl
                 errors={passwordErrors}
                 name="newPassword"
@@ -285,9 +278,15 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
             </GridItem>
           </Grid>
 
-          <Flex justify="right" align="center" gap={4} mt={8}>
+          <Flex
+            w={{ base: "100%", lg: "auto" }}
+            justify={{ base: "center", lg: "right" }}
+            align="center"
+            mt={4}
+          >
             <Button
               isLoading={isSubmittingPassword}
+              w={{ base: "100%", lg: "auto" }}
               type="submit"
               onClick={handleSubmitPassword(onPasswordSubmit)}
             >
@@ -296,13 +295,14 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
           </Flex>
         </form>
 
-        <Stack width={"100%"} mt={4} mb={4} mx={"auto"} spacing={4}>
+        <Stack width={"100%"} my={4} mx={"auto"} spacing={4}>
           <Divider mt={5} />
           <Text
             fontSize="md"
             fontWeight="bold"
             color="red.500"
             cursor="pointer"
+            id="test-delete-account"
             _hover={{
               textDecoration: "underline",
             }}
@@ -311,11 +311,7 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
             Delete Account
           </Text>
 
-          <AlertDialog
-            isOpen={isOpen}
-            leastDestructiveRef={cancelRef}
-            onClose={onClose}
-          >
+          <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
@@ -323,8 +319,8 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
                 </AlertDialogHeader>
 
                 <AlertDialogBody>
-                  Are you sure? This action will permanently delete your account
-                  and all your data. This action cannot be undone.
+                  Are you sure? This action will permanently delete your account and all your data.
+                  This action cannot be undone.
                 </AlertDialogBody>
 
                 <AlertDialogFooter>
