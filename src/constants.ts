@@ -1,7 +1,11 @@
 export const PAGES = [
   { name: "Home", href: "/" },
   { name: "Dashboard", href: "/dashboard/overview" },
-  { name: "Documentation", href: "/documentation" },
+  {
+    name: "Documentation",
+    href: "https://solid-adventure-371rz28.pages.github.io/",
+    isExternal: true,
+  },
 ];
 
 export const GROUP_NAME = "SE3011-24-F14A-03";

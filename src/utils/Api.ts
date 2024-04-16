@@ -66,10 +66,7 @@ export class Api {
    * Changes username
    * @returns {Promise<Response>} - The status and JSON of the return
    */
-  static async setUserData(
-    userID: string,
-    info: { [field: string]: string }
-  ): Promise<Response> {
+  static async setUserData(userID: string, info: { [field: string]: string }): Promise<Response> {
     const res = await fetch("/api/changeUserData", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -118,7 +115,7 @@ export class Api {
 
     return res;
   }
-    
+
   /**
    * Gets choropleth data for the heatmap
    * @param condition The condition to fetch data for
