@@ -3,11 +3,9 @@
 import {
   Box,
   Container,
-  Flex,
   Grid,
   GridItem,
   Hide,
-  Image,
   Link,
   Text,
   useSteps,
@@ -20,19 +18,22 @@ import {
   StepDescription,
   StepSeparator,
   Step,
+  useBreakpoint,
 } from "@chakra-ui/react";
-import { IoMdArrowRoundBack } from "react-icons/io";
+import Image from "next/image";
 import { Step1 } from "@components/ForgotPassword/Step1";
 import { Step2 } from "@components/ForgotPassword/Step2";
 import { Step3 } from "@components/ForgotPassword/Step3";
 import { useState } from "react";
+import DividerWithText from "@src/components/DividerWithText";
 
-export default async function ForgotPasswordPage() {
+export default function ForgotPasswordPage() {
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
   });
   const [email, setEmail] = useState("");
   const [token, setToken] = useState("");
+  const breakpoint = useBreakpoint();
 
   const steps = [
     {
@@ -48,25 +49,25 @@ export default async function ForgotPasswordPage() {
     {
       title: "Third",
       description: "Reset your password",
-      content: <Step3 token={token} email={email} />,
+      content: <Step3 setStep={setActiveStep} token={token} email={email} />,
     },
   ];
 
   return (
     <Grid templateColumns="repeat(3, 1fr)" minHeight={"100%"}>
       <Hide below="md">
-        <GridItem
-          w="100%"
-          position="relative"
-          bgGradient="linear(to-r, #FAD262, #FFECBA)"
-          objectPosition={"fixed"}
-        >
-          <Image src="/login.svg" alt="Solar panel" fill={"true"} style={{ objectFit: "cover" }} />
+        <GridItem w="100%" position="relative" bgGradient="linear(to-r, #FAD262, #FFECBA)">
+          <Image src="/login.svg" alt="Solar panel" fill style={{ objectFit: "cover" }} />
         </GridItem>
       </Hide>
       <GridItem alignItems="center" display="flex" colSpan={{ base: 3, sm: 3, md: 2 }}>
         <Container>
-          <Stepper index={activeStep} orientation="horizontal" paddingBottom={100} width={"100%"}>
+          <Stepper
+            index={activeStep}
+            orientation={["base", "sm"].includes(breakpoint) ? "vertical" : "horizontal"}
+            paddingBottom={30}
+            width={"100%"}
+          >
             {steps.map((step, index) => (
               <Step key={index}>
                 <StepIndicator>
@@ -86,22 +87,15 @@ export default async function ForgotPasswordPage() {
             ))}
           </Stepper>
           {steps[activeStep].content}
-          <Container
-            fontWeight={700}
-            paddingY={2}
-            paddingX={0}
-            display="flex"
-            justifyContent="center"
-          >
-            <Link href="/login" paddingBottom={7}>
-              <Flex padding={2}>
-                <Box paddingTop={1}>
-                  <IoMdArrowRoundBack />
-                </Box>
-                <Text paddingLeft={1}>Back to log in</Text>
-              </Flex>
+          <Box pt={8} pb={6}>
+            <DividerWithText text="OR" />
+          </Box>
+          <Text fontWeight={700}>
+            Remember your password?{" "}
+            <Link color="teal.500" href="/login">
+              Login here.
             </Link>
-          </Container>
+          </Text>
         </Container>
       </GridItem>
     </Grid>

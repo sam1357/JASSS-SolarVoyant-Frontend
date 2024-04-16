@@ -1,7 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import { Button, Container, Heading, Stack, Text, useToast } from "@chakra-ui/react";
+import { Button, ButtonGroup, Heading, Stack, Text, useToast } from "@chakra-ui/react";
 import CustomFormControl from "../AuthPages/CustomFormControl";
 import { PasswordInput } from "@saas-ui/react";
 
@@ -10,6 +10,7 @@ export interface Step3Value {
 }
 
 export interface Step3Props {
+  setStep: (step: number) => void; // eslint-disable-line
   token: string;
   email: string;
 }
@@ -25,16 +26,19 @@ export const resetPassword = async (token: string, email: string, data: Step3Val
 
 export const Step3Schema = yup
   .object({
-    password: yup.string().required("A valid password is required."),
+    password: yup
+      .string()
+      .required("A valid password is required.")
+      .min(6, "Password must be at least 6 characters."),
   })
   .required();
 
-export const Step3: React.FC<Step3Props> = ({ token, email }) => {
+export const Step3: React.FC<Step3Props> = ({ token, email, setStep }) => {
   const toast = useToast();
   const {
     handleSubmit,
     register,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<Step3Value>({ resolver: yupResolver(Step3Schema) });
 
   const onSubmit = async (data: Step3Value) => {
@@ -80,11 +84,14 @@ export const Step3: React.FC<Step3Props> = ({ token, email }) => {
         />
       </Stack>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Container paddingTop={100}>
-          <Button w="100%" type="submit">
+        <ButtonGroup w="100%" top={4}>
+          <Button colorScheme="gray" w="100%" onClick={() => setStep(1)}>
+            Back
+          </Button>
+          <Button type="submit" w="100%" isLoading={isSubmitting}>
             Reset Password
           </Button>
-        </Container>
+        </ButtonGroup>
       </form>
     </Stack>
   );
