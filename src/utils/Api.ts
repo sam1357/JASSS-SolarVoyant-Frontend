@@ -63,6 +63,63 @@ export class Api {
   }
 
   /**
+   * Changes username
+   * @returns {Promise<Response>} - The status and JSON of the return
+   */
+  static async setUserData(
+    userID: string,
+    info: { [field: string]: string }
+  ): Promise<Response> {
+    const res = await fetch("/api/changeUserData", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userID: userID,
+        info: info,
+      }),
+    });
+
+    return res;
+  }
+
+  /**
+   * Changes password
+   * @returns {Promise<Response>} - The status and JSON of the return
+   */
+  static async changePassword(
+    email: string,
+    oldPassword: string,
+    newPassword: string
+  ): Promise<Response> {
+    const res = await fetch("/api/changePassword", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email,
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+      }),
+    });
+
+    return res;
+  }
+  /**
+   * Deletes user account
+   * @returns {Promise<Response>} - The status and JSON of the return
+   */
+  static async deleteUser(userID: string): Promise<Response> {
+    const res = await fetch("/api/deleteUser", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userID: userID,
+      }),
+    });
+
+    return res;
+  }
+    
+  /**
    * Gets choropleth data for the heatmap
    * @param condition The condition to fetch data for
    * @returns {Promise<Record<string, number>>} - The choropleth data
