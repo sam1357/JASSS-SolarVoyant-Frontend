@@ -11,8 +11,8 @@ export interface Step1Value {
 }
 
 export interface Step1Props {
-  increaseStep: (step: number) => void;
-  setEmail: (email: string) => void;
+  increaseStep: (step: number) => void; // eslint-disable-line
+  setEmail: (email: string) => void; // eslint-disable-line
 }
 
 export const Step1Schema = yup

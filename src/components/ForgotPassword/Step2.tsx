@@ -9,8 +9,8 @@ export interface Step2Value {
 }
 
 export interface Step2Props {
-  increaseStep: (step: number) => void;
-  setToken: (token: string) => void;
+  increaseStep: (step: number) => void; // eslint-disable-line
+  setToken: (token: string) => void; // eslint-disable-line
   email: string;
 }
 
@@ -44,7 +44,7 @@ export const Step2: React.FC<Step2Props> = ({ increaseStep, setToken, email }) =
         <CustomFormControl
           errors={errors}
           name="token"
-          label="Emailed token"
+          label="Password Reset Token"
           placeholder=""
           register={register}
         />
