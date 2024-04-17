@@ -23,7 +23,7 @@ const DashboardNavbar: React.FC<{ session: Session }> = ({ session }) => {
       }`}
     >
       <NavbarContent justifyContent="end" spacing="2">
-        <NotificationMenu />
+        <NotificationMenu session={session} />
         <ColourModeToggle />
         <AccountMenu session={session} />
       </NavbarContent>

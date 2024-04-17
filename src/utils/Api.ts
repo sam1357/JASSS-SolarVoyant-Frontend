@@ -720,4 +720,22 @@ export class Api {
   //   let currentDateStr = currentDate.toISOString();
   //   return currentDateStr = currentDateStr.split("T")[0];
   // }
+
+  static async getUserNotifications(userID: string): Promise<Response> {
+    const res = await fetch(`/api/notifications?userID=${userID}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    return res;
+  }
+
+  static async deleteUserNotifications(userID: string): Promise<Response> {
+    const res = await fetch(`/api/notifications?userID=${userID}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    return res;
+  }
 }
