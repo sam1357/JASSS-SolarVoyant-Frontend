@@ -1,10 +1,10 @@
 "use client";
 import { Flex } from "@chakra-ui/react";
 import WeatherCard from "./WeatherCard";
-import { DashboardData } from "@interfaces/index";
+import { WeekWeatherCodes } from "@src/interfaces";
 
 interface CardSetProps {
-  data: DashboardData;
+  data: WeekWeatherCodes;
 }
 
 const CardSet: React.FC<CardSetProps> = ({ data }) => {
