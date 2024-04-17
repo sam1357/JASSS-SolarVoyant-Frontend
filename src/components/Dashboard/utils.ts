@@ -44,12 +44,14 @@ export function getFormattedDate() {
 }
 export function getAttributeName(attribute: string) {
   switch (attribute) {
-    case "solar_radiation":
+    case "shortwave_radiation":
       return "Solar Irradiance";
     case "temperature_2m":
       return "Temperature";
     case "daylight_hours":
       return "Daylight Hours";
+    case "sunshine_hours":
+      return "Sunshine Hours";
     case "cloud_cover":
       return "Cloud Cover";
     default:

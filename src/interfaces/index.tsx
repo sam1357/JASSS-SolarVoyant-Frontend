@@ -115,7 +115,8 @@ export interface Event {
   attributes: Attributes;
 }
 
-export interface Attributes { // Backend Return Object
+export interface Attributes {
+  // Backend Return Object
   location: Location;
   units: Units;
   weather_code: number;
@@ -158,13 +159,7 @@ export interface currentWeatherData {
 // Used for Weekly Overview Graph Overview Page
 export interface AverageDailyInWeekWeatherData {
   units: Units;
-  0: Conditions;
-  1: Conditions;
-  2: Conditions;
-  3: Conditions;
-  4: Conditions;
-  5: Conditions;
-  6: Conditions;
+  [key: number]: Conditions;
 }
 
 // Used for the Weather Card Set in Forecast Page
@@ -181,41 +176,11 @@ export interface WeekWeatherCodes {
 // Used for Day Overview Graph in Forecast Page
 export interface NextWeekHourlyData {
   units: Units;
-  0: DayConditions;
-  1: DayConditions;
-  2: DayConditions;
-  3: DayConditions;
-  4: DayConditions;
-  5: DayConditions;
-  6: DayConditions;
+  [index: number]: DayConditions;
 }
 
-export interface DayConditions {
-  0: GraphHourlyConditions | InsightHourlyConditions;
-  1: GraphHourlyConditions | InsightHourlyConditions;
-  2: GraphHourlyConditions | InsightHourlyConditions;
-  3: GraphHourlyConditions | InsightHourlyConditions;
-  4: GraphHourlyConditions | InsightHourlyConditions;
-  5: GraphHourlyConditions | InsightHourlyConditions;
-  6: GraphHourlyConditions | InsightHourlyConditions;
-  7: GraphHourlyConditions | InsightHourlyConditions;
-  8: GraphHourlyConditions | InsightHourlyConditions;
-  9: GraphHourlyConditions | InsightHourlyConditions;
-  10: GraphHourlyConditions | InsightHourlyConditions;
-  11: GraphHourlyConditions | InsightHourlyConditions;
-  12: GraphHourlyConditions | InsightHourlyConditions;
-  13: GraphHourlyConditions | InsightHourlyConditions;
-  14: GraphHourlyConditions | InsightHourlyConditions;
-  15: GraphHourlyConditions | InsightHourlyConditions;
-  16: GraphHourlyConditions | InsightHourlyConditions;
-  17: GraphHourlyConditions | InsightHourlyConditions;
-  18: GraphHourlyConditions | InsightHourlyConditions;
-  19: GraphHourlyConditions | InsightHourlyConditions;
-  20: GraphHourlyConditions | InsightHourlyConditions;
-  21: GraphHourlyConditions | InsightHourlyConditions;
-  22: GraphHourlyConditions | InsightHourlyConditions;
-  23: GraphHourlyConditions | InsightHourlyConditions;
-}
+export interface DayConditions extends Array<GraphHourlyConditions | InsightHourlyConditions> {}
+
 // Used for Day Overview Graph in Forecast Page
 export interface GraphHourlyConditions {
   temperature_2m: number;
@@ -224,16 +189,16 @@ export interface GraphHourlyConditions {
 }
 
 export interface InsightHourlyConditions {
-  weather_code: WeatherCode;
+  weather_code: number;
   precipitation_probability: number;
 }
 
 // Return Objects for Analyse
 export interface AnalyseReturnObject {
-  "time_object": TimeObject,
-  "location": Location,
-  "units": Units,
-  "analytics": MeanAttributes | ModeWeatherCode
+  "time_object": TimeObject;
+  "location": Location;
+  "units": Units;
+  "analytics": MeanAttributes | ModeWeatherCode;
 }
 
 // Return Objects for Analyse
@@ -248,14 +213,14 @@ export interface MeanAttributes {
 
 // Return Objects for Analyse
 export interface MeanData {
-  "mean": number
+  "mean": number;
 }
 
 // Return Objects for Analyse
 export interface ModeWeatherCode {
   "weather_code": {
-    "mode": number[]
-  }
+    "mode": number[];
+  };
 }
 
 export interface GaugeLabels {
@@ -272,4 +237,15 @@ export interface GaugeLabels {
   };
   minimum: number;
   maximum: number;
+}
+
+export interface InsightProcessedData {
+  severeWeather: number[];
+  lowPrecipitation: number[];
+  timeFrame?: Timeframes[];
+}
+
+export interface Timeframes {
+  start: number;
+  end: number;
 }

@@ -1,6 +1,6 @@
 import { Center, Heading, Spinner, VStack } from "@chakra-ui/react";
 
-export default function ChoroplethLoadingUI() {
+export default function LoadingUI() {
   return (
     <Center h="100%" w="100%" zIndex={10} position="relative">
       <VStack gap={10}>
