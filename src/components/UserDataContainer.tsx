@@ -56,9 +56,7 @@ const passwordSchema = yup.object({
   newPassword: yup.string().required("Please re-type your password."),
 });
 
-const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
-  session,
-}) => {
+const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) => {
   const router = useRouter();
   const toast = useToast();
   const [isOpen, setIsOpen] = useState(false);
@@ -111,31 +109,29 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
 
   const onPasswordSubmit = async (data: PasswordFormData) => {
     if (session?.user?.email) {
-      await Api.changePassword(
-        session.user.email,
-        data.currentPassword,
-        data.newPassword
-      ).then(async (res) => {
-        if (res?.status !== 200) {
-          toast({
-            title: "Error",
-            description: (await res.json()).error,
-            status: "error",
-            position: "top",
-            duration: 4000,
-            isClosable: true,
-          });
-        } else {
-          toast({
-            title: "Success",
-            description: "Password was successfully changed",
-            status: "success",
-            position: "top",
-            duration: 4000,
-            isClosable: true,
-          });
+      await Api.changePassword(session.user.email, data.currentPassword, data.newPassword).then(
+        async (res) => {
+          if (res?.status !== 200) {
+            toast({
+              title: "Error",
+              description: (await res.json()).error,
+              status: "error",
+              position: "top",
+              duration: 4000,
+              isClosable: true,
+            });
+          } else {
+            toast({
+              title: "Success",
+              description: "Password was successfully changed",
+              status: "success",
+              position: "top",
+              duration: 4000,
+              isClosable: true,
+            });
+          }
         }
-      });
+      );
     }
   };
 
@@ -174,27 +170,16 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
         <Text fontSize="md">Manage your SolarVoyant profile</Text>
         <Divider mt={2} />
       </Stack>
-      <Box
-        width={"95%"}
-        mx={"auto"}
-        alignItems="center"
-        justifyContent="center"
-      >
+      <Box width={"95%"} mx={"auto"} alignItems="center" justifyContent="center">
         <form onSubmit={handleSubmitUser(onUserSubmit)}>
           <Flex align="center" gap={4} mt={8}>
             <Box>
               <Persona>
-                <PersonaAvatar
-                  name={session?.user?.name}
-                  src={session?.user?.image}
-                  size="lg"
-                />
+                <PersonaAvatar name={session?.user?.name} src={session?.user?.image} size="lg" />
               </Persona>
             </Box>
             <Box>
-              <Text fontSize="xl">
-                {session?.user?.name}
-              </Text>
+              <Text fontSize="xl">{session?.user?.name}</Text>
               <Text fontSize="md">{session?.user?.email}</Text>
             </Box>
           </Flex>
@@ -230,20 +215,21 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
         </form>
 
         <Stack width={"100%"} mt={2} mx={"auto"} spacing={1}>
-      <Text fontSize="md">
-        <b>You can change your existing password below.</b>
-      </Text>
-      <Text fontSize="sm">
-        If you have forgotten your password, please {' '}
-        <Link
-          color="blue.500"
-          fontWeight="semibold"
-          onClick={() => router.push('/forgotPassword')}
-          cursor="pointer"
-        >
-          click here
-        </Link>.
-      </Text>
+          <Text fontSize="md">
+            <b>You can change your existing password below.</b>
+          </Text>
+          <Text fontSize="sm">
+            If you have forgotten your password, please{" "}
+            <Link
+              color="blue.500"
+              fontWeight="semibold"
+              onClick={() => router.push("/forgotPassword")}
+              cursor="pointer"
+            >
+              click here
+            </Link>
+            .
+          </Text>
         </Stack>
 
         <form onSubmit={handleSubmitPassword(onPasswordSubmit)}>
@@ -311,11 +297,7 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
             Delete Account
           </Text>
 
-          <AlertDialog
-            isOpen={isOpen}
-            leastDestructiveRef={cancelRef}
-            onClose={onClose}
-          >
+          <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose}>
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
@@ -323,8 +305,8 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({
                 </AlertDialogHeader>
 
                 <AlertDialogBody>
-                  Are you sure? This action will permanently delete your account
-                  and all your data. This action cannot be undone.
+                  Are you sure? This action will permanently delete your account and all your data.
+                  This action cannot be undone.
                 </AlertDialogBody>
 
                 <AlertDialogFooter>

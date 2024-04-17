@@ -172,7 +172,13 @@ export default function Sidebar() {
   return (
     <>
       <Show above="lg">
-        <Box position={"fixed"} zIndex={"100"} height={"100vh"} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+        <Box
+          position={"fixed"}
+          zIndex={"100"}
+          height={"100vh"}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
           <SidebarShell
             toggleBreakpoint={false}
             variant={isOpen ? "default" : "compact"}
@@ -199,7 +205,6 @@ export default function Sidebar() {
             </Flex>
             <SidebarContents isOpen={isOpen} />
           </SidebarShell>
-
         </Box>
         <SidebarShell
           variant={isOpen ? "default" : "compact"}
@@ -209,7 +214,6 @@ export default function Sidebar() {
           zIndex={-1000}
           opacity={0}
         />
-        
       </Show>
       <Show below="lg">
         <SidebarShell toggleBreakpoint="lg" height="100%">

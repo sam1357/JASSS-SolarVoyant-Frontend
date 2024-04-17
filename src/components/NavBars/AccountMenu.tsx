@@ -21,7 +21,7 @@ export default function AccountMenu({ session }: { session: Session }) {
       />
       <MenuList>
         <MenuItem onClick={() => signOut({ callbackUrl: "/" })}>Sign out</MenuItem>
-        <MenuItem onClick={() => router.push('/dashboard/settings')}>Settings</MenuItem>
+        <MenuItem onClick={() => router.push("/dashboard/settings")}>Settings</MenuItem>
       </MenuList>
     </Menu>
   );
