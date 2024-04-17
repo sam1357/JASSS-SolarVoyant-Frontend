@@ -1,4 +1,4 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { Box, Card, CardBody, CardHeader, Center, Divider, Heading } from "@chakra-ui/react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@src/authOptions";
 import { NextWeekHourlyData, WeekWeatherCodes, currentWeatherData } from "@src/interfaces";
@@ -24,9 +24,14 @@ export default async function DashboardPage() {
   // TODO: Still working on organising this, setup below is just to show how to pass data
   return (
     <>
-      <Box width={"60%"} padding={5}>
-        <CardSet data={result}></CardSet>
-      </Box>
+      <Center>
+        <Box width={"65%"} padding={5}>
+          <CardSet data={result}></CardSet>
+        </Box>
+      </Center>
+      <Center>
+        <Divider width={"65%"} orientation='horizontal' />
+      </Center>
     </>
   );
 }
