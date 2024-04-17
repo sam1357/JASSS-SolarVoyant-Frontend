@@ -9,6 +9,7 @@ interface CustomFormControlProps {
   register: any;
   helperText?: string;
   inputComponent?: React.ComponentType<any>;
+  defaultValue?: string;
 }
 
 const CustomFormControl: React.FC<CustomFormControlProps> = ({
@@ -19,11 +20,12 @@ const CustomFormControl: React.FC<CustomFormControlProps> = ({
   register,
   helperText,
   inputComponent: InputComponent = Input,
+  defaultValue,
 }) => {
   return (
     <FormControl isInvalid={!!errors[name]}>
-      <FormLabel>{label}</FormLabel>
-      <InputComponent placeholder={placeholder} {...register(name)} />
+      {label && <FormLabel>{label}</FormLabel>}
+      <InputComponent placeholder={placeholder} defaultValue={defaultValue} {...register(name)} />
       {!!!errors[name] ? (
         <FormHelperText>
           {(helperText && helperText.length !== 0 && helperText) || " "}

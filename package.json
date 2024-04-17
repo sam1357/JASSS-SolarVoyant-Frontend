@@ -9,10 +9,14 @@
     "lint": "next lint",
     "lint-fix": "next lint --fix",
     "prettier": "prettier -w src",
-    "prettier-fix": "prettier -c src"
+    "prettier-fix": "prettier -c src",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "dependencies": {
     "@aws-sdk/client-lambda": "^3.549.0",
+    "@chakra-ui/color-mode": "^2.2.0",
+    "@chakra-ui/layout": "^2.3.1",
     "@chakra-ui/next-js": "^2.2.0",
     "@chakra-ui/react": "^2.8.2",
     "@chakra-ui/styled-system": "^2.9.2",
@@ -43,10 +47,12 @@
   "devDependencies": {
     "@types/google.maps": "^3.55.7",
     "@types/node": "^20",
-    "@types/react": "^18",
+    "@types/react": "^18.2.67",
     "@types/react-dom": "^18",
+    "cypress": "^13.7.3",
     "eslint": "^8",
     "eslint-config-next": "14.1.4",
+    "eslint-plugin-cypress": "^2.15.1",
     "prettier": "^2.8.6",
     "typescript": "^5"
   }
