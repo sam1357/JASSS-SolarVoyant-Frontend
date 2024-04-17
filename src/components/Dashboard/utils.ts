@@ -42,6 +42,21 @@ export function getFormattedDate() {
   const year = currentDate.getFullYear();
   return `${day} ${month}, ${year}`;
 }
+
+export function getShortDate(index: number): string {
+  const newDate = new Date();
+  newDate.setDate(newDate.getDate() + index);
+  const day = newDate.getDate();
+  const month = newDate.getMonth() + 1;
+  const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+  return `${day}/${formattedMonth}`;
+}
+
+export function getTime(index: number): string {
+  const formattedHour = index < 10 ? `0${index}` : index;
+  return `${formattedHour}:00`;
+}
+
 export function getAttributeName(attribute: string) {
   switch (attribute) {
     case "shortwave_radiation":
@@ -54,8 +69,11 @@ export function getAttributeName(attribute: string) {
       return "Sunshine Hours";
     case "cloud_cover":
       return "Cloud Cover";
+    case "sunshine_duration":
+    case "sunshine_hours":
+      return "Sunshine Duration";
     default:
-      return "Unknown Attribute";
+      return "Generation VS Consumption";
   }
 }
 export function parseAttributesArray(aggregate: string): string[] {

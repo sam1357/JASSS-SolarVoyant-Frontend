@@ -1,6 +1,6 @@
 import { CHOROPLETH_AVAILABLE_CONDITIONS } from "@src/components/Choropleth/ConditionSelector";
 import { CUR_TIMEZONE, FORMAT_STRING } from "@src/constants";
-import { ChoroplethConditionData, InsightProcessedData, Timeframes } from "@src/interfaces";
+import { ConditionsSelectorData, InsightProcessedData, Timeframes } from "@src/interfaces";
 import { format, toZonedTime } from "date-fns-tz";
 
 /**
@@ -57,7 +57,7 @@ export const addDays = (date: Date, days: number): Date => {
  * @param condition The condition to get the full data for
  * @returns The data for the condition
  */
-export const getChoroplethCondition = (condition: string): ChoroplethConditionData | undefined => {
+export const getChoroplethCondition = (condition: string): ConditionsSelectorData | undefined => {
   return CHOROPLETH_AVAILABLE_CONDITIONS.find((c) => c.value === condition);
 }; // Function to convert hour number to readable string
 

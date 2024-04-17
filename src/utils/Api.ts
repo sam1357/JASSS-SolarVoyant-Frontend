@@ -8,7 +8,7 @@ import {
 } from "@src/constants";
 import {
   Attributes,
-  ChoroplethConditionData,
+  ConditionsSelectorData,
   RetrieveReturnObject,
   SuburbData,
   Event,
@@ -181,7 +181,7 @@ export class Api {
       return [];
     }
 
-    const { label, unit } = getChoroplethCondition(condition) as ChoroplethConditionData;
+    const { label, unit } = getChoroplethCondition(condition) as ConditionsSelectorData;
     const key = `${label} ${unit}`;
 
     const finalRes: SuburbData[] = data.events.map((d: any) => ({

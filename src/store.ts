@@ -28,7 +28,8 @@ const slice = createSlice({
   },
 });
 
-export const { setLastClickedFeature, setSuburbsData, setChoroplethMapping, setInsightData } = slice.actions;
+export const { setLastClickedFeature, setSuburbsData, setChoroplethMapping, setInsightData } =
+  slice.actions;
 
 const store = configureStore({
   reducer: slice.reducer,

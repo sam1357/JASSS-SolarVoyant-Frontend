@@ -64,7 +64,7 @@ export type SuburbData = {
   [key: string]: number | string;
 };
 
-export type ChoroplethConditionData = {
+export type ConditionsSelectorData = {
   label: string;
   unit: string;
   value: string;
@@ -179,8 +179,6 @@ export interface NextWeekHourlyData {
   [index: number]: DayConditions;
 }
 
-export interface DayConditions extends Array<GraphHourlyConditions | InsightHourlyConditions> {}
-
 // Used for Day Overview Graph in Forecast Page
 export interface GraphHourlyConditions {
   temperature_2m: number;
@@ -191,6 +189,18 @@ export interface GraphHourlyConditions {
 export interface InsightHourlyConditions {
   weather_code: number;
   precipitation_probability: number;
+  [days: number]: DayConditions[];
+}
+
+export interface DayConditions extends Array<HourlyConditions> {}
+
+// Used for Day Overview Graph in Forecast Page
+export interface HourlyConditions {
+  temperature_2m?: number;
+  shortwave_radiation?: number;
+  cloud_cover?: number;
+  weather_code?: WeatherCode;
+  precipitation_probability?: number;
 }
 
 // Return Objects for Analyse

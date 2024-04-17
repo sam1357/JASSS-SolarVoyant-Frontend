@@ -19,7 +19,7 @@ import store, { setLastClickedFeature } from "@src/store";
 import { LoadingSpinner } from "@saas-ui/react";
 import { AreaChart } from "@saas-ui/charts";
 import { NAVBAR_HEIGHT } from "@src/constants";
-import { ChoroplethConditionData, SuburbData } from "@src/interfaces";
+import { ConditionsSelectorData, SuburbData } from "@src/interfaces";
 import { getChoroplethCondition } from "@src/utils/utils";
 
 interface SolarInfoCardProps {
@@ -42,7 +42,7 @@ const SolarInfoCard: React.FC<SolarInfoCardProps> = ({
   sydneyAverage,
   condition,
 }) => {
-  const { label, unit } = getChoroplethCondition(condition) as ChoroplethConditionData;
+  const { label, unit } = getChoroplethCondition(condition) as ConditionsSelectorData;
   const key = `${label} ${unit}`;
 
   const suburbAverage =
