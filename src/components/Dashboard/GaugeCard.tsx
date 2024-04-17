@@ -1,12 +1,12 @@
 "use client";
 import { Card, CardBody, Heading, Text, Flex, Grid, GridItem } from "@chakra-ui/react";
-import { GaugeLabels, TodayData } from "@interfaces/index";
+import { GaugeLabels } from "@interfaces/index";
 import { getAttributeName } from "./utils";
 import { useEffect, useState } from "react";
 import GaugeComponent from "react-gauge-component";
 
 interface GaugeCardProps {
-  data: TodayData;
+  data: any; // Change the type here, I have temporarily changed it to any
   attribute: "temperature_2m"; // TODO: add more here as you wish
   labels: GaugeLabels;
 }

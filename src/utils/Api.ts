@@ -432,7 +432,7 @@ export class Api {
           // Get Hourly Conditions and Add them to Day Array
           let hourlyConditionsObj: HourlyConditions = {
             temperature_2m: eventsArr[j].attributes.temperature_2m,
-            solar_radiation: eventsArr[j].attributes.shortwave_radiation,
+            shortwave_radiation: eventsArr[j].attributes.shortwave_radiation,
             cloud_cover: eventsArr[j].attributes.cloud_cover,
           };
           dayArr.push(hourlyConditionsObj);
@@ -457,13 +457,7 @@ export class Api {
 
     const result: NextWeekHourlyData = {
       units: units as Units,
-      0: weekArr[0],
-      1: weekArr[1],
-      2: weekArr[2],
-      3: weekArr[3],
-      4: weekArr[4],
-      5: weekArr[5],
-      6: weekArr[6],
+      ...weekArr,
     };
     return result;
   }
@@ -543,13 +537,7 @@ export class Api {
 
     const result: NextWeekHourlyData = {
       units: units as Units,
-      0: weekArr[0],
-      1: weekArr[1],
-      2: weekArr[2],
-      3: weekArr[3],
-      4: weekArr[4],
-      5: weekArr[5],
-      6: weekArr[6],
+      ...weekArr,
     };
     return result;
   }
