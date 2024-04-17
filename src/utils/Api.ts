@@ -8,7 +8,7 @@ import {
 } from "@src/constants";
 import {
   Attributes,
-  ChoroplethConditionData,
+  ConditionsSelectorData,
   RetrieveReturnObject,
   SuburbData,
   Event,
@@ -23,8 +23,7 @@ import {
   Conditions,
   DayConditions,
   NextWeekHourlyData,
-  GraphHourlyConditions,
-  InsightHourlyConditions,
+  HourlyConditions,
 } from "@src/interfaces";
 import { ErrorWithStatus } from "./ErroWithStatus";
 import { getCurrentHour } from "@components/Dashboard/utils";
@@ -128,7 +127,7 @@ export class Api {
       return [];
     }
 
-    const { label, unit } = getChoroplethCondition(condition) as ChoroplethConditionData;
+    const { label, unit } = getChoroplethCondition(condition) as ConditionsSelectorData;
     const key = `${label} ${unit}`;
 
     const finalRes: SuburbData[] = data.events.map((d: any) => ({
@@ -406,15 +405,18 @@ export class Api {
     let units: Units | undefined = undefined;
     for (let i = 0; i < 7; i++) {
       // (1) Retrieve Weather Conditions for each day in a week
-      let dayArr: GraphHourlyConditions[] = [];
-      let res: RetrieveReturnObject = await Api.retrieveWeatherData(i, i, "temperature_2m, shortwave_radiation, cloud_cover");
+      let dayArr: HourlyConditions[] = [];
+      let res: RetrieveReturnObject = await Api.retrieveWeatherData(
+        i,
+        i,
+        "temperature_2m, shortwave_radiation, cloud_cover"
+      );
       let eventsArr: Event[] = res.events;
 
       for (let j = 0; j < eventsArr.length; j++) {
-        
         // In case an hourly event is missing, pick the hour before
         if (eventsArr[j] === undefined) {
-          let prevHourlyConditions: GraphHourlyConditions = dayArr[j - 1];
+          let prevHourlyConditions: HourlyConditions = dayArr[j - 1];
           dayArr.push(prevHourlyConditions);
           console.log(
             `WARN from getHourlyWeatherDataOfWeek: Hour Data ${j} of Day ${i} is Missing!`
@@ -428,7 +430,7 @@ export class Api {
             units = eventsArr[j].attributes.units;
           }
           // Get Hourly Conditions and Add them to Day Array
-          let hourlyConditionsObj: GraphHourlyConditions = {
+          let hourlyConditionsObj: HourlyConditions = {
             temperature_2m: eventsArr[j].attributes.temperature_2m,
             solar_radiation: eventsArr[j].attributes.shortwave_radiation,
             cloud_cover: eventsArr[j].attributes.cloud_cover,
@@ -438,32 +440,7 @@ export class Api {
       }
 
       // Create Day Conditions Object from Day Arr
-      let dayObj: DayConditions = {
-        0: dayArr[0],
-        1: dayArr[1],
-        2: dayArr[2],
-        3: dayArr[3],
-        4: dayArr[4],
-        5: dayArr[5],
-        6: dayArr[6],
-        7: dayArr[7],
-        8: dayArr[8],
-        9: dayArr[9],
-        10: dayArr[10],
-        11: dayArr[11],
-        12: dayArr[12],
-        13: dayArr[13],
-        14: dayArr[14],
-        15: dayArr[15],
-        16: dayArr[16],
-        17: dayArr[17],
-        18: dayArr[18],
-        19: dayArr[19],
-        20: dayArr[20],
-        21: dayArr[21],
-        22: dayArr[22],
-        23: dayArr[23],
-      }
+      let dayObj: DayConditions = [...dayArr];
 
       // In case an daily event is missing, pick the day before
       if (dayObj[0] === undefined) {
@@ -472,11 +449,11 @@ export class Api {
       }
       // Add Day Conditions to Week Arr
       weekArr.push(dayObj);
-    };
+    }
 
     if (weekArr.length !== 7) {
-      throw new ErrorWithStatus("Week Array has the Incorrect Length", 500)
-    };
+      throw new ErrorWithStatus("Week Array has the Incorrect Length", 500);
+    }
 
     const result: NextWeekHourlyData = {
       units: units as Units,
@@ -501,30 +478,31 @@ export class Api {
     for (let i = 0; i < 7; i++) {
       // (0) Get Weather Code Images and Description
       const wmoData: WmoData[] = await Api.retrieveWmoData();
-      
+
       // (1) Retrieve Weather Conditions for each day in a week
-      let dayArr: InsightHourlyConditions[] = [];
-      let res: RetrieveReturnObject = await Api.retrieveWeatherData(i, i, "weather_code, precipitation_probability");
+      let dayArr: HourlyConditions[] = [];
+      let res: RetrieveReturnObject = await Api.retrieveWeatherData(
+        i,
+        i,
+        "weather_code, precipitation_probability"
+      );
       let eventsArr: Event[] = res.events;
-      
+
       for (let j = 0; j < eventsArr.length; j++) {
-        
         // In case an hourly event is missing, pick the hour before
         if (eventsArr[j] === undefined) {
-          let prevHourlyConditions: InsightHourlyConditions = dayArr[j - 1];
+          let prevHourlyConditions: HourlyConditions = dayArr[j - 1];
           dayArr.push(prevHourlyConditions);
-          console.log(
-            `WARN from getInsightDataOfWeek: Hour Data ${j} of Day ${i} is Missing!`
-          );
+          console.log(`WARN from getInsightDataOfWeek: Hour Data ${j} of Day ${i} is Missing!`);
           continue;
         }
-        
+
         // (2) Retrieve hourly condition for each hour in a day
         if (eventsArr[j].event_type === "hourly") {
           if (i === 0 && j === 0) {
             units = eventsArr[j].attributes.units;
           }
-          
+
           // Get hour of the event
           let eventTimeStamp = res.events[j].time_object.timestamp;
           let charTIndex = eventTimeStamp.indexOf("T");
@@ -533,14 +511,14 @@ export class Api {
 
           // Determine if current hour is day or night
           const dayOrNight: "day" | "night" = currentHour < 6 || currentHour > 18 ? "night" : "day";
-          
+
           // Get Hourly Conditions and Add them to Day Array
           // console.log(currentHour)
-          let hourlyConditionsObj: InsightHourlyConditions = {
+          let hourlyConditionsObj: HourlyConditions = {
             weather_code: {
               image: wmoData[eventsArr[j].attributes.weather_code][dayOrNight].image,
               description: wmoData[eventsArr[j].attributes.weather_code][dayOrNight].description,
-            }, 
+            },
             precipitation_probability: eventsArr[j].attributes.precipitation_probability,
           };
           dayArr.push(hourlyConditionsObj);
@@ -548,32 +526,7 @@ export class Api {
       }
 
       // Create Day Conditions Object from Day Arr
-      let dayObj: DayConditions = {
-        0: dayArr[0],
-        1: dayArr[1],
-        2: dayArr[2],
-        3: dayArr[3],
-        4: dayArr[4],
-        5: dayArr[5],
-        6: dayArr[6],
-        7: dayArr[7],
-        8: dayArr[8],
-        9: dayArr[9],
-        10: dayArr[10],
-        11: dayArr[11],
-        12: dayArr[12],
-        13: dayArr[13],
-        14: dayArr[14],
-        15: dayArr[15],
-        16: dayArr[16],
-        17: dayArr[17],
-        18: dayArr[18],
-        19: dayArr[19],
-        20: dayArr[20],
-        21: dayArr[21],
-        22: dayArr[22],
-        23: dayArr[23],
-      }
+      let dayObj: DayConditions = [...dayArr];
 
       // In case an daily event is missing, pick the day before
       if (dayObj[0] === undefined) {
@@ -582,11 +535,11 @@ export class Api {
       }
       // Add Day Conditions to Week Arr
       weekArr.push(dayObj);
-    };
+    }
 
     if (weekArr.length !== 7) {
-      throw new ErrorWithStatus("Week Array has the Incorrect Length", 500)
-    };
+      throw new ErrorWithStatus("Week Array has the Incorrect Length", 500);
+    }
 
     const result: NextWeekHourlyData = {
       units: units as Units,

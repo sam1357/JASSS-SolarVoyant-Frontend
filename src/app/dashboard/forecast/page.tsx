@@ -7,6 +7,7 @@ import store, { setInsightData } from "@src/store";
 
 // import StatsCard from "@components/Dashboard/StatsCard";
 import CardSet from "@src/components/Dashboard/CardSet";
+import Graph, { HOURLY_CONDITIONS } from "@src/components/Dashboard/Graph";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -30,8 +31,15 @@ export default async function DashboardPage() {
         </Box>
       </Center>
       <Center>
-        <Divider width={"65%"} orientation='horizontal' />
+        <Divider width={"65%"} orientation="horizontal" />
       </Center>
+      <Box padding={5} borderRadius="3xl">
+        <Graph
+          hourlyWeatherData={result2}
+          indexDay={0} // you can make this variable based on the weather card
+          schema={HOURLY_CONDITIONS}
+        ></Graph>
+      </Box>
     </>
   );
 }
