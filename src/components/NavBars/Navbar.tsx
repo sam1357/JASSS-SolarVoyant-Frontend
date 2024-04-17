@@ -16,6 +16,7 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
+  Text,
   useColorMode,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -28,6 +29,7 @@ import { usePathname } from "next/navigation";
 import ColourModeToggle from "@components/NavBars/ColourModeToggle";
 import { Session } from "@src/interfaces";
 import AccountMenu from "./AccountMenu";
+import { FiExternalLink } from "react-icons/fi";
 
 const Navbar: React.FC<{ session: Session }> = ({ session }) => {
   const pathname = usePathname();
@@ -48,8 +50,14 @@ const Navbar: React.FC<{ session: Session }> = ({ session }) => {
       <NavbarContent display={{ base: "none", sm: "flex" }}>
         {PAGES.map((item, index) => (
           <NavbarItem key={index}>
-            <NavbarLink isActive={pathname === item.href} color="foreground" href={item.href}>
-              {item.name}
+            <NavbarLink
+              isActive={pathname === item.href}
+              color="foreground"
+              href={item.href}
+              target={item.isExternal ? "_blank" : ""}
+            >
+              <Text pr={2}>{item.name}</Text>
+              {item.isExternal && <FiExternalLink />}
             </NavbarLink>
           </NavbarItem>
         ))}
@@ -84,8 +92,14 @@ const Navbar: React.FC<{ session: Session }> = ({ session }) => {
             <NavbarContent flexDirection="column" justifyContent="stretch">
               {PAGES.map((item, index) => (
                 <NavbarItem key={index} width="full">
-                  <NavbarLink href={item.href} width="full" justifyContent="start">
-                    {item.name}
+                  <NavbarLink
+                    width="full"
+                    justifyContent="start"
+                    href={item.href}
+                    target={item.isExternal ? "_blank" : ""}
+                  >
+                    <Text pr={2}>{item.name}</Text>
+                    {item.isExternal && <FiExternalLink />}
                   </NavbarLink>
                 </NavbarItem>
               ))}

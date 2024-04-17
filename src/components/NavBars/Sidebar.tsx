@@ -4,14 +4,15 @@ import {
   Box,
   Center,
   Divider,
+  Text,
   Flex,
   Heading,
   HStack,
   IconButton,
   Show,
-  Spacer,
   Stack,
   Tooltip,
+  useColorMode,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -29,11 +30,14 @@ import { BiSolidMapAlt } from "react-icons/bi";
 import { IoMdPerson } from "react-icons/io";
 import { usePathname } from "next/navigation";
 import { FaCog } from "react-icons/fa";
-import { signOut } from "next-auth/react";
 import { MdLogout } from "react-icons/md";
+import { signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { PiPushPinSlashLight } from "react-icons/pi";
 import { PiPushPinFill } from "react-icons/pi";
+import { IconContext } from "react-icons/lib";
+import { colors } from "@src/styles/colours";
+import Link from "next/link";
 
 // can't be put in constants because of the icons because XML
 const DASHBOARD_PAGES = [
@@ -57,15 +61,20 @@ interface Props {
 
 const SidebarContents: React.FC<Props> = ({ isOpen }) => {
   const pathname = usePathname();
+  const { colorMode } = useColorMode();
 
   return (
     <>
-      <SidebarSection paddingY={10}>
-        <HStack gap={5} justifyContent="center">
-          <Logo size={35} />
-          <Heading display={isOpen ? "block" : "none"}>SolarVoyant</Heading>
-        </HStack>
-      </SidebarSection>
+      <Tooltip label="Return to Home">
+        <Link href="/">
+          <SidebarSection paddingY={{ base: 4, md: 10 }}>
+            <HStack gap={3} justifyContent="center">
+              <Logo size={35} />
+              <Heading display={isOpen ? "block" : "none"}>SolarVoyant</Heading>
+            </HStack>
+          </SidebarSection>
+        </Link>
+      </Tooltip>
       <Center>
         <Divider width="80%" />
       </Center>
@@ -78,7 +87,7 @@ const SidebarContents: React.FC<Props> = ({ isOpen }) => {
       >
         GENERAL
       </Heading>
-      <SidebarSection>
+      <SidebarSection flex="1" overflowY="auto">
         <Stack spacing={6}>
           {DASHBOARD_PAGES.map((item, index) => (
             <NavItem
@@ -95,7 +104,6 @@ const SidebarContents: React.FC<Props> = ({ isOpen }) => {
           ))}
         </Stack>
       </SidebarSection>
-      <Spacer />
       <Center>
         <Divider width="80%" />
       </Center>
@@ -121,12 +129,25 @@ const SidebarContents: React.FC<Props> = ({ isOpen }) => {
             Settings
           </NavItem>
           <NavItem
-            icon={<MdLogout />}
+            icon={
+              <IconContext.Provider value={{ color: "red.500" }}>
+                <MdLogout
+                  style={{ fill: colorMode === "dark" ? colors.red[400] : colors.red[500] }}
+                />
+              </IconContext.Provider>
+            }
             variant="subtle"
             size="lg"
             onClick={() => signOut({ callbackUrl: "/" })}
           >
-            Logout
+            <Text
+              display={isOpen ? "block" : "none"}
+              textColor={colorMode === "dark" ? "red.400" : "red.500"}
+              fontWeight={600}
+              whiteSpace="nowrap"
+            >
+              Sign Out
+            </Text>
           </NavItem>
         </Stack>
       </SidebarSection>
@@ -172,7 +193,13 @@ export default function Sidebar() {
   return (
     <>
       <Show above="lg">
-        <Box onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+        <Box
+          position={"fixed"}
+          zIndex={"100"}
+          height={"100vh"}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
           <SidebarShell
             toggleBreakpoint={false}
             variant={isOpen ? "default" : "compact"}
@@ -200,9 +227,17 @@ export default function Sidebar() {
             <SidebarContents isOpen={isOpen} />
           </SidebarShell>
         </Box>
+        <SidebarShell
+          variant={isOpen ? "default" : "compact"}
+          transition="width"
+          transitionDuration="normal"
+          width={isPinned || isOpen ? "280px" : "20"}
+          zIndex={-1000}
+          opacity={0}
+        />
       </Show>
       <Show below="lg">
-        <SidebarShell toggleBreakpoint="lg" height="100%">
+        <SidebarShell toggleBreakpoint="lg" height="100%" position="fixed">
           <SidebarToggleButton top="7px" />
           <SidebarContents isOpen={true} />
         </SidebarShell>
