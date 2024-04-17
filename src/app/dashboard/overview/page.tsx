@@ -18,7 +18,7 @@ export default async function DashboardPage() {
     let insightData = await Api.getInsightDataOfWeek();
     store.dispatch(setInsightData(insightData));
   }
-  const insightData = store.getState().insightData;
+  // const insightData = store.getState().insightData;
 
   // TODO: Still working on organising this, setup below is just to show how to pass data
   return (

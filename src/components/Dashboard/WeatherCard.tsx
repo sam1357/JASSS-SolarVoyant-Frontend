@@ -21,7 +21,7 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ index, data }) => {
       setDay(dayOfWeek);
     };
     getDay();
-  }, []);
+  }, []); // eslint-disable-line
 
   return (
     // TODO: Currently changes colour on hover, change to on select

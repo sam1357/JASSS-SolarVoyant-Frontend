@@ -1,7 +1,7 @@
-import { Box, Card, CardBody, CardHeader, Center, Divider, Heading } from "@chakra-ui/react";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@src/authOptions";
-import { NextWeekHourlyData, WeekWeatherCodes, currentWeatherData } from "@src/interfaces";
+import { Box, Center, Divider } from "@chakra-ui/react";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "@src/authOptions";
+import { NextWeekHourlyData, WeekWeatherCodes } from "@src/interfaces";
 import { Api } from "@utils/Api";
 import store, { setInsightData } from "@src/store";
 
@@ -10,7 +10,7 @@ import CardSet from "@src/components/Dashboard/CardSet";
 import Graph, { HOURLY_CONDITIONS } from "@src/components/Dashboard/Graph";
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
+  // const session = await getServerSession(authOptions);
   const result: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek();
   const result2: NextWeekHourlyData = await Api.getHourlyWeatherDataOfWeek();
 
@@ -19,8 +19,7 @@ export default async function DashboardPage() {
     let insightData = await Api.getInsightDataOfWeek();
     store.dispatch(setInsightData(insightData));
   }
-  const insightData = store.getState().insightData;
-  // console.log(insightData);
+  // const insightData = store.getState().insightData;
 
   // TODO: Still working on organising this, setup below is just to show how to pass data
   return (

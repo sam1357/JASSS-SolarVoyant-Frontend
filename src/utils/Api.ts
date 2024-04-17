@@ -27,7 +27,7 @@ import {
 } from "@src/interfaces";
 import { ErrorWithStatus } from "./ErroWithStatus";
 import { getCurrentHour } from "@components/Dashboard/utils";
-import { apiBaseUrl } from "next-auth/client/_utils";
+// import { apiBaseUrl } from "next-auth/client/_utils";
 
 export class Api {
   /**

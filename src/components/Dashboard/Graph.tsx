@@ -84,7 +84,6 @@ const Graph: React.FC<GraphProps> = ({ dailyWeatherData, hourlyWeatherData, inde
 
   useEffect(() => {
     let dataValues: number[] = [];
-    let newData: { date: string; value: number }[] = [];
     if (condition !== "generation_consumption") {
       if (dailyWeatherData) {
         dataValues = Object.values(dailyWeatherData)
@@ -113,7 +112,7 @@ const Graph: React.FC<GraphProps> = ({ dailyWeatherData, hourlyWeatherData, inde
     } else {
       // coming soon
     }
-  }, [condition]);
+  }, [condition]); // eslint-disable-line
 
   return (
     <Card>

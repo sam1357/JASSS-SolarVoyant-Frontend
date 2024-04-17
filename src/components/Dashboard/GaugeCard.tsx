@@ -31,7 +31,7 @@ const GaugeCard: React.FC<GaugeCardProps> = ({ data, attribute, labels }) => {
       setTitle(formattedAttribute);
     };
     getFormattedAttribute();
-  }, []);
+  }, []); // eslint-disable-line
 
   return (
     // TODO: Width is hardcoded atm, can be taken out once the dashboard page is divided as a grid
