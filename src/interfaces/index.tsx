@@ -238,6 +238,7 @@ export interface energyDataObj {
   production: energyWithTimeStamp[] | energyWithTimeStamp;
   consumption: energyWithTimeStamp[] | energyWithTimeStamp;
   net: energyWithTimeStamp[] | energyWithTimeStamp;
+  netRaw: energyWithTimeStamp[] | energyWithTimeStamp;
 }
 
 export interface energyWithTimeStamp {
