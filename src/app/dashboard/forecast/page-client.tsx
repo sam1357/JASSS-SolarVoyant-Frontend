@@ -1,6 +1,6 @@
 
 "use client";
-import { AbsoluteCenter, Box, Card, Center, Divider, Flex, Grid, GridItem, HStack, Stack, VStack, useBreakpoint } from "@chakra-ui/react";
+import { Box, Divider, Grid, GridItem, HStack, useBreakpoint } from "@chakra-ui/react";
 import {
   AverageDailyInWeekWeatherData,
   Conditions,
@@ -9,11 +9,9 @@ import {
   WeekWeatherCodes,
   energyDataObj,
 } from "@src/interfaces";
-// import StatsCard from "@components/Dashboard/StatsCard";
 import CardSet from "@components/Dashboard/CardSet";
 import Insights from "@components/Dashboard/Insights";
 import { useEffect, useState } from "react";
-import GaugeSet from "@src/components/Dashboard/GaugeSet";
 import DayEnergyCard from "@src/components/Dashboard/DayEnergyCard";
 import DayNetEnergyCard from "@src/components/Dashboard/DayNetEnergyCard";
 import Graph, { HOURLY_CONDITIONS } from "@src/components/Dashboard/Graph";
@@ -75,11 +73,7 @@ export default function ForecastPageClient({
               </GridItem>
             </Grid>
           </GridItem>
-          {/* <GridItem rowSpan={1} colSpan={{ base: 12, lg: 8 }} h="100%" pr={2} overflowX="auto">
-            {weatherData && (<Insights data={weatherData} isWeekly={false} selectedCard={selectedCard} />)}
-          </GridItem> */}
           <GridItem rowStart={2} rowEnd={2} colStart={{ base: 0, lg: 9 }} colEnd={13} maxH="100%" pr={2}>
-            {/* <AbsoluteCenter axis='horizontal'> */}
               <GaugeCard
               data={conditionOfDay}
               attribute="shortwave_radiation"
@@ -92,7 +86,6 @@ export default function ForecastPageClient({
                 maximum: 250,
               }}
               />
-              {/* </AbsoluteCenter> */}
           </GridItem>
           <GridItem rowStart={3} rowEnd={3} colStart={{ base: 0, lg: 9 }} colEnd={13} maxH="100%" pr={2}>
             <GaugeCard
@@ -134,24 +127,7 @@ export default function ForecastPageClient({
             }}
             />
           </GridItem>
-
-          {/* <GridItem rowSpan={4} colStart={{ base: 0, lg: 9 }} colEnd={13} h="100%" pr={{ base: 0, md: 1, xl: 2 }} overflowX="auto">
-            <Grid templateRows="repeat(4, 1fr)" templateColumns='repeat(4, 1fr)' gap={{ base: 2, sm: 3, md: 4, lg: 5, xl: 6 }}>
-
-
-
-            </Grid>
-          </GridItem> */}
-          {/* <GridItem rowSpan={3} colSpan={8} h="100%" pr={2} overflowX="auto">
-            <Graph
-              hourlyWeatherData={weatherData}
-              hourlyEnergyData={energyData}
-              indexDay={selectedCard} // you can make this variable based on the weather card
-              schema={HOURLY_CONDITIONS}
-            />
-          </GridItem>         */}
         </Grid>
-      {/* </AbsoluteCenter> */}
     </Box>
   );
 }
