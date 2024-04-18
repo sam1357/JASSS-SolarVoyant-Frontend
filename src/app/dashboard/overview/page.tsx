@@ -1,11 +1,17 @@
 import { Box, Heading } from "@chakra-ui/react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@src/authOptions";
-import { AverageDailyInWeekWeatherData, currentWeatherData, energyDataObj } from "@src/interfaces";
+import {
+  AverageDailyInWeekWeatherData,
+  currentWeatherData,
+  energyDataObj,
+  NextWeekHourlyData,
+} from "@src/interfaces";
 import { Api } from "@utils/Api";
 import StatsCard from "@components/Dashboard/StatsCard";
 import store, { setInsightData } from "@src/store";
 import Graph, { DAILY_CONDITIONS } from "@components/Dashboard/Graph";
+import Insights from "@src/components/Dashboard/Insights";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -14,10 +20,10 @@ export default async function DashboardPage() {
   const weeklyOverviewGraphData: AverageDailyInWeekWeatherData =
     await Api.getDailyAverageConditionsDataOfWeek("Kensington");
   const weeklyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(session?.user?.id, "day");
-
+  let insightData: NextWeekHourlyData | undefined;
   // Get Insights Data
   if (Object.keys(store.getState().insightData).length === 0) {
-    let insightData = await Api.getWeekWeatherData(false, "Kensington");
+    insightData = await Api.getWeekWeatherData(false, "Kensington");
     store.dispatch(setInsightData(insightData));
   }
 
@@ -37,6 +43,7 @@ export default async function DashboardPage() {
           schema={DAILY_CONDITIONS}
         ></Graph>
       </Box>
+      <Box>{insightData && <Insights data={insightData} isWeekly={true} selectedCard={0} />}</Box>
     </>
   );
 }

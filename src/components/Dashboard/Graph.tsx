@@ -147,6 +147,8 @@ const Graph: React.FC<GraphProps> = ({
           .map((values) => values.value)
           .slice(start, finish);
       }
+      prodDataValues = prodDataValues.map((value) => parseFloat(value.toFixed(0)));
+      consDataValues = consDataValues.map((value) => parseFloat(value.toFixed(0)));
       let newData = prodDataValues.map((prodValue, i) => ({
         date: weeklyEnergyData ? getShortDate(i) : getTime(i),
         production: prodValue,
