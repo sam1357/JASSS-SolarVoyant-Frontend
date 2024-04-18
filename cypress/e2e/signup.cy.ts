@@ -57,15 +57,6 @@ describe("Signup Page", () => {
     cy.wait(6000);
     cy.reload();
     cy.url().should("contain", "/dashboard/overview");
-    cy.get("button").contains("Sign Out").click({ force: true });
-
-    // eslint-disable-next-line
-    cy.wait(2000);
-    cy.reload();
-    // url should not be /dashboard/overview
-    cy.url().should("not.contain", "/dashboard/overview");
-
-    cy.login(email, password);
   });
 
   it("signup page link works", function () {

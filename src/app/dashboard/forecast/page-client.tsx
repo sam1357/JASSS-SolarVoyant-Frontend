@@ -4,6 +4,7 @@ import { Box, Card, Divider, Flex, Grid, GridItem, HStack } from "@chakra-ui/rea
 import {
   AverageDailyInWeekWeatherData,
   Conditions,
+  energyDataObj,
   NextWeekHourlyData,
   Units,
   WeekWeatherCodes,
@@ -14,17 +15,19 @@ import CardSet from "@components/Dashboard/CardSet";
 import Insights from "@components/Dashboard/Insights";
 import { useState } from "react";
 import GaugeSet from "@src/components/Dashboard/GaugeSet";
-import { AreaChart } from "@saas-ui/charts";
+import Graph, { HOURLY_CONDITIONS } from "@src/components/Dashboard/Graph";
 
 interface ForecastPageClientProps {
   result: WeekWeatherCodes;
-  insightData?: NextWeekHourlyData;
+  weatherData: NextWeekHourlyData | undefined;
+  energyData: energyDataObj;
   averageConditions: AverageDailyInWeekWeatherData;
 }
 
 export default function ForecastPageClient({
   result,
-  insightData,
+  weatherData,
+  energyData,
   averageConditions,
 }: ForecastPageClientProps) {
   const [selectedCard, setSelectedCard] = useState<number>(0);
@@ -60,17 +63,16 @@ export default function ForecastPageClient({
                 height={"100%"}
               >
                 <GridItem rowSpan={1}>
-                  {insightData && (
-                    <Insights data={insightData} isWeekly={false} selectedCard={selectedCard} />
+                  {weatherData && (
+                    <Insights data={weatherData} isWeekly={false} selectedCard={selectedCard} />
                   )}
                 </GridItem>
                 <GridItem rowSpan={2}>
-                  <AreaChart
-                    data={data}
-                    categories={["Revenue"]}
-                    valueFormatter={valueFormatter}
-                    yAxisWidth={80}
-                    height="400px"
+                  <Graph
+                    hourlyWeatherData={weatherData}
+                    hourlyEnergyData={energyData}
+                    indexDay={selectedCard} // you can make this variable based on the weather card
+                    schema={HOURLY_CONDITIONS}
                   />
                 </GridItem>
               </Grid>
@@ -84,117 +86,3 @@ export default function ForecastPageClient({
     </Box>
   );
 }
-
-const valueFormatter = (value: any) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(value);
-};
-
-const data = [
-  {
-    date: "Jan 1",
-    Revenue: 1475,
-  },
-  {
-    date: "Jan 8",
-    Revenue: 1936,
-  },
-  {
-    date: "Jan 15",
-    Revenue: 1555,
-  },
-  {
-    date: "Jan 22",
-    Revenue: 1557,
-  },
-  {
-    date: "Jan 29",
-    Revenue: 1977,
-  },
-  {
-    date: "Feb 5",
-    Revenue: 2315,
-  },
-  {
-    date: "Feb 12",
-    Revenue: 1736,
-  },
-  {
-    date: "Feb 19",
-    Revenue: 1981,
-  },
-  {
-    date: "Feb 26",
-    Revenue: 2581,
-  },
-  {
-    date: "Mar 5",
-    Revenue: 2592,
-  },
-  {
-    date: "Mar 12",
-    Revenue: 2635,
-  },
-  {
-    date: "Mar 19",
-    Revenue: 2074,
-  },
-  {
-    date: "Mar 26",
-    Revenue: 2984,
-  },
-  {
-    date: "Apr 2",
-    Revenue: 2254,
-  },
-  {
-    date: "Apr 9",
-    Revenue: 3159,
-  },
-  {
-    date: "Apr 16",
-    Revenue: 2804,
-  },
-  {
-    date: "Apr 23",
-    Revenue: 2602,
-  },
-  {
-    date: "Apr 30",
-    Revenue: 2840,
-  },
-  {
-    date: "May 7",
-    Revenue: 3299,
-  },
-  {
-    date: "May 14",
-    Revenue: 3487,
-  },
-  {
-    date: "May 21",
-    Revenue: 3439,
-  },
-  {
-    date: "May 28",
-    Revenue: 3095,
-  },
-  {
-    date: "Jun 4",
-    Revenue: 3252,
-  },
-  {
-    date: "Jun 11",
-    Revenue: 4096,
-  },
-  {
-    date: "Jun 18",
-    Revenue: 4193,
-  },
-  {
-    date: "Jun 25",
-    Revenue: 4759,
-  },
-];
