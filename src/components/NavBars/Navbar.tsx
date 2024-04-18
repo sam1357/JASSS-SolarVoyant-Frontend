@@ -47,7 +47,7 @@ const Navbar: React.FC<{ session: Session }> = ({ session }) => {
         <Logo size={30} />
       </NavbarBrand>
 
-      <NavbarContent display={{ base: "none", sm: "flex" }}>
+      <NavbarContent display={{ base: "none", md: "flex" }}>
         {PAGES.map((item, index) => (
           <NavbarItem key={index}>
             <NavbarLink
@@ -56,7 +56,7 @@ const Navbar: React.FC<{ session: Session }> = ({ session }) => {
               href={item.href}
               target={item.isExternal ? "_blank" : ""}
             >
-              <Text pr={2}>{item.name}</Text>
+              <Text pr={item.isExternal ? 2 : 0}>{item.name}</Text>
               {item.isExternal && <FiExternalLink />}
             </NavbarLink>
           </NavbarItem>
@@ -75,7 +75,7 @@ const Navbar: React.FC<{ session: Session }> = ({ session }) => {
         <ColourModeToggle />
         <Button
           aria-label={mobileNav.isOpen ? "Close menu" : "Open menu"}
-          display={{ base: "inline-flex", sm: "none" }}
+          display={{ base: "inline-flex", md: "none" }}
           onClick={mobileNav.onToggle}
           variant="ghost"
         >
