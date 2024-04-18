@@ -6,6 +6,7 @@ interface EnergyGraphProps {
 }
 
 const EnergyGraph: React.FC<EnergyGraphProps> = ({ data }) => {
+  
   return (
     <>
       <CardBody>

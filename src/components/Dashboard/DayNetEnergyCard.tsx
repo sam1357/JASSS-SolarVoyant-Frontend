@@ -1,5 +1,5 @@
 "use client";
-import { Card, Heading, HStack, VStack } from "@chakra-ui/react";
+import { Card, Heading, HStack, Stack, useBreakpoint, VStack } from "@chakra-ui/react";
 import { energyDataObj, energyWithTimeStamp } from "@interfaces/index";
 import { useEffect, useState } from "react";
 
@@ -9,8 +9,9 @@ interface DayNetEnergyCardProps {
 }
 
 // type Index = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-
 const DayNetEnergyCard: React.FC<DayNetEnergyCardProps> = ({ dailyEnergyData, dayIndex }) => {
+  const breakPoint = useBreakpoint();
+
   const [rawVal, setRawVal] = useState(0);
   const [percVal, setPercVal] = useState(0);
 
@@ -40,17 +41,17 @@ const DayNetEnergyCard: React.FC<DayNetEnergyCardProps> = ({ dailyEnergyData, da
         <Heading fontSize="2xl" fontWeight={200}>
           Net Energy
         </Heading>
-        <HStack>
-          <Heading fontSize="7xl" fontWeight={350} p={1}>
+        <Stack direction={["base", "sm", "md"].includes(breakPoint) ? "column": "row"}>
+          <Heading fontSize={{ base: 'lg', lg: '3xl', xl: '5xl', '2xl': '7xl'}} fontWeight={350} p={1}>
             {rawVal.toFixed(2)} w
           </Heading>
-          <Heading fontSize="4xl" fontWeight={200} p={6}>
+          <Heading fontSize={{ base: 'md', lg: 'xl', xl: '2xl', '2xl': '4xl'}} fontWeight={200} p={{ base: 2, lg: 6}} textAlign="center">
             or
           </Heading>
-          <Heading fontSize="7xl" fontWeight={350} p={1}>
+          <Heading fontSize={{ base: 'lg', lg: '3xl', xl: '5xl', '2xl': '7xl'}} fontWeight={350} p={1}>
             {percVal.toFixed(2)} %
           </Heading>
-        </HStack>
+        </Stack>
       </VStack>
     </Card>
   );
