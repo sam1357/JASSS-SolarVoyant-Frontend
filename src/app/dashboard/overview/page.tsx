@@ -13,7 +13,7 @@ export default async function DashboardPage() {
 
   // Get Insights Data
   if (Object.keys(store.getState().insightData).length === 0) {
-    let insightData = await Api.getInsightDataOfWeek();
+    let insightData = await Api.getWeekWeatherData(false);
     store.dispatch(setInsightData(insightData));
   }
   const insightData = store.getState().insightData;

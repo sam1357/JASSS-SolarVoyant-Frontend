@@ -181,41 +181,11 @@ export interface WeekWeatherCodes {
 // Used for Day Overview Graph in Forecast Page
 export interface NextWeekHourlyData {
   units: Units;
-  0: DayConditions;
-  1: DayConditions;
-  2: DayConditions;
-  3: DayConditions;
-  4: DayConditions;
-  5: DayConditions;
-  6: DayConditions;
+  [index: number]: DayConditions;
 }
 
-export interface DayConditions {
-  0: GraphHourlyConditions | InsightHourlyConditions;
-  1: GraphHourlyConditions | InsightHourlyConditions;
-  2: GraphHourlyConditions | InsightHourlyConditions;
-  3: GraphHourlyConditions | InsightHourlyConditions;
-  4: GraphHourlyConditions | InsightHourlyConditions;
-  5: GraphHourlyConditions | InsightHourlyConditions;
-  6: GraphHourlyConditions | InsightHourlyConditions;
-  7: GraphHourlyConditions | InsightHourlyConditions;
-  8: GraphHourlyConditions | InsightHourlyConditions;
-  9: GraphHourlyConditions | InsightHourlyConditions;
-  10: GraphHourlyConditions | InsightHourlyConditions;
-  11: GraphHourlyConditions | InsightHourlyConditions;
-  12: GraphHourlyConditions | InsightHourlyConditions;
-  13: GraphHourlyConditions | InsightHourlyConditions;
-  14: GraphHourlyConditions | InsightHourlyConditions;
-  15: GraphHourlyConditions | InsightHourlyConditions;
-  16: GraphHourlyConditions | InsightHourlyConditions;
-  17: GraphHourlyConditions | InsightHourlyConditions;
-  18: GraphHourlyConditions | InsightHourlyConditions;
-  19: GraphHourlyConditions | InsightHourlyConditions;
-  20: GraphHourlyConditions | InsightHourlyConditions;
-  21: GraphHourlyConditions | InsightHourlyConditions;
-  22: GraphHourlyConditions | InsightHourlyConditions;
-  23: GraphHourlyConditions | InsightHourlyConditions;
-}
+export interface DayConditions extends Array<GraphHourlyConditions | InsightHourlyConditions> {}
+
 // Used for Day Overview Graph in Forecast Page
 export interface GraphHourlyConditions {
   temperature_2m: number;
@@ -224,7 +194,7 @@ export interface GraphHourlyConditions {
 }
 
 export interface InsightHourlyConditions {
-  weather_code: WeatherCode;
+  weather_code: number;
   precipitation_probability: number;
 }
 
@@ -256,6 +226,42 @@ export interface ModeWeatherCode {
   "weather_code": {
     "mode": number[]
   }
+}
+
+// Return Objects for S3 Bucket
+export interface quarterlySuburbConditions {
+  suburb: string,
+  temp_average: string[],
+  daylight_average: string[],
+  radiation_average: string[],
+}
+
+// Return object of getEnergyDataOfWeek 
+export interface energyDataObj {
+  production: energyWithTimeStamp[] | energyWithTimeStamp,
+  consumption: energyWithTimeStamp[] | energyWithTimeStamp,
+  net: energyWithTimeStamp[] | energyWithTimeStamp,
+}
+
+export interface energyWithTimeStamp {
+  value: number,
+  timeStamp: string,
+}
+// Return object for getAllDataOfUser
+export interface fullUserObj {
+  surface_area: string,
+  suburb: string,
+  quarterly_energy_consumption: string,
+  email: string,
+  username: string,
+  user_id: string,
+  [field: string]: string | number | number;
+}
+
+// Return object for getHourlyEnergyDataOfWeek
+export interface hourlyEnergyDataObj {
+  energy_production_hourly: number[],
+  energy_consumption_hourly: number[],
 }
 
 export interface GaugeLabels {

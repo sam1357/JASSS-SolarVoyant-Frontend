@@ -1,4 +1,15 @@
-import { addDays, capitalizeFirstLetter, formatDate, getChoroplethCondition } from "./utils";
+import {
+  addDays,
+  calculateProdCoefficientVals,
+  capitalizeFirstLetter,
+  fetchQuarterlyDataAndUpdateUserData,
+  formatDate,
+  generateTimeStamp,
+  getAllDataOfUser,
+  getChoroplethCondition,
+  getHourlyEnergyDataOfWeek,
+  handleCoefficientCalculation,
+} from "./utils";
 import LambdaInvoker from "./lambdaInvoker";
 import {
   DEFAULT_USER_DATA_LAMBDA,
@@ -25,10 +36,15 @@ import {
   NextWeekHourlyData,
   GraphHourlyConditions,
   InsightHourlyConditions,
+  energyDataObj,
+  fullUserObj,
+  hourlyEnergyDataObj,
+  energyWithTimeStamp,
 } from "@src/interfaces";
 import { ErrorWithStatus } from "./ErroWithStatus";
 import { getCurrentHour } from "@components/Dashboard/utils";
 import { apiBaseUrl } from "next-auth/client/_utils";
+import { prod } from "numeric";
 
 export class Api {
   /**
@@ -79,7 +95,10 @@ export class Api {
    * Changes username
    * @returns {Promise<Response>} - The status and JSON of the return
    */
-  static async setUserData(userID: string, info: { [field: string]: string }): Promise<Response> {
+  static async setUserData(
+    userID: string,
+    info: { [field: string]: string | number[] }
+  ): Promise<Response> {
     const res = await fetch("/api/changeUserData", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -451,208 +470,224 @@ export class Api {
   }
 
   /**
-   * Gets hourly weather conditions for every day in the next 7 days.
-   * Useful for the day overview graph in Forecast page
-   * @returns
-   */
-  static async getHourlyWeatherDataOfWeek(): Promise<NextWeekHourlyData> {
-    let weekArr: DayConditions[] = [];
-    let units: Units | undefined = undefined;
+  Gets hourly weather conditions for every day in the next 7 days.
+  Useful for the day overview graph in Forecast page and insights
+  @param useGraphData - whether to use graph data, otherwise false will get insights data
+  @returns {Promise<NextWeekHourlyData>} - weather data for the next 7 days
+  */
+  static async getWeekWeatherData(useGraphData = true): Promise<NextWeekHourlyData> {
+    const weekArr: DayConditions[] = [];
+    let units: Units | {} = {};
+    const attributes = useGraphData
+      ? "temperature_2m, shortwave_radiation, cloud_cover"
+      : "weather_code, precipitation_probability";
+
     for (let i = 0; i < 7; i++) {
-      // (1) Retrieve Weather Conditions for each day in a week
-      let dayArr: GraphHourlyConditions[] = [];
-      let res: RetrieveReturnObject = await Api.retrieveWeatherData(i, i, "temperature_2m, shortwave_radiation, cloud_cover");
-      let eventsArr: Event[] = res.events;
+      const dayArr: (GraphHourlyConditions | InsightHourlyConditions)[] = [];
+      const res: RetrieveReturnObject = await Api.retrieveWeatherData(i, i, attributes);
+      const eventsArr: Event[] = res.events;
 
-      for (let j = 0; j < eventsArr.length; j++) {
-        
-        // In case an hourly event is missing, pick the hour before
-        if (eventsArr[j] === undefined) {
-          let prevHourlyConditions: GraphHourlyConditions = dayArr[j - 1];
-          dayArr.push(prevHourlyConditions);
-          console.log(
-            `WARN from getHourlyWeatherDataOfWeek: Hour Data ${j} of Day ${i} is Missing!`
-          );
-          continue;
-        }
-
-        // (2) Retrieve hourly condition for each hour in a day
-        if (eventsArr[j].event_type === "hourly") {
+      eventsArr.forEach((event, j) => {
+        if (event.event_type === "hourly") {
           if (i === 0 && j === 0) {
-            units = eventsArr[j].attributes.units;
+            units = event.attributes.units;
           }
-          // Get Hourly Conditions and Add them to Day Array
-          let hourlyConditionsObj: GraphHourlyConditions = {
-            temperature_2m: eventsArr[j].attributes.temperature_2m,
-            solar_radiation: eventsArr[j].attributes.shortwave_radiation,
-            cloud_cover: eventsArr[j].attributes.cloud_cover,
-          };
+
+          const hourlyConditionsObj: GraphHourlyConditions | InsightHourlyConditions = useGraphData
+            ? {
+                temperature_2m: event.attributes.temperature_2m,
+                solar_radiation: event.attributes.shortwave_radiation,
+                cloud_cover: event.attributes.cloud_cover,
+              }
+            : {
+                weather_code: event.attributes.weather_code,
+                precipitation_probability: event.attributes.precipitation_probability,
+              };
           dayArr.push(hourlyConditionsObj);
         }
-      }
+      });
 
-      // Create Day Conditions Object from Day Arr
-      let dayObj: DayConditions = {
-        0: dayArr[0],
-        1: dayArr[1],
-        2: dayArr[2],
-        3: dayArr[3],
-        4: dayArr[4],
-        5: dayArr[5],
-        6: dayArr[6],
-        7: dayArr[7],
-        8: dayArr[8],
-        9: dayArr[9],
-        10: dayArr[10],
-        11: dayArr[11],
-        12: dayArr[12],
-        13: dayArr[13],
-        14: dayArr[14],
-        15: dayArr[15],
-        16: dayArr[16],
-        17: dayArr[17],
-        18: dayArr[18],
-        19: dayArr[19],
-        20: dayArr[20],
-        21: dayArr[21],
-        22: dayArr[22],
-        23: dayArr[23],
-      }
-
-      // In case an daily event is missing, pick the day before
-      if (dayObj[0] === undefined) {
-        dayObj = weekArr[i - 1];
-        console.log(`WARN from getHourlyWeatherDataOfWeek: Day Data ${i} is Missing!`);
-      }
-      // Add Day Conditions to Week Arr
+      const dayObj: DayConditions = Object.fromEntries(dayArr.entries()) as any;
       weekArr.push(dayObj);
-    };
+    }
 
     if (weekArr.length !== 7) {
-      throw new ErrorWithStatus("Week Array has the Incorrect Length", 500)
-    };
+      throw new ErrorWithStatus("Week Array has the Incorrect Length", 500);
+    }
 
-    const result: NextWeekHourlyData = {
-      units: units as Units,
-      0: weekArr[0],
-      1: weekArr[1],
-      2: weekArr[2],
-      3: weekArr[3],
-      4: weekArr[4],
-      5: weekArr[5],
-      6: weekArr[6],
-    };
-    return result;
+    return { units: units as Units, ...weekArr };
   }
 
   /**
-   * Gets hourly weather conditions for precipitation_probability and weather codes
-   * Useful for insights in Forecast Page and Overview Page
+   * Gets predicted energy consumption, production, and net energy for the next 7 days. The caller
+   * can specify whether they want this data presented in an hourly, daily, or one-week format.
+   * @param user 
+   * @param userId 
+   * @param time_unit 
+   * @returns 
    */
-  static async getInsightDataOfWeek(): Promise<NextWeekHourlyData> {
-    let weekArr: DayConditions[] = [];
-    let units: Units | undefined = undefined;
-    for (let i = 0; i < 7; i++) {
-      // (0) Get Weather Code Images and Description
-      const wmoData: WmoData[] = await Api.retrieveWmoData();
-      
-      // (1) Retrieve Weather Conditions for each day in a week
-      let dayArr: InsightHourlyConditions[] = [];
-      let res: RetrieveReturnObject = await Api.retrieveWeatherData(i, i, "weather_code, precipitation_probability");
-      let eventsArr: Event[] = res.events;
-      
-      for (let j = 0; j < eventsArr.length; j++) {
-        
-        // In case an hourly event is missing, pick the hour before
-        if (eventsArr[j] === undefined) {
-          let prevHourlyConditions: InsightHourlyConditions = dayArr[j - 1];
-          dayArr.push(prevHourlyConditions);
-          console.log(
-            `WARN from getInsightDataOfWeek: Hour Data ${j} of Day ${i} is Missing!`
-          );
-          continue;
-        }
-        
-        // (2) Retrieve hourly condition for each hour in a day
-        if (eventsArr[j].event_type === "hourly") {
-          if (i === 0 && j === 0) {
-            units = eventsArr[j].attributes.units;
-          }
-          
-          // Get hour of the event
-          let eventTimeStamp = res.events[j].time_object.timestamp;
-          let charTIndex = eventTimeStamp.indexOf("T");
-          let hourStr = eventTimeStamp.substring(charTIndex + 1, charTIndex + 3);
-          let currentHour = parseInt(hourStr, 10);
+  static async getEnergyDataOfWeek(userId: string, time_unit: "week" | "day" | "hour"): Promise<energyDataObj> {
+    
+    // (1) Check that User has all the Required Fields
+    let user: fullUserObj = await getAllDataOfUser(userId);
+    
+    if (
+      (user.surface_area === undefined || user.suburb === undefined,
+      user.quarterly_energy_consumption === undefined)
+    ) {
+      throw new ErrorWithStatus(
+        "User is missing the necessary fields for energy calculations",
+        500
+      );
+    }
+    // console.log("Checking User Fields Complete");
 
-          // Determine if current hour is day or night
-          const dayOrNight: "day" | "night" = currentHour < 6 || currentHour > 18 ? "night" : "day";
+    // (2) Write Historical Quarterly Weather Data To User
+    // console.log("Fetching Quarterly Data");
+    await fetchQuarterlyDataAndUpdateUserData(user, userId);
+    // console.log("Fetching Quarterly Data Complete");
+
+    // (3) Calculate Prediction Coefficients and Write to User
+    // console.log("Calculating Coefficients");
+    await handleCoefficientCalculation(user, userId);
+    await calculateProdCoefficientVals(user, userId);
+    // console.log("Calculating Coefficients Complete");
+
+    // (4) Retrieve Energy Data
+    // console.log("Retrieving Energy Data");
+    let res: hourlyEnergyDataObj = await getHourlyEnergyDataOfWeek(user);
+    console.log("FINISHED RETRIEVING HOURLY ENERGY DATA");
+    // console.log(res);
+    // (5) Apply the provided time unit
+    let energyDataRes: energyDataObj;
+
+    // (a) 168 Sets of Values for each day in the week
+
+    if (time_unit === "hour") {
+      console.log("PARSING HOURLY");
+      let prodHourly: energyWithTimeStamp[] = [];
+      let consHourly: energyWithTimeStamp[] = [];
+      let netEnergyHourly: energyWithTimeStamp[] = [];
+      
+      for (let i = 0; i < 168; i++) {
+        // generate time stamp
+        let dayOffSet = Math.floor(i / 24);
+        let hourOffset = i % 24;
+        let timeStamp = await generateTimeStamp(dayOffSet, hourOffset);
+        
+        // Add each hour's value to the array
+        let currProd =  res.energy_production_hourly[i];
+        let currentCons = res.energy_consumption_hourly[i];
+        
+        let currProdEntry: energyWithTimeStamp = {
+          value: res.energy_production_hourly[i],
+          timeStamp: timeStamp
+        };
+
+        prodHourly.push(currProdEntry);
+        let currConsEntry: energyWithTimeStamp = {
+          value: res.energy_consumption_hourly[i],
+          timeStamp: timeStamp
+        };
+        consHourly.push(currConsEntry);
+
+        if ( currProd !== 0) {
+          let netEnergyVal = parseFloat((((currProd - currentCons) / currProd) * 100).toFixed(3));
           
-          // Get Hourly Conditions and Add them to Day Array
-          // console.log(currentHour)
-          let hourlyConditionsObj: InsightHourlyConditions = {
-            weather_code: {
-              image: wmoData[eventsArr[j].attributes.weather_code][dayOrNight].image,
-              description: wmoData[eventsArr[j].attributes.weather_code][dayOrNight].description,
-            }, 
-            precipitation_probability: eventsArr[j].attributes.precipitation_probability,
+          let currNetEnergyEntry: energyWithTimeStamp = {
+            value: netEnergyVal,
+            timeStamp: timeStamp
           };
-          dayArr.push(hourlyConditionsObj);
+          netEnergyHourly.push(currNetEnergyEntry);
         }
       }
 
-      // Create Day Conditions Object from Day Arr
-      let dayObj: DayConditions = {
-        0: dayArr[0],
-        1: dayArr[1],
-        2: dayArr[2],
-        3: dayArr[3],
-        4: dayArr[4],
-        5: dayArr[5],
-        6: dayArr[6],
-        7: dayArr[7],
-        8: dayArr[8],
-        9: dayArr[9],
-        10: dayArr[10],
-        11: dayArr[11],
-        12: dayArr[12],
-        13: dayArr[13],
-        14: dayArr[14],
-        15: dayArr[15],
-        16: dayArr[16],
-        17: dayArr[17],
-        18: dayArr[18],
-        19: dayArr[19],
-        20: dayArr[20],
-        21: dayArr[21],
-        22: dayArr[22],
-        23: dayArr[23],
+      // Form the result object
+      energyDataRes = {
+        production: prodHourly,
+        consumption: consHourly,
+        net: netEnergyHourly,
       }
 
-      // In case an daily event is missing, pick the day before
-      if (dayObj[0] === undefined) {
-        dayObj = weekArr[i - 1];
-        console.log(`WARN from getInsightDataOfWeek: Day Data ${i} is Missing!`);
+    // (b) Seven Sets of Values for each day in the week
+    } else if (time_unit === "day") {
+      console.log("PARSING DAILY");
+      let energyProdSum: energyWithTimeStamp[] = [];
+      let energyConsSum: energyWithTimeStamp[] = [];
+      let netEnergyPerc: energyWithTimeStamp[] = [];
+
+      for (let i = 0; i < 168; i += 24) {
+        // get timeStamp
+        let dayOffSet = Math.floor(i / 24);
+        let timeStamp = await generateTimeStamp(dayOffSet, 0);
+
+        // Calculate production and consumption total for each day
+        let prodSum = 0;
+        let consSum = 0;
+        for (let j = i; j < i + 24 && j < 168; j++) {
+          prodSum += res.energy_production_hourly[j];
+          consSum += res.energy_consumption_hourly[j];
+        }
+
+        // Add each day's value to the array
+        let prodEntry: energyWithTimeStamp = {
+          value: prodSum,
+          timeStamp: timeStamp
+        }
+        energyProdSum.push(prodEntry);
+
+        let consEntry: energyWithTimeStamp = {
+          value: consSum,
+          timeStamp: timeStamp
+        }
+        energyConsSum.push(consEntry);
+
+        let netEnergyVal = parseFloat((((prodSum - consSum) / prodSum) * 100).toFixed(3));
+        let netEnergyEntry: energyWithTimeStamp = {
+          value: netEnergyVal,
+          timeStamp: timeStamp
+        }
+        netEnergyPerc.push(netEnergyEntry);
       }
-      // Add Day Conditions to Week Arr
-      weekArr.push(dayObj);
-    };
 
-    if (weekArr.length !== 7) {
-      throw new ErrorWithStatus("Week Array has the Incorrect Length", 500)
-    };
+      // Form the result object
+      energyDataRes = {
+        production: energyProdSum,
+        consumption: energyConsSum,
+        net: netEnergyPerc
+      }
 
-    const result: NextWeekHourlyData = {
-      units: units as Units,
-      0: weekArr[0],
-      1: weekArr[1],
-      2: weekArr[2],
-      3: weekArr[3],
-      4: weekArr[4],
-      5: weekArr[5],
-      6: weekArr[6],
-    };
-    return result;
+    // (c) One Set of Values for the entire week
+    } else {
+      console.log("PARSING WEEK");
+      let timeStamp = await generateTimeStamp(0, 0);
+
+      let prodSum = 0;
+      res.energy_production_hourly.forEach((e: number) => prodSum += e);
+      
+      let consSum = 0;
+      res.energy_consumption_hourly.forEach((e: number) => consSum += e);
+      
+      let netEnergyVal = parseFloat((((prodSum - consSum) / prodSum) * 100).toFixed(3));
+
+      energyDataRes = {
+        production: {
+          value: prodSum,
+          timeStamp: timeStamp,
+        }, 
+        consumption: {
+          value: consSum,
+          timeStamp: timeStamp,
+        },
+        net: {
+          value: netEnergyVal,
+          timeStamp: timeStamp
+        }
+      }
+    }
+
+    // console.log("Retrieving Energy Data Complete");
+    return energyDataRes;
   }
 
   // HELPER FUNCTION for getDailyAverageConditionsOfWeekData

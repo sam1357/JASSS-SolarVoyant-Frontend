@@ -1,37 +1,37 @@
-import { Box, Card, CardBody, CardHeader, Center, Divider, Heading } from "@chakra-ui/react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@src/authOptions";
-import { NextWeekHourlyData, WeekWeatherCodes, currentWeatherData } from "@src/interfaces";
+import { NextWeekHourlyData, WeekWeatherCodes } from "@src/interfaces";
 import { Api } from "@utils/Api";
 import store, { setInsightData } from "@src/store";
+import ForecastPageClient from "@app/dashboard/forecast/page-client";
+import { getAllDataOfUser } from "@src/utils/utils";
 
-// import StatsCard from "@components/Dashboard/StatsCard";
-import CardSet from "@src/components/Dashboard/CardSet";
-
-export default async function DashboardPage() {
+export default async function ForecastPage() {
   const session = await getServerSession(authOptions);
   const result: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek();
-  const result2: NextWeekHourlyData = await Api.getHourlyWeatherDataOfWeek();
+  let insightData: NextWeekHourlyData | undefined = undefined;
+  const averageConditionsOfWeek = await Api.getDailyAverageConditionsDataOfWeek();
 
   // Get Insights Data
   if (Object.keys(store.getState().insightData).length === 0) {
-    let insightData = await Api.getInsightDataOfWeek();
+    insightData = await Api.getWeekWeatherData(false);
     store.dispatch(setInsightData(insightData));
   }
-  const insightData = store.getState().insightData;
-  // console.log(insightData);
 
-  // TODO: Still working on organising this, setup below is just to show how to pass data
+    // (2) Call getEnergyDataOfWeek
+    let user = await getAllDataOfUser(session?.user.id);
+    console.log("BEFORE USER:");
+    console.log(user);
+
+    const res = await Api.getEnergyDataOfWeek(session?.user.id, "week");
+    console.log("RES: ");
+    console.log(res);
+    
+    console.log("AFTER USER:");
+    console.log(user);
   return (
-    <>
-      <Center>
-        <Box width={"65%"} padding={5}>
-          <CardSet data={result}></CardSet>
-        </Box>
-      </Center>
-      <Center>
-        <Divider width={"65%"} orientation='horizontal' />
-      </Center>
-    </>
+    <ForecastPageClient
+      result={result} energyData={res}
+    />
   );
 }
