@@ -13,8 +13,8 @@ import {
   TabPanels,
   Tabs,
 } from "@chakra-ui/react";
-import CustomFormControl from "./AuthPages/CustomFormControl";
 import { Session } from "@src/interfaces";
+import CustomFormControlOnChange from "./AuthPages/CustomFormControlOnChange";
 
 interface CustomUserDataContainerProps {
   session: Session;
@@ -77,7 +77,7 @@ const SliderOptionalToggle: React.FC<CustomUserDataContainerProps> = ({
             <Grid templateColumns="repeat(4, 1fr)" gap={2} mt={1} w="100%">
               {["q1", "q2", "q3", "q4"].map((quarter, index) => (
                 <GridItem key={index}>
-                  <CustomFormControl
+                  <CustomFormControlOnChange
                     errors={{}}
                     name={quarter}
                     label={`Quarter ${index + 1}`}

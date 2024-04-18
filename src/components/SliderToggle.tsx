@@ -15,7 +15,7 @@ import {
   TabPanels,
   Tabs,
 } from "@chakra-ui/react";
-import CustomFormControl from "./AuthPages/CustomFormControl";
+import CustomFormControlOnChange from "./AuthPages/CustomFormControlOnChange";
 
 interface onEnergyConsumptionChangeType {
   // eslint-disable-next-line
@@ -90,7 +90,7 @@ const SliderToggle: React.FC<CustomUserDataContainerProps> = ({ onEnergyConsumpt
             <TabPanel>
               <Grid templateColumns="repeat(4, 1fr)" gap={2} mt={1} w={"100%"}>
                 <GridItem>
-                  <CustomFormControl
+                  <CustomFormControlOnChange
                     errors={{}}
                     name="quarter1C"
                     label="Quarter 1"
@@ -99,7 +99,7 @@ const SliderToggle: React.FC<CustomUserDataContainerProps> = ({ onEnergyConsumpt
                   />
                 </GridItem>
                 <GridItem>
-                  <CustomFormControl
+                  <CustomFormControlOnChange
                     errors={{}}
                     name="quarter2C"
                     label="Quarter 2"
@@ -108,7 +108,7 @@ const SliderToggle: React.FC<CustomUserDataContainerProps> = ({ onEnergyConsumpt
                   />
                 </GridItem>
                 <GridItem>
-                  <CustomFormControl
+                  <CustomFormControlOnChange
                     errors={{}}
                     name="quarter3C"
                     label="Quarter 3"
@@ -117,7 +117,7 @@ const SliderToggle: React.FC<CustomUserDataContainerProps> = ({ onEnergyConsumpt
                   />
                 </GridItem>
                 <GridItem>
-                  <CustomFormControl
+                  <CustomFormControlOnChange
                     errors={{}}
                     name="quarter4C"
                     label="Quarter 4"

@@ -17,11 +17,12 @@ interface CustomFormControlProps {
   register: any;
   helperText?: string;
   inputComponent?: React.ComponentType<any>;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
   defaultValue?: string;
   inputRightAddon?: string;
 }
 
-const CustomFormControl: React.FC<CustomFormControlProps> = ({
+const CustomFormControlOnChange: React.FC<CustomFormControlProps> = ({
   errors,
   name,
   label,
@@ -29,6 +30,7 @@ const CustomFormControl: React.FC<CustomFormControlProps> = ({
   register,
   helperText,
   inputComponent: InputComponent = Input,
+  onChange,
   defaultValue,
   inputRightAddon,
 }) => {
@@ -40,6 +42,7 @@ const CustomFormControl: React.FC<CustomFormControlProps> = ({
           placeholder={placeholder}
           defaultValue={defaultValue}
           name={name}
+          onChange={onChange}
           {...register(name)}
         />
         {inputRightAddon && <InputRightAddon>{inputRightAddon}</InputRightAddon>}
@@ -55,4 +58,4 @@ const CustomFormControl: React.FC<CustomFormControlProps> = ({
   );
 };
 
-export default CustomFormControl;
+export default CustomFormControlOnChange;
