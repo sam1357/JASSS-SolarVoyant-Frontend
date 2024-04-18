@@ -4,7 +4,7 @@ import { Box, useColorMode } from "@chakra-ui/react";
 import { LoadScriptNext } from "@react-google-maps/api";
 import { ChoroplethMapLight, ChoroplethMapDark } from "@components/Choropleth/ChoroplethMap";
 import HeatmapColourBar from "@components/Choropleth/HeatmapColourBar";
-import ChoroplethLoadingUI from "@components/Choropleth/LoadingUI";
+import LoadingUI from "@components/LoadingUI";
 import { GOOGLE_MAP_LIGHT_ID, GOOGLE_MAP_DARK_ID } from "@src/constants";
 import { State } from "@src/interfaces/state";
 import { useEffect, useState } from "react";
@@ -45,7 +45,7 @@ export default function ChoroplethMapPage() {
           </>
         )}
       </Box>
-      {isLoading && <ChoroplethLoadingUI />}
+      {isLoading && <LoadingUI />}
     </>
   );
 }
