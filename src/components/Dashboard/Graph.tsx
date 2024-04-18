@@ -156,7 +156,7 @@ const Graph: React.FC<GraphProps> = ({
       }));
       setFormattedEnergyData(newData);
     }
-  }, [condition]); // eslint-disable-line
+  }, [condition, indexDay]); // eslint-disable-line
 
   return (
     <Card>

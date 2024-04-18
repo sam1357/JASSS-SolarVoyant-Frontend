@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Card, Center, Divider, Flex, Grid, GridItem, HStack } from "@chakra-ui/react";
+import { Box, Card, Divider, Flex, Grid, GridItem, HStack } from "@chakra-ui/react";
 import {
   AverageDailyInWeekWeatherData,
   Conditions,
@@ -71,7 +71,7 @@ export default function ForecastPageClient({
                   <Graph
                     hourlyWeatherData={weatherData}
                     hourlyEnergyData={energyData}
-                    indexDay={0} // you can make this variable based on the weather card
+                    indexDay={selectedCard} // you can make this variable based on the weather card
                     schema={HOURLY_CONDITIONS}
                   />
                 </GridItem>
