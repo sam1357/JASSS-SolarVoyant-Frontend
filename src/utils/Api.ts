@@ -19,7 +19,7 @@ import {
 } from "@src/constants";
 import {
   Attributes,
-  ChoroplethConditionData,
+  ConditionsSelectorData,
   RetrieveReturnObject,
   SuburbData,
   Event,
@@ -34,8 +34,7 @@ import {
   Conditions,
   DayConditions,
   NextWeekHourlyData,
-  GraphHourlyConditions,
-  InsightHourlyConditions,
+  HourlyConditions,
   energyDataObj,
   fullUserObj,
   hourlyEnergyDataObj,
@@ -43,8 +42,6 @@ import {
 } from "@src/interfaces";
 import { ErrorWithStatus } from "./ErroWithStatus";
 import { getCurrentHour } from "@components/Dashboard/utils";
-import { apiBaseUrl } from "next-auth/client/_utils";
-import { prod } from "numeric";
 
 export class Api {
   /**
@@ -201,7 +198,7 @@ export class Api {
       return [];
     }
 
-    const { label, unit } = getChoroplethCondition(condition) as ChoroplethConditionData;
+    const { label, unit } = getChoroplethCondition(condition) as ConditionsSelectorData;
     const key = `${label} ${unit}`;
 
     const finalRes: SuburbData[] = data.events.map((d: any) => ({
@@ -483,7 +480,7 @@ export class Api {
       : "weather_code, precipitation_probability";
 
     for (let i = 0; i < 7; i++) {
-      const dayArr: (GraphHourlyConditions | InsightHourlyConditions)[] = [];
+      const dayArr: HourlyConditions[] = [];
       const res: RetrieveReturnObject = await Api.retrieveWeatherData(i, i, attributes);
       const eventsArr: Event[] = res.events;
 
@@ -493,7 +490,7 @@ export class Api {
             units = event.attributes.units;
           }
 
-          const hourlyConditionsObj: GraphHourlyConditions | InsightHourlyConditions = useGraphData
+          const hourlyConditionsObj: any = useGraphData
             ? {
                 temperature_2m: event.attributes.temperature_2m,
                 solar_radiation: event.attributes.shortwave_radiation,
@@ -521,16 +518,18 @@ export class Api {
   /**
    * Gets predicted energy consumption, production, and net energy for the next 7 days. The caller
    * can specify whether they want this data presented in an hourly, daily, or one-week format.
-   * @param user 
-   * @param userId 
-   * @param time_unit 
-   * @returns 
+   * @param user
+   * @param userId
+   * @param time_unit
+   * @returns
    */
-  static async getEnergyDataOfWeek(userId: string, time_unit: "week" | "day" | "hour"): Promise<energyDataObj> {
-    
+  static async getEnergyDataOfWeek(
+    userId: string,
+    time_unit: "week" | "day" | "hour"
+  ): Promise<energyDataObj> {
     // (1) Check that User has all the Required Fields
     let user: fullUserObj = await getAllDataOfUser(userId);
-    
+
     if (
       (user.surface_area === undefined || user.suburb === undefined,
       user.quarterly_energy_consumption === undefined)
@@ -568,35 +567,35 @@ export class Api {
       let prodHourly: energyWithTimeStamp[] = [];
       let consHourly: energyWithTimeStamp[] = [];
       let netEnergyHourly: energyWithTimeStamp[] = [];
-      
+
       for (let i = 0; i < 168; i++) {
         // generate time stamp
         let dayOffSet = Math.floor(i / 24);
         let hourOffset = i % 24;
         let timeStamp = await generateTimeStamp(dayOffSet, hourOffset);
-        
+
         // Add each hour's value to the array
-        let currProd =  res.energy_production_hourly[i];
+        let currProd = res.energy_production_hourly[i];
         let currentCons = res.energy_consumption_hourly[i];
-        
+
         let currProdEntry: energyWithTimeStamp = {
           value: res.energy_production_hourly[i],
-          timeStamp: timeStamp
+          timeStamp: timeStamp,
         };
 
         prodHourly.push(currProdEntry);
         let currConsEntry: energyWithTimeStamp = {
           value: res.energy_consumption_hourly[i],
-          timeStamp: timeStamp
+          timeStamp: timeStamp,
         };
         consHourly.push(currConsEntry);
 
-        if ( currProd !== 0) {
+        if (currProd !== 0) {
           let netEnergyVal = parseFloat((((currProd - currentCons) / currProd) * 100).toFixed(3));
-          
+
           let currNetEnergyEntry: energyWithTimeStamp = {
             value: netEnergyVal,
-            timeStamp: timeStamp
+            timeStamp: timeStamp,
           };
           netEnergyHourly.push(currNetEnergyEntry);
         }
@@ -607,9 +606,9 @@ export class Api {
         production: prodHourly,
         consumption: consHourly,
         net: netEnergyHourly,
-      }
+      };
 
-    // (b) Seven Sets of Values for each day in the week
+      // (b) Seven Sets of Values for each day in the week
     } else if (time_unit === "day") {
       console.log("PARSING DAILY");
       let energyProdSum: energyWithTimeStamp[] = [];
@@ -636,21 +635,21 @@ export class Api {
         // Add each day's value to the array
         let prodEntry: energyWithTimeStamp = {
           value: prodSum,
-          timeStamp: timeStamp
-        }
+          timeStamp: timeStamp,
+        };
         energyProdSum.push(prodEntry);
 
         let consEntry: energyWithTimeStamp = {
           value: consSum,
-          timeStamp: timeStamp
-        }
+          timeStamp: timeStamp,
+        };
         energyConsSum.push(consEntry);
 
         let netEnergyVal = parseFloat((((prodSum - consSum) / prodSum) * 100).toFixed(3));
         let netEnergyEntry: energyWithTimeStamp = {
           value: netEnergyVal,
-          timeStamp: timeStamp
-        }
+          timeStamp: timeStamp,
+        };
         netEnergyPerc.push(netEnergyEntry);
       }
 
@@ -658,20 +657,20 @@ export class Api {
       energyDataRes = {
         production: energyProdSum,
         consumption: energyConsSum,
-        net: netEnergyPerc
-      }
+        net: netEnergyPerc,
+      };
 
-    // (c) One Set of Values for the entire week
+      // (c) One Set of Values for the entire week
     } else {
       console.log("PARSING WEEK");
       let timeStamp = await generateTimeStamp(0, 0);
 
       let prodSum = 0;
-      res.energy_production_hourly.forEach((e: number) => prodSum += e);
-      
+      res.energy_production_hourly.forEach((e: number) => (prodSum += e));
+
       let consSum = 0;
-      res.energy_consumption_hourly.forEach((e: number) => consSum += e);
-      
+      res.energy_consumption_hourly.forEach((e: number) => (consSum += e));
+
       // get average
       prodSum /= 168;
       consSum /= 168;
@@ -682,16 +681,16 @@ export class Api {
         production: {
           value: prodSum,
           timeStamp: timeStamp,
-        }, 
+        },
         consumption: {
           value: consSum,
           timeStamp: timeStamp,
         },
         net: {
           value: netEnergyVal,
-          timeStamp: timeStamp
-        }
-      }
+          timeStamp: timeStamp,
+        },
+      };
     }
 
     // console.log("Retrieving Energy Data Complete");
@@ -822,4 +821,22 @@ export class Api {
   //   let currentDateStr = currentDate.toISOString();
   //   return currentDateStr = currentDateStr.split("T")[0];
   // }
+
+  static async getUserNotifications(userID: string): Promise<Response> {
+    const res = await fetch(`/api/notifications?userID=${userID}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    return res;
+  }
+
+  static async deleteUserNotifications(userID: string): Promise<Response> {
+    const res = await fetch(`/api/notifications?userID=${userID}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    return res;
+  }
 }

@@ -1,10 +1,19 @@
 import { CHOROPLETH_AVAILABLE_CONDITIONS } from "@src/components/Choropleth/ConditionSelector";
-import { CUR_TIMEZONE, DEFAULT_RETRIEVAL_LAMBDA, DEFAULT_USER_DATA_LAMBDA, FORMAT_STRING } from "@src/constants";
-import { ChoroplethConditionData, fullUserObj, hourlyEnergyDataObj, quarterlySuburbConditions } from "@src/interfaces";
+import {
+  CUR_TIMEZONE,
+  DEFAULT_RETRIEVAL_LAMBDA,
+  DEFAULT_USER_DATA_LAMBDA,
+  FORMAT_STRING,
+} from "@src/constants";
+import {
+  ConditionsSelectorData,
+  fullUserObj,
+  hourlyEnergyDataObj,
+  quarterlySuburbConditions,
+} from "@src/interfaces";
 import { format, toZonedTime } from "date-fns-tz";
 
 import numeric from "numeric";
-import { Api } from "@utils/Api";
 import dotenv from "dotenv";
 import { fromEnv } from "@aws-sdk/credential-providers";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
@@ -64,7 +73,7 @@ export const addDays = (date: Date, days: number): Date => {
  * @param condition The condition to get the full data for
  * @returns The data for the condition
  */
-export const getChoroplethCondition = (condition: string): ChoroplethConditionData | undefined => {
+export const getChoroplethCondition = (condition: string): ConditionsSelectorData | undefined => {
   return CHOROPLETH_AVAILABLE_CONDITIONS.find((c) => c.value === condition);
 };
 
@@ -159,17 +168,20 @@ export async function calculateProdCoefficientVals(user: any, userId: string): P
     predictedGenerationQ4 = parseFloat(user.q4_r);
   }
 
-  prod_coefficients.push((predictedGenerationQ1) / parseFloat(user.q1_w));
-  prod_coefficients.push((predictedGenerationQ2) / parseFloat(user.q2_w));
-  prod_coefficients.push((predictedGenerationQ3) / parseFloat(user.q3_w));
-  prod_coefficients.push((predictedGenerationQ4) / parseFloat(user.q4_w));
+  prod_coefficients.push(predictedGenerationQ1 / parseFloat(user.q1_w));
+  prod_coefficients.push(predictedGenerationQ2 / parseFloat(user.q2_w));
+  prod_coefficients.push(predictedGenerationQ3 / parseFloat(user.q3_w));
+  prod_coefficients.push(predictedGenerationQ4 / parseFloat(user.q4_w));
   if (user.user_id) {
     await setDataOfUser(userId, { "production_coefficient": prod_coefficients });
     // await Api.setUserData(userId, { "production_coefficient": prod_coefficients });
   }
 }
 
-export async function fetchQuarterlyDataAndUpdateUserData(user: any, userId: string): Promise<void> {
+export async function fetchQuarterlyDataAndUpdateUserData(
+  user: any,
+  userId: string
+): Promise<void> {
   // (1) Read the S3 Bucket
   //// (a) Initialise S3 client
   dotenv.config();
@@ -216,43 +228,43 @@ export async function fetchQuarterlyDataAndUpdateUserData(user: any, userId: str
 }
 
 export async function getHourlyEnergyDataOfWeek(user: any): Promise<hourlyEnergyDataObj> {
-    const lambdaInvoker = new LambdaInvoker();
-    let res = await lambdaInvoker.invokeLambda(
-      {
-        httpMethod: "GET",
-        path: `/${process.env.STAGING_ENV}/data-retrieval/retrieve-energy-data`,
-        queryStringParameters: {
-          userID: user.user_id
-        },
+  const lambdaInvoker = new LambdaInvoker();
+  let res = await lambdaInvoker.invokeLambda(
+    {
+      httpMethod: "GET",
+      path: `/${process.env.STAGING_ENV}/data-retrieval/retrieve-energy-data`,
+      queryStringParameters: {
+        userID: user.user_id,
       },
-      DEFAULT_RETRIEVAL_LAMBDA
-    );
-    return await res.json();
-  }
+    },
+    DEFAULT_RETRIEVAL_LAMBDA
+  );
+  return await res.json();
+}
 
 export async function getAllDataOfUser(userId: any): Promise<fullUserObj> {
   const lambdaInvoker = new LambdaInvoker();
-    let res = await lambdaInvoker.invokeLambda(
-      {
-        httpMethod: "GET",
-        path: `/${process.env.STAGING_ENV}/user-data/get-all`,
-        body: JSON.stringify({userID: userId})
-      },
-      DEFAULT_USER_DATA_LAMBDA
-    );
+  let res = await lambdaInvoker.invokeLambda(
+    {
+      httpMethod: "GET",
+      path: `/${process.env.STAGING_ENV}/user-data/get-all`,
+      body: JSON.stringify({ userID: userId }),
+    },
+    DEFAULT_USER_DATA_LAMBDA
+  );
   return (await res.json()).data;
 }
 
 export async function setDataOfUser(userId: any, setFields: any): Promise<any> {
   const lambdaInvoker = new LambdaInvoker();
-  
+
   const res = await lambdaInvoker.invokeLambda(
     {
       httpMethod: "PATCH",
       path: `/${process.env.STAGING_ENV}/user-data/set`,
       body: JSON.stringify({
         userID: userId,
-        info: setFields
+        info: setFields,
       }),
     },
     DEFAULT_USER_DATA_LAMBDA
@@ -266,7 +278,7 @@ export async function generateTimeStamp(dateOffset: number, hourOffset: number):
   let currentDate = new Date();
   currentDate.setUTCHours(currentDate.getUTCHours() + 10);
   currentDate.setUTCHours(0, 0, 0, 0);
-  
+
   // Add dateOffset
   currentDate.setDate(currentDate.getDate() + dateOffset);
 
@@ -275,9 +287,8 @@ export async function generateTimeStamp(dateOffset: number, hourOffset: number):
 
   // Convert Date to String
   let dateStr = currentDate.toISOString();
-  let timestamp = dateStr.replace(/\..*/, '+10:00');
+  let timestamp = dateStr.replace(/\..*/, "+10:00");
   return timestamp;
-
 }
 /**
  * Capitalises a suburb name as a proper noun. For example surry hills -> Surry Hills

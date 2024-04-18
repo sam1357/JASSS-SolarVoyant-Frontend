@@ -10,7 +10,6 @@ export default async function ForecastPage() {
   const session = await getServerSession(authOptions);
   const result: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek();
   let insightData: NextWeekHourlyData | undefined = undefined;
-  const averageConditionsOfWeek = await Api.getDailyAverageConditionsDataOfWeek();
 
   // Get Insights Data
   if (Object.keys(store.getState().insightData).length === 0) {
@@ -18,20 +17,16 @@ export default async function ForecastPage() {
     store.dispatch(setInsightData(insightData));
   }
 
-    // (2) Call getEnergyDataOfWeek
-    let user = await getAllDataOfUser(session?.user.id);
-    console.log("BEFORE USER:");
-    console.log(user);
+  // (2) Call getEnergyDataOfWeek
+  let user = await getAllDataOfUser(session?.user.id);
+  console.log("BEFORE USER:");
+  console.log(user);
 
-    const res = await Api.getEnergyDataOfWeek(session?.user.id, "week");
-    console.log("RES: ");
-    console.log(res);
-    
-    console.log("AFTER USER:");
-    console.log(user);
-  return (
-    <ForecastPageClient
-      result={result} energyData={res}
-    />
-  );
+  const res = await Api.getEnergyDataOfWeek(session?.user.id, "week");
+  console.log("RES: ");
+  console.log(res);
+
+  console.log("AFTER USER:");
+  console.log(user);
+  return <ForecastPageClient result={result} />;
 }

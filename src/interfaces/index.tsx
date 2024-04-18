@@ -64,7 +64,7 @@ export type SuburbData = {
   [key: string]: number | string;
 };
 
-export type ChoroplethConditionData = {
+export type ConditionsSelectorData = {
   label: string;
   unit: string;
   value: string;
@@ -115,7 +115,8 @@ export interface Event {
   attributes: Attributes;
 }
 
-export interface Attributes { // Backend Return Object
+export interface Attributes {
+  // Backend Return Object
   location: Location;
   units: Units;
   weather_code: number;
@@ -181,29 +182,26 @@ export interface WeekWeatherCodes {
 // Used for Day Overview Graph in Forecast Page
 export interface NextWeekHourlyData {
   units: Units;
-  [index: number]: DayConditions;
+  [days: number]: DayConditions[];
 }
 
-export interface DayConditions extends Array<GraphHourlyConditions | InsightHourlyConditions> {}
+export interface DayConditions extends Array<HourlyConditions> {}
 
 // Used for Day Overview Graph in Forecast Page
-export interface GraphHourlyConditions {
-  temperature_2m: number;
-  solar_radiation: number;
-  cloud_cover: number;
-}
-
-export interface InsightHourlyConditions {
-  weather_code: number;
-  precipitation_probability: number;
+export interface HourlyConditions {
+  temperature_2m?: number;
+  shortwave_radiation?: number;
+  cloud_cover?: number;
+  weather_code?: WeatherCode;
+  precipitation_probability?: number;
 }
 
 // Return Objects for Analyse
 export interface AnalyseReturnObject {
-  "time_object": TimeObject,
-  "location": Location,
-  "units": Units,
-  "analytics": MeanAttributes | ModeWeatherCode
+  "time_object": TimeObject;
+  "location": Location;
+  "units": Units;
+  "analytics": MeanAttributes | ModeWeatherCode;
 }
 
 // Return Objects for Analyse
@@ -218,50 +216,50 @@ export interface MeanAttributes {
 
 // Return Objects for Analyse
 export interface MeanData {
-  "mean": number
+  "mean": number;
 }
 
 // Return Objects for Analyse
 export interface ModeWeatherCode {
   "weather_code": {
-    "mode": number[]
-  }
+    "mode": number[];
+  };
 }
 
 // Return Objects for S3 Bucket
 export interface quarterlySuburbConditions {
-  suburb: string,
-  temp_average: string[],
-  daylight_average: string[],
-  radiation_average: string[],
+  suburb: string;
+  temp_average: string[];
+  daylight_average: string[];
+  radiation_average: string[];
 }
 
-// Return object of getEnergyDataOfWeek 
+// Return object of getEnergyDataOfWeek
 export interface energyDataObj {
-  production: energyWithTimeStamp[] | energyWithTimeStamp,
-  consumption: energyWithTimeStamp[] | energyWithTimeStamp,
-  net: energyWithTimeStamp[] | energyWithTimeStamp,
+  production: energyWithTimeStamp[] | energyWithTimeStamp;
+  consumption: energyWithTimeStamp[] | energyWithTimeStamp;
+  net: energyWithTimeStamp[] | energyWithTimeStamp;
 }
 
 export interface energyWithTimeStamp {
-  value: number,
-  timeStamp: string,
+  value: number;
+  timeStamp: string;
 }
 // Return object for getAllDataOfUser
 export interface fullUserObj {
-  surface_area: string,
-  suburb: string,
-  quarterly_energy_consumption: string,
-  email: string,
-  username: string,
-  user_id: string,
+  surface_area: string;
+  suburb: string;
+  quarterly_energy_consumption: string;
+  email: string;
+  username: string;
+  user_id: string;
   [field: string]: string | number | number;
 }
 
 // Return object for getHourlyEnergyDataOfWeek
 export interface hourlyEnergyDataObj {
-  energy_production_hourly: number[],
-  energy_consumption_hourly: number[],
+  energy_production_hourly: number[];
+  energy_consumption_hourly: number[];
 }
 
 export interface GaugeLabels {
