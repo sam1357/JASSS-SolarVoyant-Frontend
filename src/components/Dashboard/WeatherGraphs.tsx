@@ -15,6 +15,7 @@ const WeatherGraph: React.FC<WeatherGraphProps> = ({ data }) => {
           yAxisWidth={80}
           height="300px"
           categories={["value"]}
+          colors={["blue"]}
         />
       </CardBody>
     </>
