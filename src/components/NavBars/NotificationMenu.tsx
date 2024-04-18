@@ -42,7 +42,7 @@ export default function NotificationMenu({ session }: NotificationMenuProps) {
         setNotifications((prevNotifications) => {
           if (prevNotifications.length !== newNotifs.length) {
             toast({
-              title: "New Notification!",
+              description: "You've got a new notification!",
               status: "info",
               position: "top-right",
               duration: 3000,

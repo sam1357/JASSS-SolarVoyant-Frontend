@@ -9,11 +9,20 @@ describe("UserDataContainer", () => {
   });
 
   afterEach(() => {
-    cy.get("[id=test-delete-account]").click();
-    cy.get("button").contains("Delete").click();
-
-    // url should no longer be /dashboard/settings
-    cy.url().should("not.include", "/dashboard/settings");
+    cy.request({
+      method: "POST",
+      url: "/api/auth/login",
+      body: JSON.stringify({ email, password }),
+      failOnStatusCode: false,
+    }).then((res) => {
+      if (res.status === 200) {
+        const userID = res.body.user.id;
+        expect(userID).to.not.equal("");
+        cy.request("DELETE", `/api/deleteUser`, { userID }).then((res) => {
+          expect(res.status).to.equal(200);
+        });
+      }
+    });
   });
 
   it("allows updating username", () => {
