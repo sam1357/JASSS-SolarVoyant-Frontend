@@ -1,19 +1,10 @@
 "use client";
 
-import {
-  Box,
-  Card,
-  Divider,
-  Flex,
-  Grid,
-  GridItem,
-  Heading,
-  HStack,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Flex, Grid, GridItem, Heading, HStack, VStack } from "@chakra-ui/react";
 import Graph, { DAILY_CONDITIONS } from "@components/Dashboard/Graph";
 import StatsCard from "@components/Dashboard/StatsCard";
 import Insights from "@src/components/Dashboard/Insights";
+import WeekEnergyCard from "@src/components/Dashboard/WeekEnergyCard";
 import {
   AverageDailyInWeekWeatherData,
   currentWeatherData,
@@ -28,6 +19,7 @@ interface OverviewPageClientProps {
   weeklyOverviewGraphData: AverageDailyInWeekWeatherData;
   weeklyEnergyData: energyDataObj;
   insightsData: NextWeekHourlyData | undefined;
+  energyCardsData: energyDataObj;
 }
 
 export default function OverviewPageClient({
@@ -36,7 +28,9 @@ export default function OverviewPageClient({
   weeklyEnergyData,
   weeklyOverviewGraphData,
   insightsData,
+  energyCardsData,
 }: OverviewPageClientProps) {
+  console.log(weeklyEnergyData);
   return (
     <Box width={"100%"} padding={5}>
       <Box paddingStart={5} paddingBottom={5}>
@@ -51,7 +45,9 @@ export default function OverviewPageClient({
             <Box borderRadius="3xl" h="300px" minW="200px" w="20%">
               <StatsCard data={statsCardData} />
             </Box>
-            <Card borderRadius="3xl" h="300px" minW="200px" w="30%" />
+            <Box borderRadius="3xl" h="300px" minW="200px" w="30%" paddingTop={12}>
+              <WeekEnergyCard energyDataName="net" weekEnergyData={energyCardsData} />
+            </Box>
           </HStack>
         </GridItem>
         <GridItem rowSpan={4}>
@@ -63,9 +59,13 @@ export default function OverviewPageClient({
                 schema={DAILY_CONDITIONS}
               ></Graph>
             </Box>
-            <VStack gap={6} paddingTop={3} paddingLeft={5} width={"29%"}>
-              <Card borderRadius="3xl" h="200px" minW="200px" w="100%" />
-              <Card borderRadius="3xl" h="200px" minW="200px" w="100%" />
+            <VStack gap={6} paddingTop={3} paddingLeft={5} width={"30%"}>
+              <Box width={"100%"}>
+                <WeekEnergyCard energyDataName="prod" weekEnergyData={energyCardsData} />
+              </Box>
+              <Box width={"100%"}>
+                <WeekEnergyCard energyDataName="cons" weekEnergyData={energyCardsData} />
+              </Box>
             </VStack>
           </Flex>
         </GridItem>
