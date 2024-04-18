@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Card, Divider, Flex, Grid, GridItem, HStack } from "@chakra-ui/react";
+import { Box, Divider, Flex, Grid, GridItem, HStack } from "@chakra-ui/react";
 import {
   AverageDailyInWeekWeatherData,
   Conditions,
@@ -31,8 +31,8 @@ export default function ForecastPageClient({
   weatherData,
   energyData,
   averageConditions,
-  weekWeatherCodes, 
-  dailyEnergyData
+  weekWeatherCodes,
+  dailyEnergyData,
 }: ForecastPageClientProps) {
   const [selectedCard, setSelectedCard] = useState<number>(0); // INDEX
   const conditionOfDay: Conditions & { units: Units } = {
@@ -43,21 +43,32 @@ export default function ForecastPageClient({
   return (
     <Box width={"100%"} padding={5}>
       <Flex justifyContent="center" pb={1}>
-        <CardSet data={weekWeatherCodes} selectedCard={selectedCard} setSelectedCard={setSelectedCard} />
+        <CardSet
+          data={weekWeatherCodes}
+          selectedCard={selectedCard}
+          setSelectedCard={setSelectedCard}
+        />
       </Flex>
       <Divider pb={10} />
       <Grid templateRows="repeat(5, 1fr)" gap={{ base: 10, sm: 10, md: 10, lg: 10, xl: 6 }} my={10}>
         <GridItem rowSpan={1} h="100%" pr={2} overflowX="scroll">
           <HStack gap={2} w="100%">
-            
-            <DayEnergyCard energyDataName={"prod"} dailyEnergyData={dailyEnergyData} dayIndex={selectedCard}>
-            </DayEnergyCard>
+            <DayEnergyCard
+              energyDataName={"prod"}
+              dailyEnergyData={dailyEnergyData}
+              dayIndex={selectedCard}
+            ></DayEnergyCard>
 
-            <DayEnergyCard energyDataName={"cons"} dailyEnergyData={dailyEnergyData} dayIndex={selectedCard}>
-            </DayEnergyCard>
+            <DayEnergyCard
+              energyDataName={"cons"}
+              dailyEnergyData={dailyEnergyData}
+              dayIndex={selectedCard}
+            ></DayEnergyCard>
 
-            <DayNetEnergyCard dailyEnergyData={dailyEnergyData} dayIndex={selectedCard}>
-            </DayNetEnergyCard>
+            <DayNetEnergyCard
+              dailyEnergyData={dailyEnergyData}
+              dayIndex={selectedCard}
+            ></DayNetEnergyCard>
           </HStack>
         </GridItem>
         <GridItem rowSpan={4}>
@@ -73,9 +84,9 @@ export default function ForecastPageClient({
                 height={"100%"}
               >
                 {/* <GridItem rowSpan={1}> */}
-                  {weatherData && (
-                    <Insights data={weatherData} isWeekly={false} selectedCard={selectedCard} />
-                  )}
+                {weatherData && (
+                  <Insights data={weatherData} isWeekly={false} selectedCard={selectedCard} />
+                )}
                 {/* </GridItem> */}
                 <GridItem rowSpan={2}>
                   <Graph

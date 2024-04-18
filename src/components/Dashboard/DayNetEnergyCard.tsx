@@ -1,13 +1,11 @@
 "use client";
-import { Card, CardBody, Box, Heading, Text, Image, Center, HStack, VStack, useColorMode } from "@chakra-ui/react";
-import { WeekWeatherCodes, energyDataObj, energyWithTimeStamp } from "@interfaces/index";
-import { getDayOfWeek } from "./utils";
+import { Card, Heading, HStack, VStack } from "@chakra-ui/react";
+import { energyDataObj, energyWithTimeStamp } from "@interfaces/index";
 import { useEffect, useState } from "react";
-import { Grenze } from "next/font/google";
 
 interface DayNetEnergyCardProps {
-    dailyEnergyData: energyDataObj;
-    dayIndex: number;
+  dailyEnergyData: energyDataObj;
+  dayIndex: number;
 }
 
 // type Index = 0 | 1 | 2 | 3 | 4 | 5 | 6;
@@ -17,9 +15,7 @@ const DayNetEnergyCard: React.FC<DayNetEnergyCardProps> = ({ dailyEnergyData, da
   const [percVal, setPercVal] = useState(0);
 
   useEffect(() => {
-    let rawVal = 0;
     const getRawVal = () => {
-
       let rawVal = (dailyEnergyData.netRaw as energyWithTimeStamp[])[dayIndex].value;
       setRawVal(rawVal);
     };
@@ -33,14 +29,22 @@ const DayNetEnergyCard: React.FC<DayNetEnergyCardProps> = ({ dailyEnergyData, da
   }, [dayIndex]); // eslint-disable-line
 
   return (
-    <Card borderRadius="3xl" h="175px" minW="200px" w="50%" backgroundColor={rawVal >= 0 ? "orange.500" : "green.500"}>        
+    <Card
+      borderRadius="3xl"
+      h="175px"
+      minW="200px"
+      w="50%"
+      backgroundColor={rawVal >= 0 ? "orange.500" : "green.500"}
+    >
       <VStack display="flex" justifyContent="center" pt={2} h="100%">
-        <Heading fontSize="2xl" fontWeight={200}>Net Energy</Heading>
+        <Heading fontSize="2xl" fontWeight={200}>
+          Net Energy
+        </Heading>
         <HStack>
           <Heading fontSize="7xl" fontWeight={350} p={1}>
             {rawVal.toFixed(2)} w
           </Heading>
-          <Heading fontSize="4xl" fontWeight={200}p={6}>
+          <Heading fontSize="4xl" fontWeight={200} p={6}>
             or
           </Heading>
           <Heading fontSize="7xl" fontWeight={350} p={1}>

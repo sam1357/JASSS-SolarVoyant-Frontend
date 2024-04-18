@@ -1,16 +1,12 @@
 "use client";
-import { Card, CardBody, Box, Heading, Text, Image, Center, HStack, VStack, useColorMode } from "@chakra-ui/react";
-import { WeekWeatherCodes, energyDataObj, energyWithTimeStamp } from "@interfaces/index";
-import { getDayOfWeek } from "./utils";
+import { Card, Heading, HStack, VStack, useColorMode } from "@chakra-ui/react";
+import { energyDataObj, energyWithTimeStamp } from "@interfaces/index";
 import { useEffect, useState } from "react";
 
 interface WeekEnergyCardProps {
-    energyDataName: "prod" | "cons" | "net";
-    weekEnergyData: energyDataObj;
+  energyDataName: "prod" | "cons" | "net";
+  weekEnergyData: energyDataObj;
 }
-
-// type Index = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-
 
 const WeekEnergyCard: React.FC<WeekEnergyCardProps> = ({ energyDataName, weekEnergyData }) => {
   const [dataName, setDataName] = useState("");
@@ -18,7 +14,7 @@ const WeekEnergyCard: React.FC<WeekEnergyCardProps> = ({ energyDataName, weekEne
   const [unit, setUnit] = useState("");
 
   const { colorMode } = useColorMode();
-  
+
   useEffect(() => {
     // Get the name of the day of the week
     const getDataName = () => {
@@ -28,7 +24,7 @@ const WeekEnergyCard: React.FC<WeekEnergyCardProps> = ({ energyDataName, weekEne
       } else if (energyDataName === "cons") {
         dataName = "Energy Consumption";
       } else {
-        dataName = "Net Energy"
+        dataName = "Net Energy";
       }
       setDataName(dataName);
     };
@@ -59,7 +55,6 @@ const WeekEnergyCard: React.FC<WeekEnergyCardProps> = ({ energyDataName, weekEne
       setUnit(unit);
     };
     getUnit();
-
   }, []); // eslint-disable-line
 
   let netColor: string;
@@ -72,7 +67,7 @@ const WeekEnergyCard: React.FC<WeekEnergyCardProps> = ({ energyDataName, weekEne
       } else {
         netColor = "orange.500";
       }
-    } 
+    }
   } else {
     netColor = "whiteAlpha.200";
   }
@@ -80,7 +75,9 @@ const WeekEnergyCard: React.FC<WeekEnergyCardProps> = ({ energyDataName, weekEne
   return (
     <Card borderRadius="3xl" h="175px" minW="200px" w="25%" backgroundColor={netColor}>
       <VStack display="flex" justifyContent="center" alignContent="center" pt={2} h="100%">
-        <Heading fontSize="2xl" fontWeight={200}>{dataName}</Heading>
+        <Heading fontSize="2xl" fontWeight={200}>
+          {dataName}
+        </Heading>
         <HStack>
           <Heading fontSize="7xl" fontWeight={350} p={1}>
             {val.toFixed(2)} {unit}

@@ -1,19 +1,21 @@
 "use client";
-import { Card, CardBody, Box, Heading, Text, Image, Center, HStack, VStack } from "@chakra-ui/react";
-import { WeekWeatherCodes, energyDataObj, energyWithTimeStamp } from "@interfaces/index";
-import { getDayOfWeek } from "./utils";
+import { Card, Heading, HStack, VStack } from "@chakra-ui/react";
+import { energyDataObj, energyWithTimeStamp } from "@interfaces/index";
 import { useEffect, useState } from "react";
-import { TbCoinRupee } from "react-icons/tb";
 
 interface dayEnergyCardProps {
-    energyDataName: "prod" | "cons";
-    dailyEnergyData: energyDataObj;
-    dayIndex: number;
+  energyDataName: "prod" | "cons";
+  dailyEnergyData: energyDataObj;
+  dayIndex: number;
 }
 
 // type Index = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-const DayEnergyCard: React.FC<dayEnergyCardProps> = ({ energyDataName, dailyEnergyData, dayIndex }) => {
+const DayEnergyCard: React.FC<dayEnergyCardProps> = ({
+  energyDataName,
+  dailyEnergyData,
+  dayIndex,
+}) => {
   const [dataName, setDataName] = useState("");
   const [val, setVal] = useState(0);
 
@@ -40,13 +42,14 @@ const DayEnergyCard: React.FC<dayEnergyCardProps> = ({ energyDataName, dailyEner
       setVal(val);
     };
     getVal();
-    
   }, [dayIndex]); // eslint-disable-line
 
   return (
     <Card borderRadius="3xl" h="175px" minW="200px" w="25%">
       <VStack display="flex" justifyContent="center" alignContent="center" pt={2} h="100%">
-        <Heading fontSize="2xl" fontWeight={200}>{dataName}</Heading>
+        <Heading fontSize="2xl" fontWeight={200}>
+          {dataName}
+        </Heading>
         <HStack>
           <Heading fontSize="7xl" fontWeight={350} p={1}>
             {val.toFixed(2)} w

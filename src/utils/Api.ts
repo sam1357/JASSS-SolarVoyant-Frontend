@@ -493,8 +493,8 @@ export class Api {
 
     // (3) Calculate Prediction Coefficients and Write to User
     await handleCoefficientCalculation(user, userId);
-    
-    if (!(user.q1_w === '-1' || user.q2_w === '-1' || user.q3_w === '-1' || user.q4_w === '-1')) {
+
+    if (!(user.q1_w === "-1" || user.q2_w === "-1" || user.q3_w === "-1" || user.q4_w === "-1")) {
       await calculateProdCoefficientVals(user, userId);
     }
 
@@ -543,7 +543,7 @@ export class Api {
         }
 
         let currNetEnergyRawEntry: energyWithTimeStamp = {
-          value: (currProd - currCons),
+          value: currProd - currCons,
           timeStamp: timeStamp,
         };
         netEnergyRawHourly.push(currNetEnergyRawEntry);
@@ -554,7 +554,7 @@ export class Api {
         production: prodHourly,
         consumption: consHourly,
         net: netEnergyHourly,
-        netRaw: netEnergyHourly
+        netRaw: netEnergyHourly,
       };
 
       // (b) Seven Sets of Values for each day in the week
@@ -602,9 +602,9 @@ export class Api {
         netEnergyPerc.push(netEnergyEntry);
 
         let netEnergyRawEntry: energyWithTimeStamp = {
-          value: (prodSum - consSum),
-          timeStamp: timeStamp
-        }
+          value: prodSum - consSum,
+          timeStamp: timeStamp,
+        };
         netEnergyRaw.push(netEnergyRawEntry);
       }
 
@@ -631,7 +631,7 @@ export class Api {
       consSum /= HOURS_IN_WEEK;
 
       let netEnergyVal = parseFloat((((prodSum - consSum) / prodSum) * 100).toFixed(3));
-      let netEnergyRawVal = (prodSum - consSum);
+      let netEnergyRawVal = prodSum - consSum;
       energyDataRes = {
         production: {
           value: prodSum,
@@ -647,8 +647,8 @@ export class Api {
         },
         netRaw: {
           value: netEnergyRawVal,
-          timeStamp: timeStamp
-        }
+          timeStamp: timeStamp,
+        },
       };
     }
 

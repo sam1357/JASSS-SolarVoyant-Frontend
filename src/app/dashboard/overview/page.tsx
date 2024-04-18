@@ -30,8 +30,6 @@ export default async function DashboardPage() {
 
   let dailyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(session?.user?.id, "week");
 
-
-
   // TODO: Still working on organising this, setup below is just to show how to pass data
   return (
     <>
@@ -50,14 +48,11 @@ export default async function DashboardPage() {
       </Box>
 
       <VStack gap={2} w="100%">
-        <WeekEnergyCard energyDataName={"net"} weekEnergyData={dailyEnergyData}>
-        </WeekEnergyCard>
-        <WeekEnergyCard energyDataName={"cons"} weekEnergyData={dailyEnergyData}>
-        </WeekEnergyCard>
-        <WeekEnergyCard energyDataName={"prod"} weekEnergyData={dailyEnergyData}>
-        </WeekEnergyCard>
+        <WeekEnergyCard energyDataName={"net"} weekEnergyData={dailyEnergyData}></WeekEnergyCard>
+        <WeekEnergyCard energyDataName={"cons"} weekEnergyData={dailyEnergyData}></WeekEnergyCard>
+        <WeekEnergyCard energyDataName={"prod"} weekEnergyData={dailyEnergyData}></WeekEnergyCard>
       </VStack>
-      
+
       <Box>{insightData && <Insights data={insightData} isWeekly={true} selectedCard={0} />}</Box>
     </>
   );

@@ -9,16 +9,15 @@ export default async function ForecastPage() {
   const averageConditionsOfWeek = await Api.getDailyAverageConditionsDataOfWeek("Kensington");
   const session = await getServerSession(authOptions);
   const hourlyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(session?.user?.id, "hour");
-  
+
   // Get Insights Data
   let insightData: NextWeekHourlyData | undefined = undefined;
   if (Object.keys(store.getState().insightData).length === 0) {
     insightData = await Api.getWeekWeatherData(true, "Kensington");
     store.dispatch(setInsightData(insightData));
   }
-  
+
   // Get Week Weather Codes
-  const result: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek("Kensington");
   const weekWeatherCodes: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek("Kensington"); // FIXME: change hardcode
 
   // Get Energy Data for Forecast Cards
@@ -35,13 +34,13 @@ export default async function ForecastPage() {
 
   // console.log("AFTER USER:");
   // console.log(user);
-  
+
   return (
     <ForecastPageClient
       weatherData={insightData}
       energyData={hourlyEnergyData}
       averageConditions={averageConditionsOfWeek}
-      weekWeatherCodes={weekWeatherCodes} 
+      weekWeatherCodes={weekWeatherCodes}
       dailyEnergyData={dailyEnergyData}
     />
   );
