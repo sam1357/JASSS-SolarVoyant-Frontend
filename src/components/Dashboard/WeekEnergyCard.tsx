@@ -72,7 +72,7 @@ const WeekEnergyCard: React.FC<WeekEnergyCardProps> = ({ energyDataName, weekEne
   }
 
   return (
-    <Card borderRadius="3xl" h="200px" backgroundColor={netColor}>
+    <Card borderRadius="3xl" h="210px" backgroundColor={netColor}>
       <VStack display="flex" justifyContent="center" alignContent="center" pt={2} h="100%">
         <Heading fontSize="2xl" fontWeight={200}>
           {dataName}

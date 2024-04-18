@@ -52,48 +52,40 @@ const StatsCard: React.FC<StatsCardProps> = ({ data }) => {
           />
         </Center>
         <Box marginBottom={3}>
-          <Heading fontSize="xl" textAlign="center">
+          <Heading fontSize="xl" textAlign="center" padding={2}>
             {data.weather_code.description}
           </Heading>
         </Box>
-        <Flex width="100%" paddingBottom={3}>
-          <Box paddingLeft={2}>
-            <Text fontSize="md" textAlign="center">
-              Current Temp
-            </Text>
-            <Text fontSize="md" textAlign="center">
-              {data.current_conditions.temperature_2m} °C
-            </Text>
-          </Box>
-          <Divider height="65px" orientation="vertical" color={`rgba(31, 31, 31)`} />
-          <Box paddingLeft={2} paddingRight={2}>
-            <Text fontSize="md" textAlign="center">
-              Daylight Hours
-            </Text>
-            <Text fontSize="md" textAlign="center">
-              {data.current_conditions.daylight_hours}
-            </Text>
-          </Box>
-          <Divider height="65px" orientation="vertical" />
-          <Box paddingLeft={2}>
-            <Text fontSize="md" textAlign="center">
-              Solar Irradiance
-            </Text>
-            <Text fontSize="md" textAlign="center">
-              {data.current_conditions.shortwave_radiation} W/m²
-            </Text>
-          </Box>
-        </Flex>
-        <Button
-          rightIcon={<IoArrowForward />}
-          colorScheme="blue"
-          variant="outline"
-          borderRadius={100}
-          width="100%"
-          height={7}
-        >
-          <Link href="/dashboard/forecast">More Details</Link>
-        </Button>
+        <Box display={"flex"} textAlign={"center"}>
+          <Flex width="100%" justifyContent={"center"} alignContent={"center"}>
+            <Box paddingLeft={2} paddingRight={3}>
+              <Text fontSize="md" textAlign="center">
+                Current Temp
+              </Text>
+              <Text fontSize="md" textAlign="center">
+                {data.current_conditions.temperature_2m} °C
+              </Text>
+            </Box>
+            <Divider height="100%" orientation="vertical" color={`rgba(31, 31, 31)`} />
+            <Box paddingLeft={3} paddingRight={3}>
+              <Text fontSize="md" textAlign="center">
+                Daylight Hours
+              </Text>
+              <Text fontSize="md" textAlign="center">
+                {data.current_conditions.daylight_hours}
+              </Text>
+            </Box>
+            <Divider height="100%" orientation="vertical" />
+            <Box paddingLeft={3}>
+              <Text fontSize="md" textAlign="center">
+                Solar Irradiance
+              </Text>
+              <Text fontSize="md" textAlign="center">
+                {data.current_conditions.shortwave_radiation} W/m²
+              </Text>
+            </Box>
+          </Flex>
+        </Box>
       </CardBody>
     </Card>
   );

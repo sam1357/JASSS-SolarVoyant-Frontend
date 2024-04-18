@@ -116,7 +116,7 @@ const Insights: React.FC<InsightsProps> = ({ data, isWeekly, selectedCard }) => 
   }
 
   return (
-    <Card borderRadius="3xl" p={2}>
+    <Card borderRadius="3xl" p={2} padding={isWeekly ? 4 : 0}>
       <CardHeader>
         <HStack>
           <Heading as="h2" size="lg">

@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex, Grid, GridItem, Heading, HStack, VStack } from "@chakra-ui/react";
+import { Box, Flex, Grid, GridItem, Heading, Stack, useBreakpoint, VStack } from "@chakra-ui/react";
 import Graph, { DAILY_CONDITIONS } from "@components/Dashboard/Graph";
 import StatsCard from "@components/Dashboard/StatsCard";
 import Insights from "@src/components/Dashboard/Insights";
@@ -30,45 +30,70 @@ export default function OverviewPageClient({
   insightsData,
   energyCardsData,
 }: OverviewPageClientProps) {
+  const breakpoint = useBreakpoint();
   return (
     <Box width={"100%"} padding={5}>
       <Box paddingStart={5} paddingBottom={5}>
         <Heading fontSize={"4xl"}>Welcome, {session?.user?.name}! 👋</Heading>
       </Box>
-      <Grid templateRows="repeat(3, 1fr)" gap={{ base: 10, sm: 10, md: 10, lg: 10, xl: 6 }}>
-        <GridItem rowSpan={1} h="100%" pr={2} overflowX="scroll">
-          <HStack gap={6} w="100%" paddingTop={5}>
-            <Box width={"50%"}>
+      <Grid
+        templateRows="repeat(2, 1fr)"
+        templateColumns="repeat(3, 1fr)"
+        gap={{ base: 10, sm: 10, md: 10, lg: 10, xl: 6 }}
+      >
+        <GridItem pr={2} overflowY="scroll" colSpan={{ base: 3, lg: 2 }}>
+          <Stack
+            w="100%"
+            direction={["md", "sm", "base"].includes(breakpoint) ? "column" : "row"}
+            height={["md", "sm", "base"].includes(breakpoint) ? "column" : "row"}
+            paddingTop={["md", "sm", "base"].includes(breakpoint) ? 2 : 0}
+            gap={6}
+          >
+            <Box
+              minW="300px"
+              w={{ base: "100%", lg: "50%" }}
+              height={"100%"}
+              verticalAlign={"center"}
+            >
               {insightsData && <Insights data={insightsData} isWeekly={true} selectedCard={0} />}
             </Box>
-            <Box borderRadius="3xl" h="300px" minW="200px" w="20%">
+            <Box
+              borderRadius="3xl"
+              minW="250px"
+              paddingTop={["md", "sm", "base"].includes(breakpoint) ? 4 : 0}
+              w={{ base: "100%", lg: "50%" }}
+            >
               <StatsCard data={statsCardData} />
             </Box>
-            <Box borderRadius="3xl" h="300px" minW="200px" w="30%" paddingTop={12}>
+          </Stack>
+          <Box borderRadius="3xl" paddingTop={["md", "sm", "base"].includes(breakpoint) ? 10 : 6}>
+            <Graph
+              weeklyEnergyData={weeklyEnergyData}
+              dailyWeatherData={weeklyOverviewGraphData}
+              schema={DAILY_CONDITIONS}
+            ></Graph>
+          </Box>
+        </GridItem>
+        <GridItem colSpan={{ base: 3, lg: 1 }}>
+          <Stack gap={6} minW="300px" direction="column">
+            <Box width={"100%"}>
               <WeekEnergyCard energyDataName="net" weekEnergyData={energyCardsData} />
             </Box>
-          </HStack>
-        </GridItem>
-        <GridItem rowSpan={4}>
-          <Flex>
-            <Box padding={2} borderRadius="3xl" width="70%" h="600px" paddingTop={4}>
-              <Graph
-                weeklyEnergyData={weeklyEnergyData}
-                dailyWeatherData={weeklyOverviewGraphData}
-                schema={DAILY_CONDITIONS}
-              ></Graph>
+            <Box width={"100%"} paddingTop={["md", "sm", "base"].includes(breakpoint) ? 4 : 0}>
+              <WeekEnergyCard energyDataName="prod" weekEnergyData={energyCardsData} />
             </Box>
-            <VStack gap={6} paddingTop={3} paddingLeft={5} width={"30%"}>
-              <Box width={"100%"}>
-                <WeekEnergyCard energyDataName="prod" weekEnergyData={energyCardsData} />
-              </Box>
-              <Box width={"100%"}>
-                <WeekEnergyCard energyDataName="cons" weekEnergyData={energyCardsData} />
-              </Box>
-            </VStack>
-          </Flex>
+            <Box width={"100%"} paddingTop={["md", "sm", "base"].includes(breakpoint) ? 4 : 0}>
+              <WeekEnergyCard energyDataName="cons" weekEnergyData={energyCardsData} />
+            </Box>
+          </Stack>
         </GridItem>
       </Grid>
     </Box>
   );
+}
+
+{
+  /* <GridItem>
+  
+</GridItem>; */
 }
