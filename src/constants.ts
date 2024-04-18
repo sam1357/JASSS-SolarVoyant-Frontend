@@ -1,7 +1,11 @@
 export const PAGES = [
   { name: "Home", href: "/" },
   { name: "Dashboard", href: "/dashboard/overview" },
-  { name: "Documentation", href: "/documentation" },
+  {
+    name: "Documentation",
+    href: "https://solid-adventure-371rz28.pages.github.io/",
+    isExternal: true,
+  },
 ];
 
 export const GROUP_NAME = "SE3011-24-F14A-03";
@@ -34,3 +38,9 @@ export const CUR_TIMEZONE = "Australia/Sydney";
 export const FORMAT_STRING = "yyyy-MM-dd";
 
 export const SECONDS_IN_HOUR = 3600;
+
+export const HOUSEHOLD_1_CONSUMPTION = "732,745,927,705";
+export const HOUSEHOLD_2_CONSUMPTION = "1278,1232,1565,1162";
+export const HOUSEHOLD_3_CONSUMPTION = "1530,1503,1903,1425";
+export const HOUSEHOLD_4_CONSUMPTION = "1819,1717,2148,1627";
+export const HOUSEHOLD_5_CONSUMPTION = "2158,2082,2761,2007";

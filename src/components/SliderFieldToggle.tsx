@@ -30,63 +30,57 @@ import { Api } from "@utils/Api";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import CustomSlider from "./CustomSlider";
+import getSliderLabelByValue from "@src/utils/getSliderLabelByValue";
 
 interface CustomUserDataContainerProps {
   session: Session;
   heading: string;
   subheading: string;
+  onComplete: () => void;
 }
 
-interface UserEmailFormData {
-  username: string;
+interface surfaceAreaData {
+  surface_area: string;
 }
 
-interface PasswordFormData {
-  currentPassword: string;
-  newPassword: string;
-}
-
-const userSchema = yup.object({
-  username: yup
+const surfaceAreaSchema = yup.object({
+  surface_area: yup
     .string()
-    .required("Username is required.")
-    .matches(/^[\w]+$/, "Username can only contain alphanumeric characters"),
+    .required("Surface area is required.")
 });
 
-const passwordSchema = yup.object({
-  currentPassword: yup
-    .string()
-    .required("Password is required.")
-    .min(6, "Password must contain at least 6 characters."),
-  newPassword: yup.string().required("Please re-type your password."),
-});
-
-const SliderFieldToggle: React.FC<CustomUserDataContainerProps> = ({ session, heading, subheading }) => {
+const SliderFieldToggle: React.FC<CustomUserDataContainerProps> = ({
+  session,
+  heading,
+  subheading,
+  onComplete
+}) => {
   const router = useRouter();
   const toast = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
   const cancelRef = useRef<HTMLButtonElement>(null);
   const [isSwitchOn, setIsSwitchOn] = useState(false);
+  const [sliderValue, setSliderValue] = useState(50);
 
   const handleSwitchChange = () => {
     setIsSwitchOn(!isSwitchOn);
 
     if (!isSwitchOn) {
-        console.log("Switch turned on!")
+      console.log("Switch turned on!");
     }
-  }
+  };
 
   const {
     register: registerUser,
     handleSubmit: handleSubmitUser,
     formState: { errors: userErrors, isSubmitting: isSubmittingUser },
   } = useForm({
-    resolver: yupResolver(userSchema),
+    resolver: yupResolver(surfaceAreaSchema),
   });
 
-  const onUserSubmit = async (data: UserEmailFormData) => {
-    const info = { username: data.username };
+  const onUserSubmit = async (data: surfaceAreaData) => {
+    const info = { surface_area: `${getSliderLabelByValue(sliderValue)}` };
 
     if (session?.user?.email && session?.user?.id) {
       await Api.setUserData(session.user.id, info).then(async (res) => {
@@ -108,59 +102,67 @@ const SliderFieldToggle: React.FC<CustomUserDataContainerProps> = ({ session, he
             duration: 4000,
             isClosable: true,
           });
+          onComplete();
         }
       });
     }
   };
-//   What is the surface area of your solar panels?
-// Toggle the switch if you are unsure to select from common solar panel sizes
+  //   What is the surface area of your solar panels?
+  // Toggle the switch if you are unsure to select from common solar panel sizes
   return (
     <Box my={"auto"} width={"100%"} mx={"auto"} height="100%">
-        <form onSubmit={handleSubmitUser(onUserSubmit)}>
-          <Grid templateColumns="repeat(2, 1fr)" gap={6} mt={8}>
-            <GridItem>
-              <Text fontSize="md">
-                <b>{heading}</b>
-              </Text>
-              <Text fontSize="sm">{subheading}</Text>
-            </GridItem>
-            <GridItem display="flex" alignItems="center" justifyContent="flex-end">
-                <Switch size="md" isChecked={isSwitchOn} onChange={handleSwitchChange}></Switch>
-            </GridItem>
-          </Grid>
+      <form onSubmit={handleSubmitUser(onUserSubmit)}>
+        <Grid templateColumns="repeat(2, 1fr)" gap={6} mt={8}>
+          <GridItem>
+            <Text fontSize="md">
+              <b>{heading}</b>
+            </Text>
+            <Text fontSize="sm">{subheading}</Text>
+          </GridItem>
+          <GridItem display="flex" alignItems="center" justifyContent="flex-end">
+            <Switch size="md" isChecked={isSwitchOn} onChange={handleSwitchChange}></Switch>
+          </GridItem>
+        </Grid>
 
-          <Flex justify="center" align="center" gap={4} mt={8}>
+        <Flex justify="center" align="center" gap={4} mt={8}>
           {isSwitchOn ? (
-              <CustomSlider></CustomSlider>
-            ) : (
+            <CustomSlider value={sliderValue} onChange={setSliderValue}></CustomSlider>
+          ) : (
+            <Grid templateColumns="75fr 25fr" gap={2} mt={8} w={"100%"}>
+              <GridItem w={"100%"}>
               <CustomFormControl
-              errors={userErrors}
-              name="username"
-              label=""
-              defaultValue={session?.user?.name}
-              helperText=""
-              register={registerUser}
-            />
-            )}
-          </Flex>
+                errors={userErrors}
+                name="surface_area"
+                label=""
+                defaultValue={"1.8"}
+                helperText=""
+                register={registerUser}
+              />
+            </GridItem>
+              <GridItem display="flex" alignItems="center" height="100%" justifyContent={"flex-start"}>
+                <Text><b>m²</b></Text>
+              </GridItem>
+            </Grid>
+          )}
+        </Flex>
 
-          <Stack justify="center" align="center" gap={4} mt={20}>
-            <Button
-              isLoading={isSubmittingUser}
-              type="submit"
-              onClick={handleSubmitUser(onUserSubmit)}
-              w={"100%"}
-            >
-              Update Details
-            </Button>
+        <Stack justify="center" align="center" gap={4} mt={20}>
+          <Button
+            isLoading={isSubmittingUser}
+            type="submit"
+            onClick={handleSubmitUser(onUserSubmit)}
+            w={"100%"}
+          >
+            Update Details
+          </Button>
 
-            <Text size={"xs"} color={"Primary"}><b>Back</b></Text>
-
-          </Stack>
-        </form>
-      </Box>
+          <Text size={"xs"} color={"Primary"}>
+            Back
+          </Text>
+        </Stack>
+      </form>
+    </Box>
   );
 };
 
 export default SliderFieldToggle;
- 

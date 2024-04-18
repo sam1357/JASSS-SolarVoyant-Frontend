@@ -185,13 +185,13 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
           </Flex>
 
           <Grid templateColumns="repeat(2, 1fr)" gap={6} mt={8}>
-            <GridItem>
+            <GridItem colSpan={{ base: 2, lg: 1 }}>
               <Text fontSize="md">
                 <b>Username</b>
               </Text>
               <Text fontSize="sm">Enter your new username</Text>
             </GridItem>
-            <GridItem>
+            <GridItem colSpan={{ base: 2, lg: 1 }}>
               <CustomFormControl
                 errors={userErrors}
                 name="username"
@@ -203,9 +203,16 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
             </GridItem>
           </Grid>
 
-          <Flex justify="right" align="center" gap={4} mt={8}>
+          <Flex
+            w={{ base: "100%", lg: "auto" }}
+            justify={{ base: "center", lg: "right" }}
+            align="center"
+            mt={4}
+            mb={6}
+          >
             <Button
               isLoading={isSubmittingUser}
+              w={{ base: "100%", lg: "auto" }}
               type="submit"
               onClick={handleSubmitUser(onUserSubmit)}
             >
@@ -213,7 +220,7 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
             </Button>
           </Flex>
         </form>
-
+        <Divider />
         <Stack width={"100%"} mt={2} mx={"auto"} spacing={1}>
           <Text fontSize="md">
             <b>You can change your existing password below.</b>
@@ -223,7 +230,7 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
             <Link
               color="blue.500"
               fontWeight="semibold"
-              onClick={() => router.push("/forgotPassword")}
+              onClick={() => router.push("/forgot-password")}
               cursor="pointer"
             >
               click here
@@ -234,13 +241,13 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
 
         <form onSubmit={handleSubmitPassword(onPasswordSubmit)}>
           <Grid templateColumns="repeat(2, 1fr)" gap={6} mt={8}>
-            <GridItem>
+            <GridItem colSpan={{ base: 2, lg: 1 }}>
               <Text fontSize="md">
                 <b>Current Password</b>
               </Text>
               <Text fontSize="sm">Enter your current password</Text>
             </GridItem>
-            <GridItem>
+            <GridItem colSpan={{ base: 2, lg: 1 }}>
               <CustomFormControl
                 errors={passwordErrors}
                 name="currentPassword"
@@ -252,13 +259,13 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
               />
             </GridItem>
 
-            <GridItem>
+            <GridItem colSpan={{ base: 2, lg: 1 }}>
               <Text fontSize="md">
                 <b>New Password</b>
               </Text>
               <Text fontSize="sm">Enter your new password</Text>
             </GridItem>
-            <GridItem>
+            <GridItem colSpan={{ base: 2, lg: 1 }}>
               <CustomFormControl
                 errors={passwordErrors}
                 name="newPassword"
@@ -271,9 +278,15 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
             </GridItem>
           </Grid>
 
-          <Flex justify="right" align="center" gap={4} mt={8}>
+          <Flex
+            w={{ base: "100%", lg: "auto" }}
+            justify={{ base: "center", lg: "right" }}
+            align="center"
+            mt={4}
+          >
             <Button
               isLoading={isSubmittingPassword}
+              w={{ base: "100%", lg: "auto" }}
               type="submit"
               onClick={handleSubmitPassword(onPasswordSubmit)}
             >
@@ -282,13 +295,14 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
           </Flex>
         </form>
 
-        <Stack width={"100%"} mt={4} mb={4} mx={"auto"} spacing={4}>
+        <Stack width={"100%"} my={4} mx={"auto"} spacing={4}>
           <Divider mt={5} />
           <Text
             fontSize="md"
             fontWeight="bold"
             color="red.500"
             cursor="pointer"
+            id="test-delete-account"
             _hover={{
               textDecoration: "underline",
             }}

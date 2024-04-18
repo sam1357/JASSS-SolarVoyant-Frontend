@@ -338,4 +338,21 @@ export class Api {
     };
     return result;
   }
+
+  /**
+   * Retrieves user data
+   * @param userID The user ID for which data is being retrieved
+   * @returns {Promise<Response>} - The response from the fetch operation
+   */
+  static async getUserData(userID: string, fields: string): Promise<Response> {
+    console.log(userID);
+    console.log(fields);
+    const res = await fetch("/api/getUserData", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userID, fields }),
+    });
+
+    return res;
+  }
 }

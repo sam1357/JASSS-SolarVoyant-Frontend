@@ -10,6 +10,7 @@ interface CustomFormControlProps {
   helperText?: string;
   inputComponent?: React.ComponentType<any>;
   defaultValue?: string;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 const CustomFormControl: React.FC<CustomFormControlProps> = ({
@@ -21,11 +22,12 @@ const CustomFormControl: React.FC<CustomFormControlProps> = ({
   helperText,
   inputComponent: InputComponent = Input,
   defaultValue,
+  onChange,
 }) => {
   return (
     <FormControl isInvalid={!!errors[name]}>
       {label && <FormLabel>{label}</FormLabel>}
-      <InputComponent placeholder={placeholder} defaultValue={defaultValue} {...register(name)} />
+      <InputComponent placeholder={placeholder} defaultValue={defaultValue} {...register(name)} onChange={onChange} />
       {!!!errors[name] ? (
         <FormHelperText>
           {(helperText && helperText.length !== 0 && helperText) || " "}

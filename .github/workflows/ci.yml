@@ -1,31 +1,33 @@
 name: Frontend CI
 
-on: ["pull_request"]
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 
 jobs:
   CI:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.x]
-
     steps:
       - name: Checkout code repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install pnpm
         run: npm i pnpm@latest -g
 
       - name: Install modules
-        run: pnpm i
+        run: pnpm i --no-frozen-lockfile
 
       - name: Lint
         run: pnpm lint
@@ -33,5 +35,38 @@ jobs:
       - name: Prettier
         run: pnpm prettier
 
-      - name: Build
-        run: pnpm build
+  Cypress-run:
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_CLIENT_ID: ${{secrets.GOOGLE_CLIENT_ID}}
+      GOOGLE_CLIENT_SECRET: ${{secrets.GOOGLE_CLIENT_SECRET}}
+      DEFAULT_REGION: ${{vars.DEFAULT_REGION}}
+      AWS_ACCESS_KEY_ID: ${{secrets.EXEC_AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{secrets.EXEC_AWS_SECRET_ACCESS_KEY}}
+      STAGING_ENV: ${{vars.STAGING_ENV}}
+      NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{secrets.NEXT_PUBLIC_GOOGLE_MAPS_API}}
+      NEXTAUTH_URL: ${{vars.NEXTAUTH_URL}}
+      NEXTAUTH_SECRET: ${{secrets.NEXTAUTH_SECRET}}
+
+    steps:
+      - name: Checkout code repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth:
+
+      - name: Setup node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        run: npm i pnpm@latest -g
+
+      - name: Install modules
+        run: pnpm i
+
+      - name: Cypress Build and Run Tests
+        uses: cypress-io/github-action@v6
+        with:
+          build: pnpm build
+          start: pnpm start
