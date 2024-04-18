@@ -3,6 +3,7 @@ import { Card, CardBody, Box, Heading, Text, Image, Center, HStack, VStack } fro
 import { WeekWeatherCodes, energyDataObj, energyWithTimeStamp } from "@interfaces/index";
 import { getDayOfWeek } from "./utils";
 import { useEffect, useState } from "react";
+import { TbCoinRupee } from "react-icons/tb";
 
 interface dayEnergyCardProps {
     energyDataName: "prod" | "cons";
@@ -39,7 +40,7 @@ const DayEnergyCard: React.FC<dayEnergyCardProps> = ({ energyDataName, dailyEner
       setVal(val);
     };
     getVal();
-
+    
   }, [dayIndex]); // eslint-disable-line
 
   return (
@@ -52,17 +53,6 @@ const DayEnergyCard: React.FC<dayEnergyCardProps> = ({ energyDataName, dailyEner
           </Heading>
         </HStack>
       </VStack>
-      
-      {/* <CardBody>
-        <Heading fontSize="3xl" textAlign="center">
-          {dataName}
-        </Heading>
-        <Box>
-          <Text fontSize="6xl" textAlign="center">
-            {val.toFixed(2)} W
-          </Text>
-        </Box>
-      </CardBody> */}
     </Card>
   );
 };

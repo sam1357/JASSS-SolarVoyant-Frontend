@@ -58,10 +58,6 @@ export default function ForecastPageClient({
 
             <DayNetEnergyCard dailyEnergyData={dailyEnergyData} dayIndex={selectedCard}>
             </DayNetEnergyCard>
-
-            {/* <Card borderRadius="3xl" h="200px" minW="200px" w="25%" />
-            <Card borderRadius="3xl" h="200px" minW="200px" w="25%" />
-            <Card borderRadius="3xl" h="200px" minW="200px" w="50%" /> */}
           </HStack>
         </GridItem>
         <GridItem rowSpan={4}>

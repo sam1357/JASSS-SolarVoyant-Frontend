@@ -1,8 +1,9 @@
 "use client";
-import { Card, CardBody, Box, Heading, Text, Image, Center, HStack, VStack } from "@chakra-ui/react";
+import { Card, CardBody, Box, Heading, Text, Image, Center, HStack, VStack, useColorMode } from "@chakra-ui/react";
 import { WeekWeatherCodes, energyDataObj, energyWithTimeStamp } from "@interfaces/index";
 import { getDayOfWeek } from "./utils";
 import { useEffect, useState } from "react";
+import { Grenze } from "next/font/google";
 
 interface DayNetEnergyCardProps {
     dailyEnergyData: energyDataObj;
@@ -29,11 +30,10 @@ const DayNetEnergyCard: React.FC<DayNetEnergyCardProps> = ({ dailyEnergyData, da
       setPercVal(percVal);
     };
     getPercVal();
-
   }, [dayIndex]); // eslint-disable-line
 
   return (
-    <Card borderRadius="3xl" h="175px" minW="200px" w="50%">        
+    <Card borderRadius="3xl" h="175px" minW="200px" w="50%" backgroundColor={rawVal >= 0 ? "orange.500" : "green.500"}>        
       <VStack display="flex" justifyContent="center" pt={2} h="100%">
         <Heading fontSize="2xl" fontWeight={200}>Net Energy</Heading>
         <HStack>
