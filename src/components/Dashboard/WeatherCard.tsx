@@ -6,14 +6,16 @@ import { useEffect, useState } from "react";
 
 interface WeatherCardProps {
   index: number; // day of week
-  data: WeekWeatherCodes;
+  codeData: WeekWeatherCodes;
   isActive: boolean;
   onClick: () => void;
+  rawNetEnergy: number;
+  percNetEnergy: number;
 }
 
 type Index = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-const WeatherCard: React.FC<WeatherCardProps> = ({ index, data, isActive, onClick }) => {
+const WeatherCard: React.FC<WeatherCardProps> = ({ index, codeData, isActive, onClick, rawNetEnergy, percNetEnergy }) => {
   const [day, setDay] = useState("");
 
   useEffect(() => {
@@ -35,7 +37,7 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ index, data, isActive, onClic
       onClick={onClick}
       cursor="pointer"
       minW="130px"
-      maxW="150px"
+      maxW="180px"
       w="100%"
     >
       <CardBody>
@@ -44,7 +46,7 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ index, data, isActive, onClic
         </Heading>
         <Center>
           <Image
-            src={data[index as Index].image}
+            src={codeData[index as Index].image}
             alt="Weather image"
             style={{ maxWidth: "100%" }}
             marginBottom={-2}
@@ -53,10 +55,10 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ index, data, isActive, onClic
         </Center>
         <Box>
           <Text fontSize="md" textAlign="center">
-            2.22% Excess
+            {percNetEnergy.toFixed(2)}% Excess
           </Text>
           <Text fontSize="xs" textAlign="center">
-            (+242W)
+            ({rawNetEnergy.toFixed(2)} W)
           </Text>
         </Box>
       </CardBody>

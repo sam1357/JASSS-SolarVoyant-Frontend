@@ -1,4 +1,4 @@
-import { CardBody } from "@chakra-ui/react";
+import { CardBody, Flex } from "@chakra-ui/react";
 import { AreaChart } from "@saas-ui/charts";
 
 interface EnergyGraphProps {
@@ -9,14 +9,16 @@ const EnergyGraph: React.FC<EnergyGraphProps> = ({ data }) => {
   return (
     <>
       <CardBody>
-        <AreaChart
-          data={data}
-          yAxisWidth={80}
-          height="300px"
-          categories={["production", "consumption"]}
-          colors={["blue", "orange"]}
-          stack
-        />
+        {/* <Flex justifyContent="center" alignItems="center" height="100%"> */}
+          <AreaChart
+            data={data}
+            yAxisWidth={80}
+            height="90%"
+            categories={["production", "consumption"]}
+            colors={["blue", "orange"]}
+            stack
+          />
+        {/* </Flex> */}
       </CardBody>
     </>
   );

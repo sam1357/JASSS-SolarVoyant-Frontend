@@ -8,6 +8,7 @@ import {
   VStack,
   HStack,
   SimpleGrid,
+  AbsoluteCenter,
 } from "@chakra-ui/react";
 import { getAttributeName } from "./utils";
 import { useEffect, useState } from "react";
@@ -95,9 +96,10 @@ const GaugeCard: React.FC<GaugeCardProps> = ({ data, attribute, labels, inverse 
   }, []); // eslint-disable-line
 
   return (
-    <Card borderRadius="3xl" width="100%" minW="250px">
+    <Card borderRadius="3xl" width="100%" height="100%" minW="250px" align="center">
+      <AbsoluteCenter axis='vertical'>
       <CardBody>
-        <SimpleGrid columns={{ xl: 1, "2xl": 2 }}>
+        <SimpleGrid columns={{ xl: 1, "2xl": 2 }} alignItems="center" justifyContent="center" justifyItems="center">
           <VStack display="flex" justifyContent="center" pt={2}>
             <Heading fontSize="2xl">{title}</Heading>
             <HStack>
@@ -145,6 +147,8 @@ const GaugeCard: React.FC<GaugeCardProps> = ({ data, attribute, labels, inverse 
           </Box>
         </SimpleGrid>
       </CardBody>
+
+      </AbsoluteCenter>
     </Card>
   );
 };

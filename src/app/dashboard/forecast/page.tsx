@@ -4,11 +4,13 @@ import { energyDataObj, NextWeekHourlyData, WeekWeatherCodes } from "@src/interf
 import { Api } from "@utils/Api";
 import store, { setInsightData } from "@src/store";
 import ForecastPageClient from "@app/dashboard/forecast/page-client";
+import { getAllDataOfUser } from "@src/utils/utils";
 
 export default async function ForecastPage() {
-  const averageConditionsOfWeek = await Api.getDailyAverageConditionsDataOfWeek("Kensington");
+  // Get Key User Data
   const session = await getServerSession(authOptions);
-  const hourlyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(session?.user?.id, "hour");
+  let userId = session?.user?.id;
+  let userSuburb: string = (await getAllDataOfUser(userId)).suburb;
 
   // Get Insights Data
   let insightData: NextWeekHourlyData | undefined = undefined;
@@ -16,25 +18,19 @@ export default async function ForecastPage() {
     insightData = await Api.getWeekWeatherData(true, "Kensington");
     store.dispatch(setInsightData(insightData));
   }
-
+  
   // Get Week Weather Codes
   const weekWeatherCodes: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek("Kensington"); // FIXME: change hardcode
-
+  
   // Get Energy Data for Forecast Cards
-  let dailyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(session?.user?.id, "day");
+  const dailyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(userId, "day");
+  
+  // Get Weather data for gauge cards
+  const averageConditionsOfWeek = await Api.getDailyAverageConditionsDataOfWeek("Kensington");
 
-  // DEBUGGING
-  // let user = await getAllDataOfUser(session?.user.id);
-  // console.log("BEFORE USER:");
-  // console.log(user);
-
-  // const res = await Api.getEnergyDataOfWeek(session?.user.id, "week");
-  // console.log("RES: ");
-  // console.log(res);
-
-  // console.log("AFTER USER:");
-  // console.log(user);
-
+  // Get Energy Data for Graph
+  const hourlyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(userId, "hour");
+  
   return (
     <ForecastPageClient
       weatherData={insightData}
