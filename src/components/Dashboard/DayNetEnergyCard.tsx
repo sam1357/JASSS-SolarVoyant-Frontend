@@ -1,50 +1,54 @@
-// "use client";
-// import { Card, CardBody, Box, Heading, Text, Image, Center } from "@chakra-ui/react";
-// import { WeekWeatherCodes, energyDataObj, energyWithTimeStamp } from "@interfaces/index";
-// import { getDayOfWeek } from "./utils";
-// import { useEffect, useState } from "react";
+"use client";
+import { Card, CardBody, Box, Heading, Text, Image, Center, HStack, VStack } from "@chakra-ui/react";
+import { WeekWeatherCodes, energyDataObj, energyWithTimeStamp } from "@interfaces/index";
+import { getDayOfWeek } from "./utils";
+import { useEffect, useState } from "react";
 
-// interface DayNetEnergyCardProps {
-//     dailyEnergyData: energyDataObj;
-//     dayIndex: number;
-// }
+interface DayNetEnergyCardProps {
+    dailyEnergyData: energyDataObj;
+    dayIndex: number;
+}
 
-// // type Index = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+// type Index = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-// const DayEnergyCard: React.FC<DayNetEnergyCardProps> = ({ dailyEnergyData, dayIndex }) => {
-//   const [rawVal, setRawVal] = useState(0);
-//   const [percVal, setPercVal] = useState(0);
+const DayNetEnergyCard: React.FC<DayNetEnergyCardProps> = ({ dailyEnergyData, dayIndex }) => {
+  const [rawVal, setRawVal] = useState(0);
+  const [percVal, setPercVal] = useState(0);
 
-//   useEffect(() => {
-//     let rawVal = 0;
-//     const getRawVal = () => {
+  useEffect(() => {
+    let rawVal = 0;
+    const getRawVal = () => {
 
-//       let rawVal = (dailyEnergyData.netRaw as energyWithTimeStamp[])[dayIndex].value;
-//       setRawVal(rawVal);
-//     };
-//     getRawVal();
+      let rawVal = (dailyEnergyData.netRaw as energyWithTimeStamp[])[dayIndex].value;
+      setRawVal(rawVal);
+    };
+    getRawVal();
 
-//     const getPercVal = () => {
-//       let percVal = (dailyEnergyData.net as energyWithTimeStamp[])[dayIndex].value;
-//       setPercVal(percVal);
-//     };
-//     getPercVal();
+    const getPercVal = () => {
+      let percVal = (dailyEnergyData.net as energyWithTimeStamp[])[dayIndex].value;
+      setPercVal(percVal);
+    };
+    getPercVal();
 
-//   }, []); // eslint-disable-line
+  }, [dayIndex]); // eslint-disable-line
 
-//   return (
-//     <Card borderRadius="3xl" _hover={{ bg: "#0095e6" }}>
-//       <CardBody>
-//         <Heading fontSize="xl" textAlign="center">
-//           {dataName}
-//         </Heading>
-//         <Box>
-//           <Text fontSize="md" textAlign="center">
-//             {val.toFixed(2)} W
-//           </Text>
-//         </Box>
-//       </CardBody>
-//     </Card>
-//   );
-// };
-// export default DayNetEnergyCardProps;
+  return (
+    <Card borderRadius="3xl" h="175px" minW="200px" w="50%">        
+      <VStack display="flex" justifyContent="center" pt={2} h="100%">
+        <Heading fontSize="2xl" fontWeight={200}>Net Energy</Heading>
+        <HStack>
+          <Heading fontSize="7xl" fontWeight={350} p={1}>
+            {rawVal.toFixed(2)} w
+          </Heading>
+          <Heading fontSize="4xl" fontWeight={200}p={6}>
+            or
+          </Heading>
+          <Heading fontSize="7xl" fontWeight={350} p={1}>
+            {percVal.toFixed(2)} %
+          </Heading>
+        </HStack>
+      </VStack>
+    </Card>
+  );
+};
+export default DayNetEnergyCard;

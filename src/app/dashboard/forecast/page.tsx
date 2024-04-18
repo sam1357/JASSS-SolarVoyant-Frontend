@@ -1,18 +1,23 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@src/authOptions";
 import { NextWeekHourlyData, WeekWeatherCodes, energyDataObj } from "@src/interfaces";
 import { Api } from "@utils/Api";
 import store, { setInsightData } from "@src/store";
 import ForecastPageClient from "@app/dashboard/forecast/page-client";
-import { getAllDataOfUser } from "@src/utils/utils";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@src/authOptions";
 
 export default async function ForecastPage() {
+  const result: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek("Kensington");
+  const averageConditionsOfWeek = await Api.getDailyAverageConditionsDataOfWeek("Kensington");
   const session = await getServerSession(authOptions);
-  
+  console.log(session?.user?.id as string);
+
+  const res = await Api.getEnergyDataOfWeek(session?.user?.id as string, "week");
+  console.log(res);
+
   // Get Insights Data
   let insightData: NextWeekHourlyData | undefined = undefined;
   if (Object.keys(store.getState().insightData).length === 0) {
-    insightData = await Api.getWeekWeatherData(false, "Kensington"); // FIXME: change hardcode
+    insightData = await Api.getWeekWeatherData(false, "Kensington");
     store.dispatch(setInsightData(insightData));
   }
   
@@ -34,5 +39,13 @@ export default async function ForecastPage() {
   // console.log("AFTER USER:");
   // console.log(user);
   
-  return <ForecastPageClient weekWeatherCodes={weekWeatherCodes} dailyEnergyData={dailyEnergyData} />;
+  return (
+    <ForecastPageClient
+      result={result}
+      insightData={insightData}
+      averageConditions={averageConditionsOfWeek}
+      weekWeatherCodes={weekWeatherCodes} 
+      dailyEnergyData={dailyEnergyData}
+    />
+  );
 }

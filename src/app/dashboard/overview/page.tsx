@@ -1,11 +1,12 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { Box, Heading, VStack } from "@chakra-ui/react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@src/authOptions";
-import { AverageDailyInWeekWeatherData, currentWeatherData } from "@src/interfaces";
+import { AverageDailyInWeekWeatherData, currentWeatherData, energyDataObj } from "@src/interfaces";
 import { Api } from "@utils/Api";
 import StatsCard from "@components/Dashboard/StatsCard";
 import store, { setInsightData } from "@src/store";
 import Graph, { DAILY_CONDITIONS } from "@components/Dashboard/Graph";
+import WeekEnergyCard from "@src/components/Dashboard/WeekEnergyCard";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -21,6 +22,10 @@ export default async function DashboardPage() {
   }
   // const insightData = store.getState().insightData;
 
+  let dailyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(session?.user?.id, "week");
+
+
+
   // TODO: Still working on organising this, setup below is just to show how to pass data
   return (
     <>
@@ -33,6 +38,16 @@ export default async function DashboardPage() {
       <Box padding={5} borderRadius="3xl">
         <Graph dailyWeatherData={weeklyOverviewGraphData} schema={DAILY_CONDITIONS}></Graph>
       </Box>
+
+      <VStack gap={2} w="100%">
+        <WeekEnergyCard energyDataName={"net"} weekEnergyData={dailyEnergyData}>
+        </WeekEnergyCard>
+        <WeekEnergyCard energyDataName={"cons"} weekEnergyData={dailyEnergyData}>
+        </WeekEnergyCard>
+        <WeekEnergyCard energyDataName={"prod"} weekEnergyData={dailyEnergyData}>
+        </WeekEnergyCard>
+      </VStack>
+      
     </>
   );
 }

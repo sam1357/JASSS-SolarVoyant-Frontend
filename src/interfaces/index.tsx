@@ -159,13 +159,7 @@ export interface currentWeatherData {
 // Used for Weekly Overview Graph Overview Page
 export interface AverageDailyInWeekWeatherData {
   units: Units;
-  0: Conditions;
-  1: Conditions;
-  2: Conditions;
-  3: Conditions;
-  4: Conditions;
-  5: Conditions;
-  6: Conditions;
+  [key: number]: Conditions;
 }
 
 // Used for the Weather Card Set in Forecast Page
@@ -276,4 +270,15 @@ export interface GaugeLabels {
   };
   minimum: number;
   maximum: number;
+}
+
+export interface InsightProcessedData {
+  severeWeather: number[];
+  lowPrecipitation: number[];
+  timeFrame?: Timeframes[];
+}
+
+export interface Timeframes {
+  start: number;
+  end: number;
 }

@@ -4,17 +4,17 @@ import { WeekWeatherCodes, energyDataObj, energyWithTimeStamp } from "@interface
 import { getDayOfWeek } from "./utils";
 import { useEffect, useState } from "react";
 
-interface dayEnergyCardProps {
-    energyDataName: "prod" | "cons";
-    dailyEnergyData: energyDataObj;
-    dayIndex: number;
+interface WeekEnergyCardProps {
+    energyDataName: "prod" | "cons" | "net";
+    weekEnergyData: energyDataObj;
 }
 
 // type Index = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-const DayEnergyCard: React.FC<dayEnergyCardProps> = ({ energyDataName, dailyEnergyData, dayIndex }) => {
+const WeekEnergyCard: React.FC<WeekEnergyCardProps> = ({ energyDataName, weekEnergyData }) => {
   const [dataName, setDataName] = useState("");
   const [val, setVal] = useState(0);
+  const [unit, setUnit] = useState("");
 
   useEffect(() => {
     // Get the name of the day of the week
@@ -22,8 +22,10 @@ const DayEnergyCard: React.FC<dayEnergyCardProps> = ({ energyDataName, dailyEner
       let dataName = "";
       if (energyDataName === "prod") {
         dataName = "Energy Production";
-      } else {
+      } else if (energyDataName === "cons") {
         dataName = "Energy Consumption";
+      } else {
+        dataName = "Net Energy"
       }
       setDataName(dataName);
     };
@@ -32,15 +34,30 @@ const DayEnergyCard: React.FC<dayEnergyCardProps> = ({ energyDataName, dailyEner
     const getVal = () => {
       let val = 0;
       if (energyDataName === "prod") {
-        val = (dailyEnergyData.production as energyWithTimeStamp[])[dayIndex].value;
+        val = (weekEnergyData.production as energyWithTimeStamp).value;
+      } else if (energyDataName === "cons") {
+        val = (weekEnergyData.consumption as energyWithTimeStamp).value;
       } else {
-        val = (dailyEnergyData.consumption as energyWithTimeStamp[])[dayIndex].value;
+        val = (weekEnergyData.net as energyWithTimeStamp).value;
       }
       setVal(val);
     };
     getVal();
 
-  }, [dayIndex]); // eslint-disable-line
+    const getUnit = () => {
+      let unit = "";
+      if (energyDataName === "prod") {
+        unit = "w";
+      } else if (energyDataName === "cons") {
+        unit = "w";
+      } else {
+        unit = "%";
+      }
+      setUnit(unit);
+    };
+    getUnit();
+
+  }, []); // eslint-disable-line
 
   return (
     <Card borderRadius="3xl" h="175px" minW="200px" w="25%">
@@ -48,22 +65,11 @@ const DayEnergyCard: React.FC<dayEnergyCardProps> = ({ energyDataName, dailyEner
         <Heading fontSize="2xl" fontWeight={200}>{dataName}</Heading>
         <HStack>
           <Heading fontSize="7xl" fontWeight={350} p={1}>
-            {val.toFixed(2)} w
+            {val.toFixed(2)} {unit}
           </Heading>
         </HStack>
       </VStack>
-      
-      {/* <CardBody>
-        <Heading fontSize="3xl" textAlign="center">
-          {dataName}
-        </Heading>
-        <Box>
-          <Text fontSize="6xl" textAlign="center">
-            {val.toFixed(2)} W
-          </Text>
-        </Box>
-      </CardBody> */}
     </Card>
   );
 };
-export default DayEnergyCard;
+export default WeekEnergyCard;

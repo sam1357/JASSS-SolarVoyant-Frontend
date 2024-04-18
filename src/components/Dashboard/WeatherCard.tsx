@@ -1,17 +1,19 @@
 "use client";
 import { Card, CardBody, Box, Heading, Text, Image, Center } from "@chakra-ui/react";
 import { WeekWeatherCodes } from "@interfaces/index";
-import { getDayOfWeek } from "./utils";
+import { getDayOfWeek } from "@components/Dashboard/utils";
 import { useEffect, useState } from "react";
 
 interface WeatherCardProps {
   index: number; // day of week
   data: WeekWeatherCodes;
+  isActive: boolean;
+  onClick: () => void;
 }
 
 type Index = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-const WeatherCard: React.FC<WeatherCardProps> = ({ index, data }) => {
+const WeatherCard: React.FC<WeatherCardProps> = ({ index, data, isActive, onClick }) => {
   const [day, setDay] = useState("");
 
   useEffect(() => {
@@ -24,8 +26,18 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ index, data }) => {
   }, []); // eslint-disable-line
 
   return (
-    // TODO: Currently changes colour on hover, change to on select
-    <Card borderRadius="3xl" _hover={{ bg: "#0095e6" }}>
+    <Card
+      borderRadius="3xl"
+      _hover={{ bg: "primary.400", textColor: "white" }}
+      _active={{ bg: "primary.500" }}
+      bg={isActive ? "primary.500" : "whiteAlpha.200"}
+      textColor={isActive ? "white" : "auto"}
+      onClick={onClick}
+      cursor="pointer"
+      minW="130px"
+      maxW="150px"
+      w="100%"
+    >
       <CardBody>
         <Heading fontSize="xl" textAlign="center">
           {day}

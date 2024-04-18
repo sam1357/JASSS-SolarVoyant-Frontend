@@ -347,7 +347,6 @@ export class Api {
    */
   static async getWeatherCodeDataOfWeek(suburb: string): Promise<WeekWeatherCodes> {
     let weatherCodeArray: number[] = [];
-
     // (1) Get Current Weather Code
     //// (a) Call Retrieval for Today
     const weatherData: RetrieveReturnObject = await Api.retrieveWeatherData(
@@ -363,7 +362,6 @@ export class Api {
     const currentHour = getCurrentHour();
 
     currentWeatherCode = events[currentHour].attributes.weather_code;
-
     //// (c) Add Current Weather Code to Array
     weatherCodeArray.push(currentWeatherCode);
 
@@ -502,6 +500,7 @@ export class Api {
 
     // (4) Retrieve Energy Data
     let res: hourlyEnergyDataObj = await getHourlyEnergyDataOfWeek(user);
+    console.log(res);
     // (5) Apply the provided time unit
     let energyDataRes: energyDataObj;
 
