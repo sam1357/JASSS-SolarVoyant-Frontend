@@ -38,3 +38,11 @@ export const CUR_TIMEZONE = "Australia/Sydney";
 export const FORMAT_STRING = "yyyy-MM-dd";
 
 export const SECONDS_IN_HOUR = 3600;
+
+export const LOW_PRECIP_THRESHOLD = 15;
+export const SEVERE_WEATHER_THRESHOLD = 82;
+export const TIMEFRAME_THRESHOLD = 4;
+export const MORNING_HOUR_CUTOFF = 5;
+export const EVENING_HOUR_CUTOFF = 18;
+export const HOURS_IN_WEEK = 168;
+export const HOURS_IN_DAY = 24;

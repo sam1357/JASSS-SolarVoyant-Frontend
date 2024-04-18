@@ -6,6 +6,7 @@ import {
   AverageDailyInWeekWeatherData,
   ConditionsSelectorData,
   DayConditions,
+  energyDataObj,
   NextWeekHourlyData,
 } from "@src/interfaces";
 import { getAttributeName, getShortDate, getTime } from "./utils";
@@ -15,11 +16,14 @@ import { BsCloudsFill, BsSunFill } from "react-icons/bs";
 import { SlEnergy } from "react-icons/sl";
 import WeatherGraph from "./WeatherGraphs";
 import { SECONDS_IN_HOUR } from "@src/constants";
+import EnergyGraph from "./EnergyGraphs";
 
 interface GraphProps {
   dailyWeatherData?: AverageDailyInWeekWeatherData;
   hourlyWeatherData?: NextWeekHourlyData;
   indexDay?: number; // which upcoming day you want it for
+  weeklyEnergyData?: energyDataObj;
+  hourlyEnergyData?: energyDataObj;
   schema: ConditionsSelectorData[];
 }
 
@@ -75,11 +79,29 @@ export const HOURLY_CONDITIONS: ConditionsSelectorData[] = [
     value: "cloud_cover",
     icon: <BsCloudsFill />,
   },
+  {
+    label: "Generation VS Consumption",
+    unit: "W",
+    value: "generation_consumption",
+    icon: <SlEnergy />,
+  },
 ];
 
-const Graph: React.FC<GraphProps> = ({ dailyWeatherData, hourlyWeatherData, indexDay, schema }) => {
-  const [formattedData, setFormattedData] = useState<{ date: string; value: number }[]>([]);
-  const [condition, setCondition] = useState<string>("temperature_2m");
+const Graph: React.FC<GraphProps> = ({
+  dailyWeatherData,
+  hourlyWeatherData,
+  indexDay,
+  weeklyEnergyData,
+  hourlyEnergyData,
+  schema,
+}) => {
+  const [formattedWeatherData, setFormattedWeatherData] = useState<
+    { date: string; value: number }[]
+  >([]);
+  const [formattedEnergyData, setFormattedEnergyData] = useState<
+    { date: string; production: number; consumption: number }[]
+  >([]);
+  const [condition, setCondition] = useState<string>("generation_consumption");
   const { onClose } = useDisclosure();
 
   useEffect(() => {
@@ -108,11 +130,33 @@ const Graph: React.FC<GraphProps> = ({ dailyWeatherData, hourlyWeatherData, inde
           value: adjustedValue,
         };
       });
-      setFormattedData(newData);
+      setFormattedWeatherData(newData);
     } else {
-      // coming soon
+      let prodDataValues: number[] | undefined = [];
+      let consDataValues: number[] | undefined = [];
+      if (weeklyEnergyData) {
+        prodDataValues = Object.values(weeklyEnergyData.production).map((values) => values.value);
+        consDataValues = Object.values(weeklyEnergyData.consumption).map((values) => values.value);
+      } else if (hourlyEnergyData && indexDay !== undefined) {
+        const start = 24 * indexDay;
+        const finish = start + 24;
+        prodDataValues = Object.values(hourlyEnergyData.production)
+          .map((values) => values.value)
+          .slice(start, finish);
+        consDataValues = Object.values(hourlyEnergyData.consumption)
+          .map((values) => values.value)
+          .slice(start, finish);
+      }
+      prodDataValues = prodDataValues.map((value) => parseFloat(value.toFixed(0)));
+      consDataValues = consDataValues.map((value) => parseFloat(value.toFixed(0)));
+      let newData = prodDataValues.map((prodValue, i) => ({
+        date: weeklyEnergyData ? getShortDate(i) : getTime(i),
+        production: prodValue,
+        consumption: consDataValues[i],
+      }));
+      setFormattedEnergyData(newData);
     }
-  }, [condition]); // eslint-disable-line
+  }, [condition, indexDay]); // eslint-disable-line
 
   return (
     <Card borderRadius={"3xl"}>
@@ -136,9 +180,9 @@ const Graph: React.FC<GraphProps> = ({ dailyWeatherData, hourlyWeatherData, inde
         </Flex>
       </CardHeader>
       {condition !== "generation_consumption" ? (
-        <WeatherGraph data={formattedData} />
+        <WeatherGraph data={formattedWeatherData} />
       ) : (
-        <Heading>hi</Heading>
+        <EnergyGraph data={formattedEnergyData} />
       )}
     </Card>
   );

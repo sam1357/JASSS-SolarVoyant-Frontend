@@ -159,13 +159,7 @@ export interface currentWeatherData {
 // Used for Weekly Overview Graph Overview Page
 export interface AverageDailyInWeekWeatherData {
   units: Units;
-  0: Conditions;
-  1: Conditions;
-  2: Conditions;
-  3: Conditions;
-  4: Conditions;
-  5: Conditions;
-  6: Conditions;
+  [key: number]: Conditions;
 }
 
 // Used for the Weather Card Set in Forecast Page
@@ -226,6 +220,41 @@ export interface ModeWeatherCode {
   };
 }
 
+export interface quarterlySuburbConditions {
+  suburb: string;
+  temp_average: string[];
+  daylight_average: string[];
+  radiation_average: string[];
+}
+
+// Return object of getEnergyDataOfWeek
+export interface energyDataObj {
+  production: energyWithTimeStamp[] | energyWithTimeStamp;
+  consumption: energyWithTimeStamp[] | energyWithTimeStamp;
+  net: energyWithTimeStamp[] | energyWithTimeStamp;
+}
+
+export interface energyWithTimeStamp {
+  value: number;
+  timeStamp: string;
+}
+// Return object for getAllDataOfUser
+export interface fullUserObj {
+  surface_area: string;
+  suburb: string;
+  quarterly_energy_consumption: string;
+  email: string;
+  username: string;
+  user_id: string;
+  [field: string]: string | number | number;
+}
+
+// Return object for getHourlyEnergyDataOfWeek
+export interface hourlyEnergyDataObj {
+  energy_production_hourly: number[];
+  energy_consumption_hourly: number[];
+}
+
 export interface GaugeLabels {
   low: {
     label: string;
@@ -240,4 +269,15 @@ export interface GaugeLabels {
   };
   minimum: number;
   maximum: number;
+}
+
+export interface InsightProcessedData {
+  severeWeather: number[];
+  lowPrecipitation: number[];
+  timeFrame?: Timeframes[];
+}
+
+export interface Timeframes {
+  start: number;
+  end: number;
 }

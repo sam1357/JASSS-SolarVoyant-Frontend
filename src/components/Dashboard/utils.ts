@@ -60,12 +60,13 @@ export function getTime(index: number): string {
 export function getAttributeName(attribute: string) {
   switch (attribute) {
     case "shortwave_radiation":
-    case "solar_radiation":
       return "Solar Irradiance";
     case "temperature_2m":
       return "Temperature";
     case "daylight_hours":
       return "Daylight Hours";
+    case "sunshine_hours":
+      return "Sunshine Hours";
     case "cloud_cover":
       return "Cloud Cover";
     case "sunshine_duration":
