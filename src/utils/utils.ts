@@ -12,13 +12,9 @@ import {
   quarterlySuburbConditions,
 } from "@src/interfaces";
 import { format, toZonedTime } from "date-fns-tz";
-
 import numeric from "numeric";
-import dotenv from "dotenv";
-import { fromEnv } from "@aws-sdk/credential-providers";
-import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { ErrorWithStatus } from "@utils/ErroWithStatus";
 import LambdaInvoker from "@utils/lambdaInvoker";
+
 /**
  * Checks if a string is a parse-able JSON object
  * @param s the string to check
@@ -110,13 +106,9 @@ export async function handleCoefficientCalculation(user: any, userId: string): P
   const daylightCoefficient = solution[1];
   if (user.user_id) {
     await setDataOfUser(userId, {
-      "temp_coefficient": String(tempCoefficient),
-      "daylight_coefficient": String(daylightCoefficient),
+      "temp_coefficient": String(Math.abs(tempCoefficient)),
+      "daylight_coefficient": String(-Math.abs(daylightCoefficient)),
     });
-    // await Api.setUserData(userId, {
-    //   "temp_coefficient": String(tempCoefficient),
-    //   "daylight_coefficient": String(daylightCoefficient),
-    // });
   }
 }
 
@@ -182,32 +174,16 @@ export async function fetchQuarterlyDataAndUpdateUserData(
   user: any,
   userId: string
 ): Promise<void> {
-  // (1) Read the S3 Bucket
-  //// (a) Initialise S3 client
-  dotenv.config();
-  const client: S3Client = new S3Client({
-    region: process.env.DEFAULT_REGION,
-    credentials: fromEnv(),
-  });
+  const lambdaInvoker = new LambdaInvoker();
+  let res = await lambdaInvoker.invokeLambda(
+    {
+      httpMethod: "GET",
+      path: `/${process.env.STAGING_ENV}/data-retrieval/retrieve-mapping`,
+    },
+    DEFAULT_RETRIEVAL_LAMBDA
+  );
 
-  //// (b) Read Bucket
-  const fileName = `SE3011-24-F14A-03/suburbsData/weather_mapping.json`;
-  const input = { Bucket: "seng3011-student", Key: fileName };
-  let quarterlySuburbData: quarterlySuburbConditions[];
-
-  try {
-    const getCommand = new GetObjectCommand(input);
-
-    const { Body } = await client.send(getCommand);
-    const fileContents: string = (await Body?.transformToString()) as string;
-    // console.log("fileContents: " + fileContents);
-    quarterlySuburbData = JSON.parse(fileContents).allSuburbs;
-  } catch (err: any) {
-    throw new ErrorWithStatus(
-      `Unable to read from S3 bucket | key: ${fileName} | error: ${err.message}`,
-      err.$response?.statusCode || 500
-    );
-  }
+  const quarterlySuburbData: quarterlySuburbConditions[] = await res.json();
 
   // (2) Update User Fields
   for (let i = 0; i < quarterlySuburbData.length; i++) {
@@ -221,7 +197,6 @@ export async function fetchQuarterlyDataAndUpdateUserData(
           [`q${j + 1}_r`]: currentSuburb.radiation_average[j],
         };
         await setDataOfUser(userId, setUserParam);
-        // await Api.setUserData(userId, setUserParam);
       }
     }
   }

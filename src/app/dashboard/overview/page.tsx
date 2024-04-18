@@ -9,13 +9,14 @@ import Graph, { DAILY_CONDITIONS } from "@components/Dashboard/Graph";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
-  const statsCardData: currentWeatherData = await Api.getCurrentWeatherData();
+  // FIXME: change suburbs to user suburb
+  const statsCardData: currentWeatherData = await Api.getCurrentWeatherData("Kensington");
   const weeklyOverviewGraphData: AverageDailyInWeekWeatherData =
-    await Api.getDailyAverageConditionsDataOfWeek();
+    await Api.getDailyAverageConditionsDataOfWeek("Kensington");
 
   // Get Insights Data
   if (Object.keys(store.getState().insightData).length === 0) {
-    let insightData = await Api.getWeekWeatherData(false);
+    let insightData = await Api.getWeekWeatherData(false, "Kensington");
     store.dispatch(setInsightData(insightData));
   }
   // const insightData = store.getState().insightData;

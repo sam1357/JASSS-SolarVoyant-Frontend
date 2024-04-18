@@ -226,7 +226,6 @@ export interface ModeWeatherCode {
   };
 }
 
-// Return Objects for S3 Bucket
 export interface quarterlySuburbConditions {
   suburb: string;
   temp_average: string[];

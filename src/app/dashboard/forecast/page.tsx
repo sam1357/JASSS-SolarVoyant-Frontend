@@ -8,12 +8,12 @@ import { getAllDataOfUser } from "@src/utils/utils";
 
 export default async function ForecastPage() {
   const session = await getServerSession(authOptions);
-  const result: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek();
+  const result: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek("Kensington"); // FIXME: change hardcode
   let insightData: NextWeekHourlyData | undefined = undefined;
 
   // Get Insights Data
   if (Object.keys(store.getState().insightData).length === 0) {
-    insightData = await Api.getWeekWeatherData(false);
+    insightData = await Api.getWeekWeatherData(false, "Kensington"); // FIXME: change hardcode
     store.dispatch(setInsightData(insightData));
   }
 
