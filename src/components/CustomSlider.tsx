@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import getSliderLabelByValue from "@src/utils/getSliderLabelByValue";
 
-function CustomSlider({ value, onChange }) {
+function CustomSlider({ value, onChange }: { value: number; onChange: any }) {
   const labelStyles = {
     mt: "2",
     ml: "-6",
@@ -38,8 +38,10 @@ function CustomSlider({ value, onChange }) {
           textAlign="center"
           bg="blue.500"
           color="white"
-          mt="-10"
-          ml="-5"
+          borderRadius="md"
+          p={2}
+          mt="-14"
+          ml="-7"
           w="15"
         >
           {getSliderLabelByValue(value)}m²

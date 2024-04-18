@@ -1,7 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
-import { Text, Box, Button, Flex, Grid, GridItem, Stack, useToast, Switch } from "@chakra-ui/react";
+import {
+  Text,
+  Box,
+  Button,
+  Flex,
+  Stack,
+  useToast,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  ButtonGroup,
+} from "@chakra-ui/react";
 import CustomFormControl from "./AuthPages/CustomFormControl";
 import { useForm } from "@saas-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -16,6 +29,7 @@ interface CustomUserDataContainerProps {
   heading: string;
   subheading: string;
   onComplete: () => void;
+  setStep: (step: number) => void; // eslint-disable-line
 }
 
 const surfaceAreaSchema = yup.object({
@@ -27,14 +41,11 @@ const SliderFieldToggle: React.FC<CustomUserDataContainerProps> = ({
   heading,
   subheading,
   onComplete,
+  setStep,
 }) => {
   const toast = useToast();
-  const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [sliderValue, setSliderValue] = useState(50);
-
-  const handleSwitchChange = () => {
-    setIsSwitchOn(!isSwitchOn);
-  };
+  const [activeTab, setActiveTab] = useState(0);
 
   const {
     register: registerUser,
@@ -44,8 +55,13 @@ const SliderFieldToggle: React.FC<CustomUserDataContainerProps> = ({
     resolver: yupResolver(surfaceAreaSchema),
   });
 
-  const onUserSubmit = async () => {
-    const info = { surface_area: `${getSliderLabelByValue(sliderValue)}` };
+  const onUserSubmit = async (data: { surface_area: string }) => {
+    let info: { surface_area: string } = { surface_area: "" };
+    if (activeTab === 0) {
+      info = { surface_area: `${getSliderLabelByValue(sliderValue)}` };
+    } else {
+      info = { surface_area: data.surface_area };
+    }
 
     if (session?.user?.email && session?.user?.id) {
       await Api.setUserData(session.user.id, info).then(async (res) => {
@@ -59,14 +75,6 @@ const SliderFieldToggle: React.FC<CustomUserDataContainerProps> = ({
             isClosable: true,
           });
         } else {
-          toast({
-            title: "Success",
-            description: `Changes will be applied on next sign in`,
-            status: "success",
-            position: "top",
-            duration: 4000,
-            isClosable: true,
-          });
           onComplete();
         }
       });
@@ -76,60 +84,55 @@ const SliderFieldToggle: React.FC<CustomUserDataContainerProps> = ({
   return (
     <Box my={"auto"} width={"100%"} mx={"auto"} height="100%">
       <form onSubmit={handleSubmitUser(onUserSubmit)}>
-        <Grid templateColumns="repeat(2, 1fr)" gap={6} mt={8}>
-          <GridItem>
-            <Text fontSize="md">
-              <b>{heading}</b>
-            </Text>
-            <Text fontSize="sm">{subheading}</Text>
-          </GridItem>
-          <GridItem display="flex" alignItems="center" justifyContent="flex-end">
-            <Switch size="md" isChecked={isSwitchOn} onChange={handleSwitchChange}></Switch>
-          </GridItem>
-        </Grid>
+        <Stack direction="column" gap={4} my={4} textAlign="left">
+          <Text fontSize="xl" fontWeight={600}>
+            {heading}
+          </Text>
+          <Text fontSize="lg">{subheading}</Text>
+        </Stack>
 
         <Flex justify="center" align="center" gap={4} mt={8}>
-          {isSwitchOn ? (
-            <CustomSlider value={sliderValue} onChange={setSliderValue}></CustomSlider>
-          ) : (
-            <Grid templateColumns="75fr 25fr" gap={2} mt={8} w={"100%"}>
-              <GridItem w={"100%"}>
+          <Tabs variant="soft-rounded" w="100%" onChange={setActiveTab}>
+            <TabList w="100%" mb={6}>
+              <Tab w="50%">Easy</Tab>
+              <Tab w="50%">Custom</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <CustomSlider value={sliderValue} onChange={setSliderValue} />
+              </TabPanel>
+              <TabPanel>
                 <CustomFormControl
                   errors={userErrors}
                   name="surface_area"
                   label=""
-                  defaultValue={"1.8"}
+                  defaultValue={"42"}
                   helperText=""
                   register={registerUser}
+                  inputRightAddon="m²"
                 />
-              </GridItem>
-              <GridItem
-                display="flex"
-                alignItems="center"
-                height="100%"
-                justifyContent={"flex-start"}
-              >
-                <Text>
-                  <b>m²</b>
-                </Text>
-              </GridItem>
-            </Grid>
-          )}
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </Flex>
 
-        <Stack justify="center" align="center" gap={4} mt={20}>
-          <Button
-            isLoading={isSubmittingUser}
-            type="submit"
-            onClick={handleSubmitUser(onUserSubmit)}
-            w={"100%"}
+        <Stack justify="center" align="center" gap={4} mt={8}>
+          <ButtonGroup
+            width={{ base: "100%", sm: "100%", md: "50%", lg: "20%" }}
+            justifyContent="center"
           >
-            Update Details
-          </Button>
-
-          <Text size={"xs"} color={"Primary"}>
-            Back
-          </Text>
+            <Button w="40%" onClick={() => setStep(0)} colorScheme="gray">
+              Back
+            </Button>
+            <Button
+              isLoading={isSubmittingUser}
+              type="submit"
+              w="60%"
+              onClick={handleSubmitUser(onUserSubmit)}
+            >
+              Update Details
+            </Button>
+          </ButtonGroup>
         </Stack>
       </form>
     </Box>

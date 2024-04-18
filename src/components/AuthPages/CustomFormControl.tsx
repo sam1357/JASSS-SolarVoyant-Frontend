@@ -1,5 +1,13 @@
 import React from "react";
-import { FormControl, FormLabel, Input, FormErrorMessage, FormHelperText } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+  Input,
+  FormErrorMessage,
+  FormHelperText,
+  InputGroup,
+  InputRightAddon,
+} from "@chakra-ui/react";
 
 interface CustomFormControlProps {
   errors: any;
@@ -11,6 +19,7 @@ interface CustomFormControlProps {
   inputComponent?: React.ComponentType<any>;
   defaultValue?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  inputRightAddon?: string;
 }
 
 const CustomFormControl: React.FC<CustomFormControlProps> = ({
@@ -22,17 +31,22 @@ const CustomFormControl: React.FC<CustomFormControlProps> = ({
   helperText,
   inputComponent: InputComponent = Input,
   defaultValue,
+  inputRightAddon,
   onChange,
 }) => {
   return (
     <FormControl isInvalid={!!errors[name]}>
       {label && <FormLabel>{label}</FormLabel>}
-      <InputComponent
-        placeholder={placeholder}
-        defaultValue={defaultValue}
-        {...register(name)}
-        onChange={onChange}
-      />
+      <InputGroup>
+        <InputComponent
+          placeholder={placeholder}
+          defaultValue={defaultValue}
+          name={name}
+          {...register(name)}
+          onChange={onChange}
+        />
+        {inputRightAddon && <InputRightAddon>{inputRightAddon}</InputRightAddon>}
+      </InputGroup>
       {!!!errors[name] ? (
         <FormHelperText>
           {(helperText && helperText.length !== 0 && helperText) || " "}

@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { Text, Box, Button, Grid, GridItem, useToast } from "@chakra-ui/react";
+import { Text, Box, Button, useToast, Spinner, Stack } from "@chakra-ui/react";
 import { GooglePlacesAutocompleteOption, Session } from "@src/interfaces";
 import { Api } from "@utils/Api";
 import { LoadScriptNext } from "@react-google-maps/api";
-import { GOOGLE_MAP_DARK_ID, GOOGLE_MAP_LIGHT_ID } from "@src/constants";
-import Autocomplete from "../Choropleth/Autocomplete";
+import { LIBRARIES } from "@src/constants";
+import Autocomplete from "@components/Choropleth/Autocomplete";
 
 interface SetLocationProps {
   session: Session;
@@ -15,13 +15,13 @@ interface SetLocationProps {
   onComplete: () => void;
 }
 
-const libraries = ["places"];
-
 const SetLocation: React.FC<SetLocationProps> = ({ session, heading, subheading, onComplete }) => {
   const [selectedPlace, setSelectedPlace] = useState<GooglePlacesAutocompleteOption>();
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   const onUserSubmit = async () => {
+    setLoading(true);
     if (!selectedPlace) {
       toast({
         title: "Error",
@@ -31,11 +31,12 @@ const SetLocation: React.FC<SetLocationProps> = ({ session, heading, subheading,
         isClosable: true,
         position: "top",
       });
+      setLoading(false);
       return;
     }
 
     const info = {
-      suburb: selectedPlace.value.structured_formatting.main_text,
+      suburb: selectedPlace.value.terms[2].value,
     };
 
     if (session?.user?.email && session?.user?.id) {
@@ -50,39 +51,48 @@ const SetLocation: React.FC<SetLocationProps> = ({ session, heading, subheading,
             position: "top",
           });
         } else {
-          toast({
-            title: "Success",
-            description: "Changes will be applied on next sign in",
-            status: "success",
-            duration: 4000,
-            isClosable: true,
-            position: "top",
-          });
           onComplete();
         }
       });
     }
+    setLoading(false);
   };
 
   return (
-    <Box my={"auto"} width={"100%"} mx={"auto"} height="80vh">
-      <Grid templateColumns="repeat(2, 1fr)" gap={6} mt={8}>
-        <GridItem>
-          <Text fontSize="md">
-            <b>{heading}</b>
+    <Box
+      width={"100%"}
+      height="90%"
+      display="flex"
+      pt={4}
+      flexDirection="column"
+      justifyContent="space-between"
+    >
+      <Box>
+        <Stack direction="column" gap={4} my={4} textAlign="left">
+          <Text fontSize="xl" fontWeight={600}>
+            {heading}
           </Text>
-          <Text fontSize="sm">{subheading}</Text>
-        </GridItem>
-      </Grid>
-      <LoadScriptNext
-        googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
-        libraries={libraries as any}
-        mapIds={[GOOGLE_MAP_LIGHT_ID, GOOGLE_MAP_DARK_ID]}
+          <Text fontSize="lg">{subheading}</Text>
+        </Stack>
+        <Box>
+          <LoadScriptNext
+            googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
+            libraries={LIBRARIES as any}
+            loadingElement={<Spinner />}
+          >
+            <Autocomplete onSelect={setSelectedPlace} onClose={() => {}} />
+          </LoadScriptNext>
+        </Box>
+      </Box>
+      <Button
+        mt={6}
+        mb={4}
+        width={{ base: "100%", sm: "100%", md: "50%", lg: "20%" }}
+        type="submit"
+        isLoading={loading}
+        onClick={onUserSubmit}
+        alignSelf="center"
       >
-        <Autocomplete onSelect={setSelectedPlace} onClose={() => {}} />
-      </LoadScriptNext>
-
-      <Button type="submit" w={"100%"} mt={"25%"} onClick={onUserSubmit}>
         Submit
       </Button>
     </Box>

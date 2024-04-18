@@ -31,6 +31,8 @@ export default interface GooglePlacesAutocompleteProps {
   onSelect: (option: GooglePlacesAutocompleteOption) => void;
   onClose: () => void;
   width?: string;
+  defaultValue?: string;
+  resetTrigger?: boolean;
 }
 
 export type Session =

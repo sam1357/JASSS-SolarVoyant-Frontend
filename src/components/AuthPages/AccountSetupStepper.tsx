@@ -3,6 +3,7 @@
 import React from "react";
 import {
   Box,
+  Text,
   Divider,
   Stack,
   useSteps,
@@ -14,12 +15,16 @@ import {
   StepNumber,
   StepTitle,
   StepSeparator,
+  Flex,
+  useBreakpoint,
+  Heading,
+  Wrap,
 } from "@chakra-ui/react";
 
 import { Session } from "@src/interfaces";
-import SliderFieldToggle from "../SliderFieldToggle";
-import SetLocation from "./SetLocation";
-import SetEnergyProfile from "./SetEnergyProfile";
+import SliderFieldToggle from "@components/SliderFieldToggle";
+import SetLocation from "@components/AuthPages/SetLocation";
+import SetEnergyProfile from "@components/AuthPages/SetEnergyProfile";
 
 interface CustomUserDataContainerProps {
   session: Session;
@@ -63,6 +68,7 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
           heading={sizeHeading}
           subheading={sizeSubheading}
           onComplete={handleCompleteStep}
+          setStep={setActiveStep}
         />
       ),
     },
@@ -74,41 +80,58 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
           heading={"How big is your household?"}
           subheading={locationSubheading}
           onComplete={handleCompleteStep}
+          setStep={setActiveStep}
         />
       ),
     },
   ];
 
+  const breakpoint = useBreakpoint();
+
   return (
-    <Box h="70vh" w="80%" p={4} borderWidth="1px" borderRadius="lg" mx={"auto"} mt={"10"}>
-      <Stack width={"95%"} mt={0} mx={"auto"} spacing={1}>
-        <Stepper size="lg" index={activeStep} mt={4}>
-          {steps.map((step, index) => (
-            <Step key={index} onClick={() => setActiveStep(index)}>
-              <StepIndicator>
-                <StepStatus
-                  complete={<StepIcon />}
-                  incomplete={<StepNumber />}
-                  active={<StepNumber />}
-                />
-              </StepIndicator>
+    <Flex justify="center" align="center" h="95%" overflowY="hidden">
+      <Box h="auto" w="80%" p={4} borderWidth="1px" borderRadius="lg" mx={"auto"} mt={"10"}>
+        <Stack width={"95%"} mt={0} mx={"auto"} spacing={1}>
+          <Wrap gap={2}>
+            <Heading>Welcome onboard</Heading>
+            <Heading color="primary.500">{session?.user?.name}!</Heading>
+          </Wrap>
+          <Text>
+            Your answers will help us better predict your energy bills. You can change these later.
+          </Text>
+          <Stepper
+            size="lg"
+            index={activeStep}
+            mt={4}
+            orientation={
+              ["base", "sm", "md", "lg"].includes(breakpoint) ? "vertical" : "horizontal"
+            }
+          >
+            {steps.map((step, index) => (
+              <Step key={index}>
+                <StepIndicator>
+                  <StepStatus
+                    complete={<StepIcon />}
+                    incomplete={<StepNumber />}
+                    active={<StepNumber />}
+                  />
+                </StepIndicator>
 
-              <Box flexShrink="0">
-                <StepTitle>{step.title}</StepTitle>
-              </Box>
+                <Box flexShrink="0">
+                  <StepTitle>{step.title}</StepTitle>
+                </Box>
 
-              <StepSeparator />
-            </Step>
-          ))}
-        </Stepper>
-
-        <Divider mt={2} />
-      </Stack>
-
-      <Box h={"80%"} width={"95%"} mx={"auto"}>
-        <Box h={"100%"}>{steps[activeStep].content}</Box>
+                <StepSeparator />
+              </Step>
+            ))}
+          </Stepper>
+          <Divider my={2} />
+        </Stack>
+        <Box h="90%" width={"95%"} mx={"auto"}>
+          <Box h={"100%"}>{steps[activeStep].content}</Box>
+        </Box>
       </Box>
-    </Box>
+    </Flex>
   );
 };
 

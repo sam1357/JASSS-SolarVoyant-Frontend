@@ -356,8 +356,7 @@ export async function fetchQuarterlyDataAndUpdateUserData(
     DEFAULT_RETRIEVAL_LAMBDA
   );
 
-  const quarterlySuburbData: quarterlySuburbConditions[] = await res.json();
-
+  const quarterlySuburbData: quarterlySuburbConditions[] = (await res.json()).allSuburbs;
   // (2) Update User Fields
   for (let i = 0; i < quarterlySuburbData.length; i++) {
     let currentSuburb: quarterlySuburbConditions = quarterlySuburbData[i];

@@ -98,7 +98,7 @@ export class Api {
    */
   static async setUserData(
     userID: string,
-    info: { [field: string]: string | number[] }
+    info: { [field: string]: string | number[] | number | boolean }
   ): Promise<Response> {
     const res = await fetch("/api/changeUserData", {
       method: "PATCH",
@@ -755,8 +755,6 @@ export class Api {
    * @returns {Promise<Response>} - The response from the fetch operation
    */
   static async getUserData(userID: string, fields: string): Promise<Response> {
-    console.log(userID);
-    console.log(fields);
     const res = await fetch("/api/getUserData", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

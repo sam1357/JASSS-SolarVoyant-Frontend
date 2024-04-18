@@ -86,7 +86,7 @@ export default function SignupPageClient() {
               isClosable: true,
             });
           } else {
-            router.refresh();
+            router.push("/setup");
           }
         });
       }

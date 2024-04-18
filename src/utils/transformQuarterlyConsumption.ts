@@ -6,8 +6,8 @@ import {
   HOUSEHOLD_5_CONSUMPTION,
 } from "@src/constants";
 
-export default function transformQuarterlyConsumption(value: Object) {
-  if (value && "householdMembers" in value && typeof value.householdMembers === "string") {
+export default function transformQuarterlyConsumption(value: any) {
+  if (value.use === "householdMembers") {
     switch (value.householdMembers) {
       case "1":
         return HOUSEHOLD_1_CONSUMPTION;
@@ -22,12 +22,10 @@ export default function transformQuarterlyConsumption(value: Object) {
     }
   }
 
-  // If the input is an object, transform it into a comma-separated string of its values
-  if (typeof value === "object" && value !== null) {
-    const filteredValues = Object.values(value).filter(
-      (item) => item !== undefined && item !== null && item !== ""
-    );
-    return filteredValues.join(",");
+  // Join quarter1C, quarter2C, quarter3C, quarter4C
+  const { quarter1C, quarter2C, quarter3C, quarter4C } = value;
+  if (quarter1C && quarter2C && quarter3C && quarter4C) {
+    return `${quarter1C},${quarter2C},${quarter3C},${quarter4C}`;
   }
 
   return "";

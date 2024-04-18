@@ -52,3 +52,6 @@ export const MORNING_HOUR_CUTOFF = 5;
 export const EVENING_HOUR_CUTOFF = 18;
 export const HOURS_IN_WEEK = 168;
 export const HOURS_IN_DAY = 24;
+
+export const LIBRARIES = ["places"];
+export const DEFAULT_NOTIF_LIMIT = 20;

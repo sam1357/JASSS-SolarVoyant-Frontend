@@ -13,7 +13,7 @@ export async function POST(request: Request): Promise<Response> {
     {
       httpMethod: "GET",
       path: `/${process.env.STAGING_ENV}/user-data/get`,
-      queryStringParameters: { userID, fields }, // Passed as query parameters instead of body
+      body: JSON.stringify({ userID, fields }),
     },
     DEFAULT_USER_DATA_LAMBDA
   );
