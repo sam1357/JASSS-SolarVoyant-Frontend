@@ -21,6 +21,8 @@ const GooglePlacesAutocomplete: React.ForwardRefRenderFunction<
     onSelect,
     onClose,
     width,
+    defaultValue,
+    resetTrigger,
   }: GooglePlacesAutocompleteProps,
   ref
 ): React.ReactElement => {
@@ -57,6 +59,7 @@ const GooglePlacesAutocomplete: React.ForwardRefRenderFunction<
     },
     debounce
   );
+  const [localDefaultValue, setLocalDefaultValue] = useState<string | undefined>(defaultValue);
 
   const initializeService = () => {
     if (!window.google)
@@ -87,6 +90,12 @@ const GooglePlacesAutocomplete: React.ForwardRefRenderFunction<
     initializeService();
   }, []);
 
+  useEffect(() => {
+    setLocalDefaultValue(defaultValue);
+    setSearchValue("");
+    setSearchSelection(null);
+  }, [resetTrigger, defaultValue]);
+
   const [searchValue, setSearchValue] = useState<string>("");
   const [searchSelection, setSearchSelection] = useState<GooglePlacesAutocompleteOption | null>();
 
@@ -96,6 +105,7 @@ const GooglePlacesAutocomplete: React.ForwardRefRenderFunction<
     } else if (action === "input-change") {
       setSearchValue(e);
       if (e.length === 0) {
+        setLocalDefaultValue(undefined);
         setSearchSelection(null);
       }
     }
@@ -125,7 +135,7 @@ const GooglePlacesAutocomplete: React.ForwardRefRenderFunction<
         isClearable
         components={{ DropdownIndicator: () => null, IndicatorSeparator: () => null }}
         closeMenuOnSelect={false}
-        inputValue={searchValue}
+        inputValue={searchValue || localDefaultValue}
         onInputChange={(e, action) => handleSearchInput(e, action)}
         loadOptions={fetchSuggestions}
         onFocus={() => {

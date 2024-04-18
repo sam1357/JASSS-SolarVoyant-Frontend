@@ -357,8 +357,6 @@ export async function fetchQuarterlyDataAndUpdateUserData(
   );
 
   const quarterlySuburbData: quarterlySuburbConditions[] = (await res.json()).allSuburbs;
-  console.log("HELLOOO");
-  console.log(quarterlySuburbData);
   // (2) Update User Fields
   for (let i = 0; i < quarterlySuburbData.length; i++) {
     let currentSuburb: quarterlySuburbConditions = quarterlySuburbData[i];

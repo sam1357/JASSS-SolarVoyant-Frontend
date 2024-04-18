@@ -26,5 +26,5 @@ Cypress.Commands.add("signup", (username: string, email: string, password: strin
   // eslint-disable-next-line
   cy.wait(6000);
   cy.reload();
-  cy.url().should("contain", "/dashboard/overview");
+  cy.url().should("contain", "/setup");
 });
