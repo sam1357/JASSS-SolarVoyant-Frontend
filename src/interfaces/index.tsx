@@ -226,6 +226,41 @@ export interface ModeWeatherCode {
   };
 }
 
+export interface quarterlySuburbConditions {
+  suburb: string;
+  temp_average: string[];
+  daylight_average: string[];
+  radiation_average: string[];
+}
+
+// Return object of getEnergyDataOfWeek
+export interface energyDataObj {
+  production: energyWithTimeStamp[] | energyWithTimeStamp;
+  consumption: energyWithTimeStamp[] | energyWithTimeStamp;
+  net: energyWithTimeStamp[] | energyWithTimeStamp;
+}
+
+export interface energyWithTimeStamp {
+  value: number;
+  timeStamp: string;
+}
+// Return object for getAllDataOfUser
+export interface fullUserObj {
+  surface_area: string;
+  suburb: string;
+  quarterly_energy_consumption: string;
+  email: string;
+  username: string;
+  user_id: string;
+  [field: string]: string | number | number;
+}
+
+// Return object for getHourlyEnergyDataOfWeek
+export interface hourlyEnergyDataObj {
+  energy_production_hourly: number[];
+  energy_consumption_hourly: number[];
+}
+
 export interface GaugeLabels {
   low: {
     label: string;
