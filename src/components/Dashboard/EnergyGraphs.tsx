@@ -2,7 +2,7 @@ import { CardBody } from "@chakra-ui/react";
 import { AreaChart } from "@saas-ui/charts";
 
 interface EnergyGraphProps {
-  data: { date: string; value: number }[];
+  data: { date: string; production: number; consumption: number }[];
 }
 
 const EnergyGraph: React.FC<EnergyGraphProps> = ({ data }) => {
@@ -13,7 +13,9 @@ const EnergyGraph: React.FC<EnergyGraphProps> = ({ data }) => {
           data={data}
           yAxisWidth={80}
           height="300px"
-          categories={["generation", "consumption"]}
+          categories={["production", "consumption"]}
+          colors={["blue", "orange"]}
+          stack
         />
       </CardBody>
     </>

@@ -1,27 +1,24 @@
-import { NextWeekHourlyData, WeekWeatherCodes, energyDataObj } from "@src/interfaces";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@src/authOptions";
+import { energyDataObj, NextWeekHourlyData, WeekWeatherCodes } from "@src/interfaces";
 import { Api } from "@utils/Api";
 import store, { setInsightData } from "@src/store";
 import ForecastPageClient from "@app/dashboard/forecast/page-client";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@src/authOptions";
 
 export default async function ForecastPage() {
-  const result: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek("Kensington");
   const averageConditionsOfWeek = await Api.getDailyAverageConditionsDataOfWeek("Kensington");
   const session = await getServerSession(authOptions);
-  console.log(session?.user?.id as string);
-
-  const res = await Api.getEnergyDataOfWeek(session?.user?.id as string, "week");
-  console.log(res);
-
+  const hourlyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(session?.user?.id, "hour");
+  
   // Get Insights Data
   let insightData: NextWeekHourlyData | undefined = undefined;
   if (Object.keys(store.getState().insightData).length === 0) {
-    insightData = await Api.getWeekWeatherData(false, "Kensington");
+    insightData = await Api.getWeekWeatherData(true, "Kensington");
     store.dispatch(setInsightData(insightData));
   }
   
   // Get Week Weather Codes
+  const result: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek("Kensington");
   const weekWeatherCodes: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek("Kensington"); // FIXME: change hardcode
 
   // Get Energy Data for Forecast Cards
@@ -41,8 +38,8 @@ export default async function ForecastPage() {
   
   return (
     <ForecastPageClient
-      result={result}
-      insightData={insightData}
+      weatherData={insightData}
+      energyData={hourlyEnergyData}
       averageConditions={averageConditionsOfWeek}
       weekWeatherCodes={weekWeatherCodes} 
       dailyEnergyData={dailyEnergyData}

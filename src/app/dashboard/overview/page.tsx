@@ -1,12 +1,18 @@
 import { Box, Heading, VStack } from "@chakra-ui/react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@src/authOptions";
-import { AverageDailyInWeekWeatherData, currentWeatherData, energyDataObj } from "@src/interfaces";
+import {
+  AverageDailyInWeekWeatherData,
+  currentWeatherData,
+  energyDataObj,
+  NextWeekHourlyData,
+} from "@src/interfaces";
 import { Api } from "@utils/Api";
 import StatsCard from "@components/Dashboard/StatsCard";
 import store, { setInsightData } from "@src/store";
 import Graph, { DAILY_CONDITIONS } from "@components/Dashboard/Graph";
 import WeekEnergyCard from "@src/components/Dashboard/WeekEnergyCard";
+import Insights from "@src/components/Dashboard/Insights";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -14,13 +20,13 @@ export default async function DashboardPage() {
   const statsCardData: currentWeatherData = await Api.getCurrentWeatherData("Kensington");
   const weeklyOverviewGraphData: AverageDailyInWeekWeatherData =
     await Api.getDailyAverageConditionsDataOfWeek("Kensington");
-
+  const weeklyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(session?.user?.id, "day");
+  let insightData: NextWeekHourlyData | undefined;
   // Get Insights Data
   if (Object.keys(store.getState().insightData).length === 0) {
-    let insightData = await Api.getWeekWeatherData(false, "Kensington");
+    insightData = await Api.getWeekWeatherData(false, "Kensington");
     store.dispatch(setInsightData(insightData));
   }
-  // const insightData = store.getState().insightData;
 
   let dailyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(session?.user?.id, "week");
 
@@ -36,7 +42,11 @@ export default async function DashboardPage() {
         <StatsCard data={statsCardData}></StatsCard>
       </Box>
       <Box padding={5} borderRadius="3xl">
-        <Graph dailyWeatherData={weeklyOverviewGraphData} schema={DAILY_CONDITIONS}></Graph>
+        <Graph
+          dailyWeatherData={weeklyOverviewGraphData}
+          weeklyEnergyData={weeklyEnergyData}
+          schema={DAILY_CONDITIONS}
+        ></Graph>
       </Box>
 
       <VStack gap={2} w="100%">
@@ -48,6 +58,7 @@ export default async function DashboardPage() {
         </WeekEnergyCard>
       </VStack>
       
+      <Box>{insightData && <Insights data={insightData} isWeekly={true} selectedCard={0} />}</Box>
     </>
   );
 }

@@ -500,7 +500,6 @@ export class Api {
 
     // (4) Retrieve Energy Data
     let res: hourlyEnergyDataObj = await getHourlyEnergyDataOfWeek(user);
-    console.log(res);
     // (5) Apply the provided time unit
     let energyDataRes: energyDataObj;
 
