@@ -5,7 +5,7 @@ import { AverageDailyInWeekWeatherData, currentWeatherData } from "@src/interfac
 import { Api } from "@utils/Api";
 import StatsCard from "@components/Dashboard/StatsCard";
 import store, { setInsightData } from "@src/store";
-import Graph, { DAILY_CONDITIONS } from "@components/Dashboard/Graph";
+import OverviewPageClient from "./page-client";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -18,20 +18,16 @@ export default async function DashboardPage() {
     let insightData = await Api.getInsightDataOfWeek();
     store.dispatch(setInsightData(insightData));
   }
-  // const insightData = store.getState().insightData;
+  const insightData = store.getState().insightData;
 
   // TODO: Still working on organising this, setup below is just to show how to pass data
   return (
     <>
-      <Box paddingStart={5}>
-        <Heading>Welcome, {session?.user?.name}! 👋</Heading>
-      </Box>
-      <Box width={"20%"} padding={5}>
-        <StatsCard data={statsCardData}></StatsCard>
-      </Box>
-      <Box padding={5} borderRadius="3xl">
-        <Graph dailyWeatherData={weeklyOverviewGraphData} schema={DAILY_CONDITIONS}></Graph>
-      </Box>
+      <OverviewPageClient
+        session={session}
+        statsCardData={statsCardData}
+        weeklyOverviewGraphData={weeklyOverviewGraphData}
+      />
     </>
   );
 }

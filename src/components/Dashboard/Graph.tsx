@@ -115,10 +115,10 @@ const Graph: React.FC<GraphProps> = ({ dailyWeatherData, hourlyWeatherData, inde
   }, [condition]); // eslint-disable-line
 
   return (
-    <Card>
+    <Card borderRadius={"3xl"}>
       <CardHeader pb="0">
         <Flex padding={2} justifyContent={"space-between"}>
-          <Heading as="h4" fontWeight="medium" size="md">
+          <Heading fontSize={"3xl"} fontWeight="medium" size="md">
             {condition !== "generation_consumption"
               ? `${getAttributeName(condition)} (${
                   schema.find((item) => item.value === condition)?.unit
