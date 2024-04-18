@@ -629,6 +629,10 @@ export class Api {
           consSum += res.energy_consumption_hourly[j];
         }
 
+        // Get Average
+        prodSum /= 24;
+        consSum /= 24;
+
         // Add each day's value to the array
         let prodEntry: energyWithTimeStamp = {
           value: prodSum,
@@ -668,6 +672,10 @@ export class Api {
       let consSum = 0;
       res.energy_consumption_hourly.forEach((e: number) => consSum += e);
       
+      // get average
+      prodSum /= 168;
+      consSum /= 168;
+
       let netEnergyVal = parseFloat((((prodSum - consSum) / prodSum) * 100).toFixed(3));
 
       energyDataRes = {
