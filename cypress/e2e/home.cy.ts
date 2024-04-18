@@ -14,7 +14,7 @@ describe("The Home Page", () => {
 
   it("checks that the button links work", () => {
     cy.visit("/");
-    cy.get('a[href*="dashboard/overview"]').click();
+    cy.get('a[href*="dashboard/overview"]').click({ multiple: true });
 
     // not logged in
     cy.url().should("contain", "/login");
