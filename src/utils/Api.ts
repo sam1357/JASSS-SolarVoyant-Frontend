@@ -1,10 +1,25 @@
-import { addDays, capitalizeFirstLetter, formatDate, getChoroplethCondition } from "./utils";
+import {
+  addDays,
+  calculateProdCoefficientVals,
+  capitalizeFirstLetter,
+  fetchQuarterlyDataAndUpdateUserData,
+  formatDate,
+  generateTimeStamp,
+  getAllDataOfUser,
+  getChoroplethCondition,
+  getHourlyEnergyDataOfWeek,
+  handleCoefficientCalculation,
+} from "./utils";
 import LambdaInvoker from "./lambdaInvoker";
 import {
   DEFAULT_USER_DATA_LAMBDA,
   SECONDS_IN_HOUR,
   DEFAULT_RETRIEVAL_LAMBDA,
   DEFAULT_ANALYTICS_LAMBDA,
+  MORNING_HOUR_CUTOFF,
+  EVENING_HOUR_CUTOFF,
+  HOURS_IN_WEEK,
+  HOURS_IN_DAY,
 } from "@src/constants";
 import {
   Attributes,
@@ -23,8 +38,11 @@ import {
   Conditions,
   DayConditions,
   NextWeekHourlyData,
-  GraphHourlyConditions,
-  InsightHourlyConditions,
+  HourlyConditions,
+  energyDataObj,
+  fullUserObj,
+  hourlyEnergyDataObj,
+  energyWithTimeStamp,
 } from "@src/interfaces";
 import { ErrorWithStatus } from "./ErroWithStatus";
 import { getCurrentHour } from "@components/Dashboard/utils";
@@ -78,7 +96,10 @@ export class Api {
    * Changes username
    * @returns {Promise<Response>} - The status and JSON of the return
    */
-  static async setUserData(userID: string, info: { [field: string]: string }): Promise<Response> {
+  static async setUserData(
+    userID: string,
+    info: { [field: string]: string | number[] }
+  ): Promise<Response> {
     const res = await fetch("/api/changeUserData", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -214,14 +235,16 @@ export class Api {
 
   /**
    * Gets current weather data for the stats card of the dashboard page
+   * @param suburb The suburb to get data for
    * @returns {Promise<currentWeatherData>} - weather data for the next 7 days
    */
-  static async getCurrentWeatherData(): Promise<currentWeatherData> {
+  static async getCurrentWeatherData(suburb: string): Promise<currentWeatherData> {
     // (1) Call Database Retrieval
     let weatherData: RetrieveReturnObject = await Api.retrieveWeatherData(
       0,
       0,
-      "temperature_2m, shortwave_radiation, weather_code, daylight_duration, sunshine_duration, cloud_cover"
+      "temperature_2m, shortwave_radiation, weather_code, daylight_duration, sunshine_duration, cloud_cover",
+      suburb
     );
 
     let events: Event[] = weatherData.events;
@@ -231,19 +254,15 @@ export class Api {
     const currentHour = getCurrentHour();
 
     //// (a) Get Hourly Attributes for the current hour
-    if (events[currentHour] !== undefined) {
-      currentHourAttributes = events[currentHour].attributes;
-    } else {
-      console.log(`WARN from getCurrentWeatherData: Current Hour Data is Missing!`);
-      currentHourAttributes = events[currentHour - 1].attributes;
-    }
+    currentHourAttributes = events[currentHour].attributes;
 
     //// (b) Get Daily Attributes for the current day
     currentDayAttributes = events[events.length - 1].attributes;
 
     // (3) Get weather images and descriptions for the acquired weather codes
     const wmoData: WmoData[] = await Api.retrieveWmoData();
-    const dayOrNight: "day" | "night" = currentHour < 5 || currentHour > 18 ? "night" : "day";
+    const dayOrNight: "day" | "night" =
+      currentHour < MORNING_HOUR_CUTOFF || currentHour > EVENING_HOUR_CUTOFF ? "night" : "day";
 
     // (4) Return data
     const result: currentWeatherData = {
@@ -256,12 +275,10 @@ export class Api {
       "current_conditions": {
         "temperature_2m": currentHourAttributes.temperature_2m,
         "daylight_hours": (
-          (currentDayAttributes as Attributes).daylight_duration /
-          (60 * 60)
+          (currentDayAttributes as Attributes).daylight_duration / SECONDS_IN_HOUR
         ).toFixed(0),
         "sunshine_hours": (
-          (currentDayAttributes as Attributes).sunshine_duration /
-          (60 * 60)
+          (currentDayAttributes as Attributes).sunshine_duration / SECONDS_IN_HOUR
         ).toFixed(0),
         "shortwave_radiation": currentHourAttributes.shortwave_radiation,
         "cloud_cover": currentHourAttributes.cloud_cover,
@@ -273,28 +290,37 @@ export class Api {
   /**
    * Gets average weather conditions for every day in the next 7 days.
    * Useful for the Weekly Overview Graph in Overview Page and Gauge Cards in Forecast Page
+   * @param suburb The suburb to get data for
    * @returns {Promise<AverageDailyInWeekWeatherData>} - weather data for the next 7 days
    */
-  static async getDailyAverageConditionsDataOfWeek(): Promise<AverageDailyInWeekWeatherData> {
+  static async getDailyAverageConditionsDataOfWeek(
+    suburb: string
+  ): Promise<AverageDailyInWeekWeatherData> {
     let avgDailyConditionsArray: Conditions[] = [];
     let units: Units | undefined = undefined;
 
     for (let i = 0; i < 7; i++) {
       // (1) Call Analyse to get Average Weather Conditions for One Day
-      let res: AnalyseReturnObject = await Api.getAverageWeatherData(i, i);
+      let res: AnalyseReturnObject = await Api.getAverageWeatherData(i, i, suburb);
+
       if (i === 0) {
-        units = { ...res.units, daylight_hours: "hrs", sunshine_hours: "hrs" };
+        units = res.units;
+      }
+
+      // In case units are still undefined
+      if (units === undefined) {
+        throw new ErrorWithStatus("Units field is missing", 500);
       }
 
       // (2) Add to avgDailyConditionsArray
       let dayData: Conditions = {
         temperature_2m: (res.analytics as MeanAttributes).temperature_2m.mean,
-        daylight_hours: (
-          (res.analytics as MeanAttributes).daylight_duration.mean / SECONDS_IN_HOUR
-        ).toFixed(2),
-        sunshine_hours: (
-          (res.analytics as MeanAttributes).sunshine_duration.mean / SECONDS_IN_HOUR
-        ).toFixed(2),
+        daylight_hours: ((res.analytics as MeanAttributes).daylight_duration.mean / SECONDS_IN_HOUR)
+          .toFixed(2)
+          .toString(),
+        sunshine_hours: ((res.analytics as MeanAttributes).sunshine_duration.mean / SECONDS_IN_HOUR)
+          .toFixed(2)
+          .toString(),
         shortwave_radiation: (res.analytics as MeanAttributes).shortwave_radiation.mean,
         cloud_cover: (res.analytics as MeanAttributes).cloud_cover.mean,
       };
@@ -302,7 +328,7 @@ export class Api {
     }
 
     // (3) Return result
-    const result: AverageDailyInWeekWeatherData = {
+    return {
       "units": units as Units,
       "0": avgDailyConditionsArray[0],
       "1": avgDailyConditionsArray[1],
@@ -312,18 +338,23 @@ export class Api {
       "5": avgDailyConditionsArray[5],
       "6": avgDailyConditionsArray[6],
     };
-    return result;
   }
 
   /**
    * Gets weather codes for every day in the next 7 days for card set of the forecast page
+   * @param suburb The suburb to get data for
    * @returns {Promise<WeekWeatherCodes>} - weather data for the next 7 days
    */
-  static async getWeatherCodeDataOfWeek(): Promise<WeekWeatherCodes> {
+  static async getWeatherCodeDataOfWeek(suburb: string): Promise<WeekWeatherCodes> {
     let weatherCodeArray: number[] = [];
     // (1) Get Current Weather Code
     //// (a) Call Retrieval for Today
-    const weatherData: RetrieveReturnObject = await Api.retrieveWeatherData(0, 0, "weather_code");
+    const weatherData: RetrieveReturnObject = await Api.retrieveWeatherData(
+      0,
+      0,
+      "weather_code",
+      suburb
+    );
 
     //// (b) Extract Current Weather Code
     let events: Event[] = weatherData.events;
@@ -336,26 +367,18 @@ export class Api {
 
     // (2) Get Mode Weather Code for the Following 6 Days
     for (let i = 1; i < 7; i++) {
-      let res: AnalyseReturnObject = await Api.getModeWeatherCode(i, i);
-
-      // In case the daily event is missing, pick the day before
-      if ((res.analytics as ModeWeatherCode) === undefined) {
-        let previous = weatherCodeArray[i - 1];
-        weatherCodeArray.push(previous);
-        console.log(`WARN from getWeatherCodeDataOfWeek: Day Event ${i} is Missing!`);
-        continue;
-      }
-
+      let res: AnalyseReturnObject = await Api.getModeWeatherCode(i, i, suburb);
       let weatherCode: number = (res.analytics as ModeWeatherCode).weather_code.mode[0];
       weatherCodeArray.push(weatherCode);
     }
 
     // (3) Get weather images and descriptions for the acquired weather codes
     const wmoData: WmoData[] = await Api.retrieveWmoData();
-    const dayOrNight: "day" | "night" = currentHour < 6 || currentHour > 18 ? "night" : "day";
+    const dayOrNight: "day" | "night" =
+      currentHour < MORNING_HOUR_CUTOFF || currentHour > EVENING_HOUR_CUTOFF ? "night" : "day";
 
     // (4) Return data
-    const result: WeekWeatherCodes = {
+    return {
       "0": {
         "image": wmoData[weatherCodeArray[0]][dayOrNight].image,
         "description": wmoData[weatherCodeArray[0]][dayOrNight].description,
@@ -385,16 +408,19 @@ export class Api {
         "description": wmoData[weatherCodeArray[6]]["day"].description,
       },
     };
-    return result;
   }
 
   /**
-   * Gets hourly weather conditions for every day in the next 7 days.
-   * Useful for the day overview graph in Forecast page and insights
-   * @param useGraphData - whether to use graph data, otherwise false will get insights data
-   * @returns {Promise<NextWeekHourlyData>} - weather data for the next 7 days
-   */
-  static async getWeekWeatherData(useGraphData = true): Promise<NextWeekHourlyData> {
+  Gets hourly weather conditions for every day in the next 7 days.
+  Useful for the day overview graph in Forecast page and insights
+  @param useGraphData - whether to use graph data, otherwise false will get insights data
+  @param suburb The suburb to get data for
+  @returns {Promise<NextWeekHourlyData>} - weather data for the next 7 days
+  */
+  static async getWeekWeatherData(
+    useGraphData = true,
+    suburb: string
+  ): Promise<NextWeekHourlyData> {
     const weekArr: DayConditions[] = [];
     let units: Units | {} = {};
     const attributes = useGraphData
@@ -402,8 +428,8 @@ export class Api {
       : "weather_code, precipitation_probability";
 
     for (let i = 0; i < 7; i++) {
-      const dayArr: (GraphHourlyConditions | InsightHourlyConditions)[] = [];
-      const res: RetrieveReturnObject = await Api.retrieveWeatherData(i, i, attributes);
+      const dayArr: HourlyConditions[] = [];
+      const res: RetrieveReturnObject = await Api.retrieveWeatherData(i, i, attributes, suburb);
       const eventsArr: Event[] = res.events;
 
       eventsArr.forEach((event, j) => {
@@ -412,7 +438,7 @@ export class Api {
             units = event.attributes.units;
           }
 
-          const hourlyConditionsObj: GraphHourlyConditions | InsightHourlyConditions = useGraphData
+          const hourlyConditionsObj: any = useGraphData
             ? {
                 temperature_2m: event.attributes.temperature_2m,
                 solar_radiation: event.attributes.shortwave_radiation,
@@ -437,10 +463,181 @@ export class Api {
     return { units: units as Units, ...weekArr };
   }
 
+  /**
+   * Gets predicted energy consumption, production, and net energy for the next 7 days. The caller
+   * can specify whether they want this data presented in an hourly, daily, or one-week format.
+   * @param user
+   * @param userId
+   * @param time_unit
+   * @returns
+   */
+  static async getEnergyDataOfWeek(
+    userId: string,
+    time_unit: "week" | "day" | "hour"
+  ): Promise<energyDataObj> {
+    // (1) Check that User has all the Required Fields
+    let user: fullUserObj = await getAllDataOfUser(userId);
+
+    if (
+      (user.surface_area === undefined || user.suburb === undefined,
+      user.quarterly_energy_consumption === undefined)
+    ) {
+      throw new ErrorWithStatus(
+        "User is missing the necessary fields for energy calculations",
+        500
+      );
+    }
+
+    // (2) Write Historical Quarterly Weather Data To User
+    await fetchQuarterlyDataAndUpdateUserData(user, userId);
+
+    // (3) Calculate Prediction Coefficients and Write to User
+    await handleCoefficientCalculation(user, userId);
+    await calculateProdCoefficientVals(user, userId);
+
+    // (4) Retrieve Energy Data
+    let res: hourlyEnergyDataObj = await getHourlyEnergyDataOfWeek(user);
+    console.log(res);
+    // (5) Apply the provided time unit
+    let energyDataRes: energyDataObj;
+
+    // (a) 168 Sets of Values for each day in the week
+    if (time_unit === "hour") {
+      let prodHourly: energyWithTimeStamp[] = [];
+      let consHourly: energyWithTimeStamp[] = [];
+      let netEnergyHourly: energyWithTimeStamp[] = [];
+
+      for (let i = 0; i < HOURS_IN_WEEK; i++) {
+        // generate time stamp
+        let dayOffSet = Math.floor(i / HOURS_IN_DAY);
+        let hourOffset = i % HOURS_IN_DAY;
+        let timeStamp = await generateTimeStamp(dayOffSet, hourOffset);
+
+        // Add each hour's value to the array
+        let currProd = res.energy_production_hourly[i];
+        let currentCons = res.energy_consumption_hourly[i];
+
+        let currProdEntry: energyWithTimeStamp = {
+          value: res.energy_production_hourly[i],
+          timeStamp: timeStamp,
+        };
+
+        prodHourly.push(currProdEntry);
+        let currConsEntry: energyWithTimeStamp = {
+          value: res.energy_consumption_hourly[i],
+          timeStamp: timeStamp,
+        };
+        consHourly.push(currConsEntry);
+
+        if (currProd !== 0) {
+          let netEnergyVal = parseFloat((((currProd - currentCons) / currProd) * 100).toFixed(3));
+
+          let currNetEnergyEntry: energyWithTimeStamp = {
+            value: netEnergyVal,
+            timeStamp: timeStamp,
+          };
+          netEnergyHourly.push(currNetEnergyEntry);
+        }
+      }
+
+      // Form the result object
+      energyDataRes = {
+        production: prodHourly,
+        consumption: consHourly,
+        net: netEnergyHourly,
+      };
+
+      // (b) Seven Sets of Values for each day in the week
+    } else if (time_unit === "day") {
+      let energyProdSum: energyWithTimeStamp[] = [];
+      let energyConsSum: energyWithTimeStamp[] = [];
+      let netEnergyPerc: energyWithTimeStamp[] = [];
+
+      for (let i = 0; i < HOURS_IN_WEEK; i += HOURS_IN_DAY) {
+        // get timeStamp
+        let dayOffSet = Math.floor(i / HOURS_IN_DAY);
+        let timeStamp = await generateTimeStamp(dayOffSet, 0);
+
+        // Calculate production and consumption total for each day
+        let prodSum = 0;
+        let consSum = 0;
+        for (let j = i; j < i + HOURS_IN_DAY && j < HOURS_IN_WEEK; j++) {
+          prodSum += res.energy_production_hourly[j];
+          consSum += res.energy_consumption_hourly[j];
+        }
+
+        // Get Average
+        prodSum /= HOURS_IN_DAY;
+        consSum /= HOURS_IN_DAY;
+
+        // Add each day's value to the array
+        let prodEntry: energyWithTimeStamp = {
+          value: prodSum,
+          timeStamp: timeStamp,
+        };
+        energyProdSum.push(prodEntry);
+
+        let consEntry: energyWithTimeStamp = {
+          value: consSum,
+          timeStamp: timeStamp,
+        };
+        energyConsSum.push(consEntry);
+
+        let netEnergyVal = parseFloat((((prodSum - consSum) / prodSum) * 100).toFixed(3));
+        let netEnergyEntry: energyWithTimeStamp = {
+          value: netEnergyVal,
+          timeStamp: timeStamp,
+        };
+        netEnergyPerc.push(netEnergyEntry);
+      }
+
+      // Form the result object
+      energyDataRes = {
+        production: energyProdSum,
+        consumption: energyConsSum,
+        net: netEnergyPerc,
+      };
+
+      // (c) One Set of Values for the entire week
+    } else {
+      let timeStamp = await generateTimeStamp(0, 0);
+
+      let prodSum = 0;
+      res.energy_production_hourly.forEach((e: number) => (prodSum += e));
+
+      let consSum = 0;
+      res.energy_consumption_hourly.forEach((e: number) => (consSum += e));
+
+      // get average
+      prodSum /= HOURS_IN_WEEK;
+      consSum /= HOURS_IN_WEEK;
+
+      let netEnergyVal = parseFloat((((prodSum - consSum) / prodSum) * 100).toFixed(3));
+
+      energyDataRes = {
+        production: {
+          value: prodSum,
+          timeStamp: timeStamp,
+        },
+        consumption: {
+          value: consSum,
+          timeStamp: timeStamp,
+        },
+        net: {
+          value: netEnergyVal,
+          timeStamp: timeStamp,
+        },
+      };
+    }
+
+    return energyDataRes;
+  }
+
   // HELPER FUNCTION for getDailyAverageConditionsOfWeekData
   static async getAverageWeatherData(
     start_day_offset: number,
-    end_day_offset: number
+    end_day_offset: number,
+    suburb: string
   ): Promise<AnalyseReturnObject> {
     const lambdaInvoker = new LambdaInvoker();
     let res = await lambdaInvoker.invokeLambda(
@@ -450,7 +647,7 @@ export class Api {
         queryStringParameters: {
           startDate: formatDate(addDays(new Date(), start_day_offset)),
           endDate: formatDate(addDays(new Date(), end_day_offset)),
-          address: "21 Hinemoa Street",
+          suburb,
           attributes:
             "temperature_2m, shortwave_radiation, weather_code, daylight_duration, sunshine_duration, cloud_cover, precipitation_probability",
         },
@@ -473,7 +670,8 @@ export class Api {
   // HELPER FUNCTION for getWeekWeatherCodeData
   static async getModeWeatherCode(
     start_day_offset: number,
-    end_day_offset: number
+    end_day_offset: number,
+    suburb: string
   ): Promise<AnalyseReturnObject> {
     const lambdaInvoker = new LambdaInvoker();
     let res = await lambdaInvoker.invokeLambda(
@@ -483,7 +681,7 @@ export class Api {
         queryStringParameters: {
           startDate: formatDate(addDays(new Date(), start_day_offset)),
           endDate: formatDate(addDays(new Date(), end_day_offset)),
-          address: "21 Hinemoa Street",
+          suburb,
           attributes: "weather_code",
         },
         body: {
@@ -501,7 +699,8 @@ export class Api {
   static async retrieveWeatherData(
     start_offset: number,
     end_offset: number,
-    attributes: string
+    attributes: string,
+    suburb: string
   ): Promise<RetrieveReturnObject> {
     const lambdaInvoker = new LambdaInvoker();
     let res = await lambdaInvoker.invokeLambda(
@@ -511,7 +710,7 @@ export class Api {
         queryStringParameters: {
           startDate: formatDate(addDays(new Date(), start_offset)),
           endDate: formatDate(addDays(new Date(), end_offset)),
-          address: "21 Hinemoa Street",
+          suburb,
           attributes: attributes,
         },
       },
@@ -531,5 +730,23 @@ export class Api {
       DEFAULT_RETRIEVAL_LAMBDA
     );
     return await res.json();
+  }
+
+  static async getUserNotifications(userID: string): Promise<Response> {
+    const res = await fetch(`/api/notifications?userID=${userID}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    return res;
+  }
+
+  static async deleteUserNotifications(userID: string): Promise<Response> {
+    const res = await fetch(`/api/notifications?userID=${userID}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    return res;
   }
 }

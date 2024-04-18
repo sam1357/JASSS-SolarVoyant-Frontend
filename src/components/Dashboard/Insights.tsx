@@ -15,7 +15,7 @@ import {
   TIMEFRAME_THRESHOLD,
 } from "@src/constants";
 import {
-  InsightHourlyConditions,
+  HourlyConditions,
   InsightProcessedData,
   NextWeekHourlyData,
   Timeframes,
@@ -35,7 +35,7 @@ const addIndex = (array: any) => {
   });
 };
 
-const getLowPrecipHours = (hourlyData: InsightHourlyConditions[]) => {
+const getLowPrecipHours = (hourlyData: HourlyConditions[]) => {
   return hourlyData
     .filter((hour: any) => hour.precipitation_probability < LOW_PRECIP_THRESHOLD)
     .map((hour: any) => hour.index);

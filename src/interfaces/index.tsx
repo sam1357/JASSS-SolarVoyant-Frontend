@@ -176,19 +176,6 @@ export interface WeekWeatherCodes {
 // Used for Day Overview Graph in Forecast Page
 export interface NextWeekHourlyData {
   units: Units;
-  [index: number]: DayConditions;
-}
-
-// Used for Day Overview Graph in Forecast Page
-export interface GraphHourlyConditions {
-  temperature_2m: number;
-  solar_radiation: number;
-  cloud_cover: number;
-}
-
-export interface InsightHourlyConditions {
-  weather_code: number;
-  precipitation_probability: number;
   [days: number]: DayConditions[];
 }
 
@@ -231,6 +218,41 @@ export interface ModeWeatherCode {
   "weather_code": {
     "mode": number[];
   };
+}
+
+export interface quarterlySuburbConditions {
+  suburb: string;
+  temp_average: string[];
+  daylight_average: string[];
+  radiation_average: string[];
+}
+
+// Return object of getEnergyDataOfWeek
+export interface energyDataObj {
+  production: energyWithTimeStamp[] | energyWithTimeStamp;
+  consumption: energyWithTimeStamp[] | energyWithTimeStamp;
+  net: energyWithTimeStamp[] | energyWithTimeStamp;
+}
+
+export interface energyWithTimeStamp {
+  value: number;
+  timeStamp: string;
+}
+// Return object for getAllDataOfUser
+export interface fullUserObj {
+  surface_area: string;
+  suburb: string;
+  quarterly_energy_consumption: string;
+  email: string;
+  username: string;
+  user_id: string;
+  [field: string]: string | number | number;
+}
+
+// Return object for getHourlyEnergyDataOfWeek
+export interface hourlyEnergyDataObj {
+  energy_production_hourly: number[];
+  energy_consumption_hourly: number[];
 }
 
 export interface GaugeLabels {
