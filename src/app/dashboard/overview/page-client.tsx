@@ -30,7 +30,6 @@ export default function OverviewPageClient({
   insightsData,
   energyCardsData,
 }: OverviewPageClientProps) {
-  console.log(weeklyEnergyData);
   return (
     <Box width={"100%"} padding={5}>
       <Box paddingStart={5} paddingBottom={5}>
