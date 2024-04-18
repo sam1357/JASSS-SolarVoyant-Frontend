@@ -493,7 +493,10 @@ export class Api {
 
     // (3) Calculate Prediction Coefficients and Write to User
     await handleCoefficientCalculation(user, userId);
-    await calculateProdCoefficientVals(user, userId);
+
+    if (!(user.q1_w === "-1" || user.q2_w === "-1" || user.q3_w === "-1" || user.q4_w === "-1")) {
+      await calculateProdCoefficientVals(user, userId);
+    }
 
     // (4) Retrieve Energy Data
     let res: hourlyEnergyDataObj = await getHourlyEnergyDataOfWeek(user);
@@ -505,6 +508,7 @@ export class Api {
       let prodHourly: energyWithTimeStamp[] = [];
       let consHourly: energyWithTimeStamp[] = [];
       let netEnergyHourly: energyWithTimeStamp[] = [];
+      let netEnergyRawHourly: energyWithTimeStamp[] = [];
 
       for (let i = 0; i < HOURS_IN_WEEK; i++) {
         // generate time stamp
@@ -514,22 +518,22 @@ export class Api {
 
         // Add each hour's value to the array
         let currProd = res.energy_production_hourly[i];
-        let currentCons = res.energy_consumption_hourly[i];
+        let currCons = res.energy_consumption_hourly[i];
 
         let currProdEntry: energyWithTimeStamp = {
-          value: res.energy_production_hourly[i],
+          value: currProd,
           timeStamp: timeStamp,
         };
 
         prodHourly.push(currProdEntry);
         let currConsEntry: energyWithTimeStamp = {
-          value: res.energy_consumption_hourly[i],
+          value: currCons,
           timeStamp: timeStamp,
         };
         consHourly.push(currConsEntry);
 
         if (currProd !== 0) {
-          let netEnergyVal = parseFloat((((currProd - currentCons) / currProd) * 100).toFixed(3));
+          let netEnergyVal = parseFloat((((currProd - currCons) / currProd) * 100).toFixed(3));
 
           let currNetEnergyEntry: energyWithTimeStamp = {
             value: netEnergyVal,
@@ -537,6 +541,12 @@ export class Api {
           };
           netEnergyHourly.push(currNetEnergyEntry);
         }
+
+        let currNetEnergyRawEntry: energyWithTimeStamp = {
+          value: currProd - currCons,
+          timeStamp: timeStamp,
+        };
+        netEnergyRawHourly.push(currNetEnergyRawEntry);
       }
 
       // Form the result object
@@ -544,6 +554,7 @@ export class Api {
         production: prodHourly,
         consumption: consHourly,
         net: netEnergyHourly,
+        netRaw: netEnergyHourly,
       };
 
       // (b) Seven Sets of Values for each day in the week
@@ -551,6 +562,7 @@ export class Api {
       let energyProdSum: energyWithTimeStamp[] = [];
       let energyConsSum: energyWithTimeStamp[] = [];
       let netEnergyPerc: energyWithTimeStamp[] = [];
+      let netEnergyRaw: energyWithTimeStamp[] = [];
 
       for (let i = 0; i < HOURS_IN_WEEK; i += HOURS_IN_DAY) {
         // get timeStamp
@@ -588,6 +600,12 @@ export class Api {
           timeStamp: timeStamp,
         };
         netEnergyPerc.push(netEnergyEntry);
+
+        let netEnergyRawEntry: energyWithTimeStamp = {
+          value: prodSum - consSum,
+          timeStamp: timeStamp,
+        };
+        netEnergyRaw.push(netEnergyRawEntry);
       }
 
       // Form the result object
@@ -595,6 +613,7 @@ export class Api {
         production: energyProdSum,
         consumption: energyConsSum,
         net: netEnergyPerc,
+        netRaw: netEnergyRaw,
       };
 
       // (c) One Set of Values for the entire week
@@ -612,7 +631,7 @@ export class Api {
       consSum /= HOURS_IN_WEEK;
 
       let netEnergyVal = parseFloat((((prodSum - consSum) / prodSum) * 100).toFixed(3));
-
+      let netEnergyRawVal = prodSum - consSum;
       energyDataRes = {
         production: {
           value: prodSum,
@@ -624,6 +643,10 @@ export class Api {
         },
         net: {
           value: netEnergyVal,
+          timeStamp: timeStamp,
+        },
+        netRaw: {
+          value: netEnergyRawVal,
           timeStamp: timeStamp,
         },
       };
