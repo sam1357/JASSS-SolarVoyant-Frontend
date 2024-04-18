@@ -35,7 +35,7 @@ const DayNetEnergyCard: React.FC<DayNetEnergyCardProps> = ({ dailyEnergyData, da
       h="175px"
       minW="200px"
       w="50%"
-      backgroundColor={rawVal >= 0 ? "orange.500" : "green.500"}
+      backgroundColor={rawVal >= 0 ? "green.500" : "orange.500"}
     >
       <VStack display="flex" justifyContent="center" pt={2} h="100%">
         <Heading fontSize="2xl" fontWeight={200}>

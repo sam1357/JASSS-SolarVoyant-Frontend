@@ -15,22 +15,22 @@ export default async function ForecastPage() {
   // Get Insights Data
   let insightData: NextWeekHourlyData | undefined = undefined;
   if (Object.keys(store.getState().insightData).length === 0) {
-    insightData = await Api.getWeekWeatherData(true, "Kensington");
+    insightData = await Api.getWeekWeatherData(true, userSuburb);
     store.dispatch(setInsightData(insightData));
   }
   
   // Get Week Weather Codes
-  const weekWeatherCodes: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek("Kensington"); // FIXME: change hardcode
+  const weekWeatherCodes: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek(userSuburb); // FIXME: change hardcode
   
   // Get Energy Data for Forecast Cards
   const dailyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(userId, "day");
-  
+
   // Get Weather data for gauge cards
-  const averageConditionsOfWeek = await Api.getDailyAverageConditionsDataOfWeek("Kensington");
+  const averageConditionsOfWeek = await Api.getDailyAverageConditionsDataOfWeek(userSuburb);
 
   // Get Energy Data for Graph
   const hourlyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(userId, "hour");
-  
+
   return (
     <ForecastPageClient
       weatherData={insightData}
