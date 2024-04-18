@@ -13,7 +13,7 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
 
   return (
-    <Box style={{ height: `calc(100vh - ${NAVBAR_HEIGHT}px)` }}>
+    <Box style={{ height: `calc(100vh - ${NAVBAR_HEIGHT + 15}px)` }}>
       <Navbar session={session} />
       <Suspense>
         <Box style={{ height: "100%" }}>{children}</Box>
