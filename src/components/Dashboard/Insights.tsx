@@ -115,7 +115,6 @@ const Insights: React.FC<InsightsProps> = ({ data, isWeekly, selectedCard }) => 
     insights = generateInsightsWeekly(processedInsights);
   }
 
-  console.log(data);
   return (
     <Card borderRadius="3xl" p={2}>
       <CardHeader>
