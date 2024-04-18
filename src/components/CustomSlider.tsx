@@ -18,11 +18,21 @@ function CustomSlider({ value, onChange }) {
   return (
     <Box width={"100%"} p={4} pt={6}>
       <Slider step={25} aria-label="slider-ex-6" value={value} onChange={onChange}>
-        <SliderMark value={0} {...labelStyles}>Smallest</SliderMark>
-        <SliderMark value={25} {...labelStyles}>Smaller</SliderMark>
-        <SliderMark value={50} {...labelStyles}>Average</SliderMark>
-        <SliderMark value={75} {...labelStyles}>Larger</SliderMark>
-        <SliderMark value={100} {...labelStyles}>Large</SliderMark>
+        <SliderMark value={0} {...labelStyles}>
+          Smallest
+        </SliderMark>
+        <SliderMark value={25} {...labelStyles}>
+          Smaller
+        </SliderMark>
+        <SliderMark value={50} {...labelStyles}>
+          Average
+        </SliderMark>
+        <SliderMark value={75} {...labelStyles}>
+          Larger
+        </SliderMark>
+        <SliderMark value={100} {...labelStyles}>
+          Large
+        </SliderMark>
         <SliderMark
           value={value}
           textAlign="center"

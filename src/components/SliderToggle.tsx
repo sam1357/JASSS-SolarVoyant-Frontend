@@ -1,33 +1,19 @@
 "use client";
 
-import React, { useRef, useState } from "react";
-import {
-  Text,
-  Box,
-  Button,
-  Flex,
-  Grid,
-  GridItem,
-  Stack,
-  useToast,
-  Switch,
-  Select,
-} from "@chakra-ui/react";
+import React, { useState } from "react";
+import { Text, Box, Flex, Grid, GridItem, useToast, Switch, Select } from "@chakra-ui/react";
 import CustomFormControl from "./AuthPages/CustomFormControl";
 import { useForm } from "@saas-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Session } from "@src/interfaces";
 import { Api } from "@utils/Api";
-import { useRouter } from "next/navigation";
-import CustomSlider from "./CustomSlider";
-import getSliderLabelByValue from "@src/utils/getSliderLabelByValue";
-import { State } from "@aws-sdk/client-lambda";
 import transformQuarterlyConsumption from "@src/utils/transformQuarterlyConsumption";
 
 interface onEnergyConsumptionChangeType {
-    (newState: Partial<surfaceAreaData>): void;
-  }
+  // eslint-disable-next-line
+  (newState: Partial<surfaceAreaData>): void;
+}
 
 interface CustomUserDataContainerProps {
   session: Session;
@@ -43,19 +29,21 @@ interface surfaceAreaData {
 }
 
 const surfaceAreaSchema = yup.object({
-  surface_area: yup
-    .string()
-    .required("Surface area is required."),
+  surface_area: yup.string().required("Surface area is required."),
   householdMembers: yup.number().optional(),
 });
 
 const SliderToggle: React.FC<CustomUserDataContainerProps> = ({
-  session, onEnergyConsumptionChange
+  session,
+  onEnergyConsumptionChange,
 }) => {
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const toast = useToast();
 
-  const handleSwitchChange = (event: { target: { checked: boolean | ((prevState: boolean) => boolean); }; }) => {
+  const handleSwitchChange = (event: {
+    // eslint-disable-next-line
+    target: { checked: boolean | ((prevState: boolean) => boolean) };
+  }) => {
     setIsSwitchOn(event.target.checked);
     onEnergyConsumptionChange({
       householdMembers: undefined,
@@ -66,12 +54,12 @@ const SliderToggle: React.FC<CustomUserDataContainerProps> = ({
     });
   };
 
-  const handleInputChange = (event: { target: { name: any; value: any; }; }) => {
+  const handleInputChange = (event: { target: { name: any; value: any } }) => {
     const { name, value } = event.target;
     if (name.startsWith("surface_area")) {
-      onEnergyConsumptionChange({ 
+      onEnergyConsumptionChange({
         householdMembers: undefined,
-        [name]: value 
+        [name]: value,
       });
     } else {
       onEnergyConsumptionChange({
@@ -79,7 +67,7 @@ const SliderToggle: React.FC<CustomUserDataContainerProps> = ({
         surface_area2: undefined,
         surface_area3: undefined,
         surface_area4: undefined,
-        [name]: value 
+        [name]: value,
       });
     }
   };
@@ -87,7 +75,7 @@ const SliderToggle: React.FC<CustomUserDataContainerProps> = ({
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     resolver: yupResolver(surfaceAreaSchema),
   });
@@ -119,7 +107,6 @@ const SliderToggle: React.FC<CustomUserDataContainerProps> = ({
         }
       });
     }
-    
   };
 
   return (
@@ -130,7 +117,9 @@ const SliderToggle: React.FC<CustomUserDataContainerProps> = ({
             <Text fontSize="md">
               <b>What is your energy consumption?</b>
             </Text>
-            <Text fontSize="sm">Toggle the switch if you are unsure to estimate energy use from household size</Text>
+            <Text fontSize="sm">
+              Toggle the switch if you are unsure to estimate energy use from household size
+            </Text>
           </GridItem>
           <GridItem display="flex" alignItems="center" justifyContent="flex-end">
             <Switch size="md" isChecked={isSwitchOn} onChange={handleSwitchChange}></Switch>
@@ -140,58 +129,58 @@ const SliderToggle: React.FC<CustomUserDataContainerProps> = ({
         <Flex justify="center" align="center" gap={4}>
           {isSwitchOn ? (
             <Select
-            {...register('householdMembers')}
-            variant='outline'
-            placeholder='Household members'
-            onChange={handleInputChange}
-          >
-            <option value='1'>1</option>
-            <option value='2'>2</option>
-            <option value='3'>3</option>
-            <option value='4'>4</option>
-            <option value='5'>5+</option>
-          </Select>
+              {...register("householdMembers")}
+              variant="outline"
+              placeholder="Household members"
+              onChange={handleInputChange}
+            >
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5+</option>
+            </Select>
           ) : (
             <Grid templateColumns="repeat(4, 1fr)" gap={2} mt={3} w={"100%"}>
               <GridItem>
-                  <CustomFormControl
-                      errors={errors}
-                      name="surface_area1"
-                      label="Quarter 1"
-                      placeholder={"1388"}
-                      register={register}
-                      onChange={handleInputChange}
-                  />
+                <CustomFormControl
+                  errors={errors}
+                  name="surface_area1"
+                  label="Quarter 1"
+                  placeholder={"1388"}
+                  register={register}
+                  onChange={handleInputChange}
+                />
               </GridItem>
               <GridItem>
-                  <CustomFormControl
-                      errors={errors}
-                      name="surface_area2"
-                      label="Quarter 2"
-                      placeholder={"1331"}
-                      register={register}
-                      onChange={handleInputChange}
-                  />
+                <CustomFormControl
+                  errors={errors}
+                  name="surface_area2"
+                  label="Quarter 2"
+                  placeholder={"1331"}
+                  register={register}
+                  onChange={handleInputChange}
+                />
               </GridItem>
               <GridItem>
-                  <CustomFormControl
-                      errors={errors}
-                      name="surface_area3"
-                      label="Quarter 3"
-                      placeholder={"1681"}
-                      register={register}
-                      onChange={handleInputChange}
-                  />
+                <CustomFormControl
+                  errors={errors}
+                  name="surface_area3"
+                  label="Quarter 3"
+                  placeholder={"1681"}
+                  register={register}
+                  onChange={handleInputChange}
+                />
               </GridItem>
               <GridItem>
-                  <CustomFormControl
-                      errors={errors}
-                      name="surface_area4"
-                      label="Quarter 4"
-                      placeholder={"1262"}
-                      register={register}
-                      onChange={handleInputChange}
-                  />
+                <CustomFormControl
+                  errors={errors}
+                  name="surface_area4"
+                  label="Quarter 4"
+                  placeholder={"1262"}
+                  register={register}
+                  onChange={handleInputChange}
+                />
               </GridItem>
             </Grid>
           )}

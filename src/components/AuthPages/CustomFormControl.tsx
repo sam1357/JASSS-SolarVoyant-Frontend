@@ -27,7 +27,12 @@ const CustomFormControl: React.FC<CustomFormControlProps> = ({
   return (
     <FormControl isInvalid={!!errors[name]}>
       {label && <FormLabel>{label}</FormLabel>}
-      <InputComponent placeholder={placeholder} defaultValue={defaultValue} {...register(name)} onChange={onChange} />
+      <InputComponent
+        placeholder={placeholder}
+        defaultValue={defaultValue}
+        {...register(name)}
+        onChange={onChange}
+      />
       {!!!errors[name] ? (
         <FormHelperText>
           {(helperText && helperText.length !== 0 && helperText) || " "}

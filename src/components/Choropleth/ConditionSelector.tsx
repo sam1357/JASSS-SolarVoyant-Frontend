@@ -2,12 +2,12 @@ import { Divider, HStack, useBreakpointValue, Text } from "@chakra-ui/react";
 import React from "react";
 import { FaSolarPanel } from "react-icons/fa";
 import { FaTemperatureEmpty } from "react-icons/fa6";
-import { ChoroplethConditionData } from "@src/interfaces";
+import { ConditionsSelectorData } from "@src/interfaces";
 import { BsCloudsFill, BsSunFill } from "react-icons/bs";
 import { SelectButton, SelectList, SelectOption, Select } from "@saas-ui/react";
 
 // needs to be here due to tsx elements
-export const CHOROPLETH_AVAILABLE_CONDITIONS: ChoroplethConditionData[] = [
+export const CHOROPLETH_AVAILABLE_CONDITIONS: ConditionsSelectorData[] = [
   {
     label: "Temperature",
     unit: "°C",
@@ -40,6 +40,7 @@ interface ConditionSelectorProps {
   setSelectedCondition: (condition: string) => void;
   width?: string;
   onClose: () => void;
+  schema: ConditionsSelectorData[];
 }
 
 export const ConditionSelector: React.FC<ConditionSelectorProps> = ({
@@ -47,10 +48,9 @@ export const ConditionSelector: React.FC<ConditionSelectorProps> = ({
   setSelectedCondition,
   width,
   onClose,
+  schema,
 }) => {
-  const { label, icon } = CHOROPLETH_AVAILABLE_CONDITIONS.find(
-    (condition) => condition.value === selectedCondition
-  ) as any;
+  const { label, icon } = schema.find((condition) => condition.value === selectedCondition) as any;
   const breakpoint = useBreakpointValue({ base: "base", lg: "lg", xl: "xl" });
 
   const renderValue =
@@ -67,7 +67,7 @@ export const ConditionSelector: React.FC<ConditionSelectorProps> = ({
     <Select defaultValue={label} renderValue={renderValue} width={width} variant="filled" size="lg">
       <SelectButton />
       <SelectList>
-        {CHOROPLETH_AVAILABLE_CONDITIONS.map((condition) => (
+        {schema.map((condition) => (
           <SelectOption
             value={condition.label}
             key={condition.value}

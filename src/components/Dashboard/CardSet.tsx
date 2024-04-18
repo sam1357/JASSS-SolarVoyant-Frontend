@@ -1,19 +1,29 @@
-"use client";
-import { Flex } from "@chakra-ui/react";
-import WeatherCard from "./WeatherCard";
-import { DashboardData } from "@interfaces/index";
+import React from "react";
+import { HStack } from "@chakra-ui/react";
+import WeatherCard from "@components/Dashboard/WeatherCard";
+import { WeekWeatherCodes } from "@src/interfaces";
 
 interface CardSetProps {
-  data: DashboardData;
+  data?: WeekWeatherCodes;
+  selectedCard: number;
+  setSelectedCard: (index: number) => void; // eslint-disable-line
 }
 
-const CardSet: React.FC<CardSetProps> = ({ data }) => {
+const CardSet: React.FC<CardSetProps> = ({ data, selectedCard, setSelectedCard }) => {
   return (
-    <Flex justifyContent="space-between">
-      {Array.from({ length: 7 }, (_, index) => (
-        <WeatherCard key={index} index={index} data={data} />
-      ))}
-    </Flex>
+    data && (
+      <HStack justifyContent={{ lg: "left", xl: "center" }} overflowX="scroll" width="100%" gap={3}>
+        {Array.from({ length: 7 }, (_, index) => (
+          <WeatherCard
+            key={index}
+            index={index}
+            data={data}
+            isActive={selectedCard === index}
+            onClick={() => setSelectedCard(index)}
+          />
+        ))}
+      </HStack>
+    )
   );
 };
 export default CardSet;

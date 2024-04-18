@@ -1,35 +1,9 @@
 "use client";
 
-import React, { useRef, useState } from "react";
-import {
-  Text,
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Grid,
-  GridItem,
-  Stack,
-  useToast,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
-  Link,
-  Switch,
-  Slider,
-  useDisclosure,
-} from "@chakra-ui/react";
-import CustomFormControl from "./CustomFormControl";
-import { PasswordInput, Persona, PersonaAvatar, useForm } from "@saas-ui/react";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import React, { useState } from "react";
+import { Text, Box, Button, Grid, GridItem, useToast } from "@chakra-ui/react";
 import { GooglePlacesAutocompleteOption, Session } from "@src/interfaces";
 import { Api } from "@utils/Api";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { LoadScriptNext } from "@react-google-maps/api";
 import { GOOGLE_MAP_DARK_ID, GOOGLE_MAP_LIGHT_ID } from "@src/constants";
 import Autocomplete from "../Choropleth/Autocomplete";
@@ -41,15 +15,10 @@ interface SetLocationProps {
   onComplete: () => void;
 }
 
-interface UserEmailFormData {
-  placeId?: GooglePlacesAutocompleteOption;
-}
-
 const libraries = ["places"];
 
 const SetLocation: React.FC<SetLocationProps> = ({ session, heading, subheading, onComplete }) => {
   const [selectedPlace, setSelectedPlace] = useState<GooglePlacesAutocompleteOption>();
-  const { isOpen, onClose, onOpen } = useDisclosure();
   const toast = useToast();
 
   const onUserSubmit = async () => {
@@ -70,7 +39,6 @@ const SetLocation: React.FC<SetLocationProps> = ({ session, heading, subheading,
     };
 
     if (session?.user?.email && session?.user?.id) {
-      console.log(selectedPlace.value.structured_formatting.main_text);
       await Api.setUserData(session.user.id, info).then(async (res) => {
         if (res?.status !== 200) {
           toast({
@@ -96,8 +64,6 @@ const SetLocation: React.FC<SetLocationProps> = ({ session, heading, subheading,
     }
   };
 
-  //   What is the surface area of your solar panels?
-  // Toggle the switch if you are unsure to select from common solar panel sizes
   return (
     <Box my={"auto"} width={"100%"} mx={"auto"} height="80vh">
       <Grid templateColumns="repeat(2, 1fr)" gap={6} mt={8}>

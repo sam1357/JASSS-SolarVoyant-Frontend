@@ -1,34 +1,13 @@
 "use client";
 
-import React, { useRef, useState } from "react";
-import {
-  Text,
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Grid,
-  GridItem,
-  Stack,
-  useToast,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
-  Link,
-  Switch,
-  Slider,
-} from "@chakra-ui/react";
+import React, { useState } from "react";
+import { Text, Box, Button, Flex, Grid, GridItem, Stack, useToast, Switch } from "@chakra-ui/react";
 import CustomFormControl from "./AuthPages/CustomFormControl";
-import { PasswordInput, Persona, PersonaAvatar, useForm } from "@saas-ui/react";
+import { useForm } from "@saas-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Session } from "@src/interfaces";
 import { Api } from "@utils/Api";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import CustomSlider from "./CustomSlider";
 import getSliderLabelByValue from "@src/utils/getSliderLabelByValue";
 
@@ -39,36 +18,22 @@ interface CustomUserDataContainerProps {
   onComplete: () => void;
 }
 
-interface surfaceAreaData {
-  surface_area: string;
-}
-
 const surfaceAreaSchema = yup.object({
-  surface_area: yup
-    .string()
-    .required("Surface area is required.")
+  surface_area: yup.string().required("Surface area is required."),
 });
 
 const SliderFieldToggle: React.FC<CustomUserDataContainerProps> = ({
   session,
   heading,
   subheading,
-  onComplete
+  onComplete,
 }) => {
-  const router = useRouter();
   const toast = useToast();
-  const [isOpen, setIsOpen] = useState(false);
-  const onClose = () => setIsOpen(false);
-  const cancelRef = useRef<HTMLButtonElement>(null);
   const [isSwitchOn, setIsSwitchOn] = useState(false);
   const [sliderValue, setSliderValue] = useState(50);
 
   const handleSwitchChange = () => {
     setIsSwitchOn(!isSwitchOn);
-
-    if (!isSwitchOn) {
-      console.log("Switch turned on!");
-    }
   };
 
   const {
@@ -79,7 +44,7 @@ const SliderFieldToggle: React.FC<CustomUserDataContainerProps> = ({
     resolver: yupResolver(surfaceAreaSchema),
   });
 
-  const onUserSubmit = async (data: surfaceAreaData) => {
+  const onUserSubmit = async () => {
     const info = { surface_area: `${getSliderLabelByValue(sliderValue)}` };
 
     if (session?.user?.email && session?.user?.id) {
@@ -107,8 +72,7 @@ const SliderFieldToggle: React.FC<CustomUserDataContainerProps> = ({
       });
     }
   };
-  //   What is the surface area of your solar panels?
-  // Toggle the switch if you are unsure to select from common solar panel sizes
+
   return (
     <Box my={"auto"} width={"100%"} mx={"auto"} height="100%">
       <form onSubmit={handleSubmitUser(onUserSubmit)}>
@@ -130,17 +94,24 @@ const SliderFieldToggle: React.FC<CustomUserDataContainerProps> = ({
           ) : (
             <Grid templateColumns="75fr 25fr" gap={2} mt={8} w={"100%"}>
               <GridItem w={"100%"}>
-              <CustomFormControl
-                errors={userErrors}
-                name="surface_area"
-                label=""
-                defaultValue={"1.8"}
-                helperText=""
-                register={registerUser}
-              />
-            </GridItem>
-              <GridItem display="flex" alignItems="center" height="100%" justifyContent={"flex-start"}>
-                <Text><b>m²</b></Text>
+                <CustomFormControl
+                  errors={userErrors}
+                  name="surface_area"
+                  label=""
+                  defaultValue={"1.8"}
+                  helperText=""
+                  register={registerUser}
+                />
+              </GridItem>
+              <GridItem
+                display="flex"
+                alignItems="center"
+                height="100%"
+                justifyContent={"flex-start"}
+              >
+                <Text>
+                  <b>m²</b>
+                </Text>
               </GridItem>
             </Grid>
           )}

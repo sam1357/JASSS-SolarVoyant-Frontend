@@ -9,7 +9,7 @@ import { State } from "@interfaces/state";
 import { useSelector } from "react-redux";
 import Autocomplete from "@components/Choropleth/Autocomplete";
 import {
-  ChoroplethConditionData,
+  ConditionsSelectorData,
   GooglePlacesAutocompleteOption,
   SuburbData,
 } from "@src/interfaces";
@@ -21,7 +21,10 @@ import {
   getOptions,
 } from "@components/Choropleth/utils";
 import { getChoroplethCondition } from "@utils/utils";
-import { ConditionSelector } from "@components/Choropleth/ConditionSelector";
+import {
+  CHOROPLETH_AVAILABLE_CONDITIONS,
+  ConditionSelector,
+} from "@components/Choropleth/ConditionSelector";
 
 let featureLayer: google.maps.FeatureLayer;
 let mapGlobal: google.maps.Map;
@@ -189,7 +192,7 @@ const createChoroplethMapComponent = (isLightMode: boolean) => {
       onClose();
 
       const suburbsData = await fetchData(condition);
-      const { unit } = getChoroplethCondition(condition) as ChoroplethConditionData;
+      const { unit } = getChoroplethCondition(condition) as ConditionsSelectorData;
 
       store.dispatch(setSuburbsData(suburbsData));
       setAverage(suburbsData["mean"]);
@@ -211,7 +214,7 @@ const createChoroplethMapComponent = (isLightMode: boolean) => {
       mapGlobal = map;
       const existingData = store.getState().suburbsData;
       let suburbsData: Record<string, number> = {};
-      const { unit } = getChoroplethCondition(condition) as ChoroplethConditionData;
+      const { unit } = getChoroplethCondition(condition) as ConditionsSelectorData;
 
       // use cached data if it exists
       if (Object.keys(existingData).length === 0) {
@@ -269,6 +272,7 @@ const createChoroplethMapComponent = (isLightMode: boolean) => {
                   selectedCondition={condition}
                   setSelectedCondition={setCondition}
                   onClose={onClose}
+                  schema={CHOROPLETH_AVAILABLE_CONDITIONS}
                 />
               </Card>
             </HStack>

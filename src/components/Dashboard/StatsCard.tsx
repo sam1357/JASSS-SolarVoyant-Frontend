@@ -11,13 +11,13 @@ import {
   Divider,
   Button,
 } from "@chakra-ui/react";
-import { TodayData } from "@interfaces/index";
 import { getFormattedDate } from "./utils";
 import { useEffect, useState } from "react";
 import { IoArrowForward } from "react-icons/io5";
+import { currentWeatherData } from "@src/interfaces";
 
 interface StatsCardProps {
-  data: TodayData;
+  data: currentWeatherData;
 }
 
 const StatsCard: React.FC<StatsCardProps> = ({ data }) => {
@@ -61,7 +61,7 @@ const StatsCard: React.FC<StatsCardProps> = ({ data }) => {
               Solar Irradiance
             </Text>
             <Text fontSize="md" textAlign="center">
-              {data.solar_radiation} W/m²
+              {data.current_conditions.shortwave_radiation} W/m²
             </Text>
           </Box>
           <Divider height="65px" orientation="vertical" color={`rgba(31, 31, 31)`} />
@@ -70,7 +70,7 @@ const StatsCard: React.FC<StatsCardProps> = ({ data }) => {
               Daylight Hours
             </Text>
             <Text fontSize="md" textAlign="center">
-              {data.daylight_hours}
+              {data.current_conditions.daylight_hours}
             </Text>
           </Box>
           <Divider height="65px" orientation="vertical" />
@@ -79,7 +79,7 @@ const StatsCard: React.FC<StatsCardProps> = ({ data }) => {
               Current Temp
             </Text>
             <Text fontSize="md" textAlign="center">
-              {data.temperature_2m} °C
+              {data.current_conditions.temperature_2m} °C
             </Text>
           </Box>
         </Flex>
