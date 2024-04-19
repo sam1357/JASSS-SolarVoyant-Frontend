@@ -1,6 +1,5 @@
 import {
   addDays,
-  calculateProdCoefficientVals,
   capitalizeFirstLetter,
   fetchQuarterlyDataAndUpdateUserData,
   formatDate,
@@ -8,7 +7,6 @@ import {
   getAllDataOfUser,
   getChoroplethCondition,
   getHourlyEnergyDataOfWeek,
-  handleCoefficientCalculation,
 } from "./utils";
 import LambdaInvoker from "./lambdaInvoker";
 import {
@@ -98,7 +96,7 @@ export class Api {
    */
   static async setUserData(
     userID: string,
-    info: { [field: string]: string | number[] }
+    info: { [field: string]: string | number[] | number | boolean }
   ): Promise<Response> {
     const res = await fetch("/api/changeUserData", {
       method: "PATCH",
@@ -492,14 +490,11 @@ export class Api {
     await fetchQuarterlyDataAndUpdateUserData(user, userId);
 
     // (3) Calculate Prediction Coefficients and Write to User
-    await handleCoefficientCalculation(user, userId);
-
-    if (!(user.q1_w === "-1" || user.q2_w === "-1" || user.q3_w === "-1" || user.q4_w === "-1")) {
-      await calculateProdCoefficientVals(user, userId);
-    }
+    user = await getAllDataOfUser(userId);
 
     // (4) Retrieve Energy Data
     let res: hourlyEnergyDataObj = await getHourlyEnergyDataOfWeek(user);
+
     // (5) Apply the provided time unit
     let energyDataRes: energyDataObj;
 
@@ -767,6 +762,21 @@ export class Api {
     const res = await fetch(`/api/notifications?userID=${userID}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
+    });
+
+    return res;
+  }
+
+  /**
+   * Retrieves user data
+   * @param userID The user ID for which data is being retrieved
+   * @returns {Promise<Response>} - The response from the fetch operation
+   */
+  static async getUserData(userID: string, fields: string): Promise<Response> {
+    const res = await fetch("/api/getUserData", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userID, fields }),
     });
 
     return res;

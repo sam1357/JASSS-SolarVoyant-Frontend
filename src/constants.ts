@@ -39,6 +39,12 @@ export const FORMAT_STRING = "yyyy-MM-dd";
 
 export const SECONDS_IN_HOUR = 3600;
 
+export const HOUSEHOLD_1_CONSUMPTION = "732,745,927,705";
+export const HOUSEHOLD_2_CONSUMPTION = "1278,1232,1565,1162";
+export const HOUSEHOLD_3_CONSUMPTION = "1530,1503,1903,1425";
+export const HOUSEHOLD_4_CONSUMPTION = "1819,1717,2148,1627";
+export const HOUSEHOLD_5_CONSUMPTION = "2158,2082,2761,2007";
+
 export const LOW_PRECIP_THRESHOLD = 15;
 export const SEVERE_WEATHER_THRESHOLD = 82;
 export const TIMEFRAME_THRESHOLD = 4;
@@ -46,3 +52,7 @@ export const MORNING_HOUR_CUTOFF = 5;
 export const EVENING_HOUR_CUTOFF = 18;
 export const HOURS_IN_WEEK = 168;
 export const HOURS_IN_DAY = 24;
+
+export const LIBRARIES = ["places"];
+export const DEFAULT_NOTIF_LIMIT = 20;
+export const MULTIPLICATION_OFFSET = 15;

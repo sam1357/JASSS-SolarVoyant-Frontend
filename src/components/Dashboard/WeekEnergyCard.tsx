@@ -78,7 +78,7 @@ const WeekEnergyCard: React.FC<WeekEnergyCardProps> = ({ energyDataName, weekEne
           {dataName}
         </Heading>
         <HStack>
-          <Heading fontSize="7xl" fontWeight={350} p={1}>
+          <Heading fontSize="6xl" fontWeight={350} p={1}>
             {val.toFixed(2)} {unit}
           </Heading>
         </HStack>

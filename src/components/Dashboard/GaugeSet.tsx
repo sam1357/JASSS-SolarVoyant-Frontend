@@ -10,7 +10,7 @@ interface GaugeSetProps {
 
 const GaugeSet: React.FC<GaugeSetProps> = ({ data }) => {
   return (
-    <Stack gap={4} direction={{ lg: "row", xl: "column" }}>
+    <Stack spacing={4}>
       <GaugeCard
         data={data}
         attribute="shortwave_radiation"

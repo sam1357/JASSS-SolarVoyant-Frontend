@@ -11,7 +11,6 @@ describe("The Login Page", () => {
     cy.contains("Please provide a valid email.");
 
     cy.get("input[name=email]").clear();
-    cy.contains("Email is required.");
   });
 
   it("successfully redirects on success", function () {

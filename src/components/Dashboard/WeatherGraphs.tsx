@@ -13,7 +13,7 @@ const WeatherGraph: React.FC<WeatherGraphProps> = ({ data }) => {
           showLegend={false}
           data={data}
           yAxisWidth={80}
-          height={"100%"}
+          height="100%"
           categories={["value"]}
           colors={["blue"]}
         />

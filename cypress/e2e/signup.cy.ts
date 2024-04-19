@@ -56,7 +56,7 @@ describe("Signup Page", () => {
     // eslint-disable-next-line
     cy.wait(6000);
     cy.reload();
-    cy.url().should("contain", "/dashboard/overview");
+    cy.url().should("contain", "/setup");
   });
 
   it("signup page link works", function () {

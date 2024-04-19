@@ -1,5 +1,5 @@
 "use client";
-import { Card, Heading, HStack, VStack } from "@chakra-ui/react";
+import { Card, Heading, Stack, useBreakpoint, VStack } from "@chakra-ui/react";
 import { energyDataObj, energyWithTimeStamp } from "@interfaces/index";
 import { useEffect, useState } from "react";
 
@@ -9,8 +9,9 @@ interface DayNetEnergyCardProps {
 }
 
 // type Index = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-
 const DayNetEnergyCard: React.FC<DayNetEnergyCardProps> = ({ dailyEnergyData, dayIndex }) => {
+  const breakPoint = useBreakpoint();
+
   const [rawVal, setRawVal] = useState(0);
   const [percVal, setPercVal] = useState(0);
 
@@ -32,25 +33,38 @@ const DayNetEnergyCard: React.FC<DayNetEnergyCardProps> = ({ dailyEnergyData, da
     <Card
       borderRadius="3xl"
       h="175px"
-      minW="200px"
+      minW="300px"
       w="50%"
-      backgroundColor={rawVal >= 0 ? "orange.500" : "green.500"}
+      backgroundColor={rawVal >= 0 ? "green.500" : "orange.500"}
     >
       <VStack display="flex" justifyContent="center" pt={2} h="100%">
         <Heading fontSize="2xl" fontWeight={200}>
           Net Energy
         </Heading>
-        <HStack>
-          <Heading fontSize="7xl" fontWeight={350} p={1}>
+        <Stack direction={["base", "sm", "md", "lg"].includes(breakPoint) ? "column" : "row"}>
+          <Heading
+            fontSize={{ base: "lg", lg: "3xl", xl: "5xl", "2xl": "6xl" }}
+            fontWeight={350}
+            p={1}
+          >
             {rawVal.toFixed(2)} w
           </Heading>
-          <Heading fontSize="4xl" fontWeight={200} p={6}>
+          <Heading
+            fontSize={{ base: "md", lg: "xl", xl: "2xl", "2xl": "3xl" }}
+            fontWeight={200}
+            p={{ base: 2, xl: 6 }}
+            textAlign="center"
+          >
             or
           </Heading>
-          <Heading fontSize="7xl" fontWeight={350} p={1}>
+          <Heading
+            fontSize={{ base: "lg", lg: "3xl", xl: "5xl", "2xl": "6xl" }}
+            fontWeight={350}
+            p={1}
+          >
             {percVal.toFixed(2)} %
           </Heading>
-        </HStack>
+        </Stack>
       </VStack>
     </Card>
   );
