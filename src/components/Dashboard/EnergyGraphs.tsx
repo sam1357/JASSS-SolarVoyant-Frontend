@@ -13,9 +13,8 @@ const EnergyGraph: React.FC<EnergyGraphProps> = ({ data }) => {
           data={data}
           yAxisWidth={80}
           height="300px"
-          categories={["production", "consumption"]}
-          colors={["blue", "orange"]}
-          stack
+          categories={["consumption", "production"]}
+          colors={["orange", "blue"]}
         />
       </CardBody>
     </>
