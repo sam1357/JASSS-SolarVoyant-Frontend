@@ -21,6 +21,7 @@ export default async function DashboardPage() {
   const weeklyOverviewGraphData: AverageDailyInWeekWeatherData =
     await Api.getDailyAverageConditionsDataOfWeek("Kensington");
   const weeklyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(session?.user?.id, "day");
+
   let insightData: NextWeekHourlyData | undefined;
   // Get Insights Data
   if (Object.keys(store.getState().insightData).length === 0) {
@@ -28,7 +29,7 @@ export default async function DashboardPage() {
     store.dispatch(setInsightData(insightData));
   }
 
-  let dailyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(session?.user?.id, "week");
+  let weekEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(session?.user?.id, "week");
 
   // TODO: Still working on organising this, setup below is just to show how to pass data
   return (
@@ -48,9 +49,9 @@ export default async function DashboardPage() {
       </Box>
 
       <VStack gap={2} w="100%">
-        <WeekEnergyCard energyDataName={"net"} weekEnergyData={dailyEnergyData}></WeekEnergyCard>
-        <WeekEnergyCard energyDataName={"cons"} weekEnergyData={dailyEnergyData}></WeekEnergyCard>
-        <WeekEnergyCard energyDataName={"prod"} weekEnergyData={dailyEnergyData}></WeekEnergyCard>
+        <WeekEnergyCard energyDataName={"net"} weekEnergyData={weekEnergyData}></WeekEnergyCard>
+        <WeekEnergyCard energyDataName={"cons"} weekEnergyData={weekEnergyData}></WeekEnergyCard>
+        <WeekEnergyCard energyDataName={"prod"} weekEnergyData={weekEnergyData}></WeekEnergyCard>
       </VStack>
 
       <Box>{insightData && <Insights data={insightData} isWeekly={true} selectedCard={0} />}</Box>

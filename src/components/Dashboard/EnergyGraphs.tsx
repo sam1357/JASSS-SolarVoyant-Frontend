@@ -12,7 +12,7 @@ const EnergyGraph: React.FC<EnergyGraphProps> = ({ data }) => {
         <AreaChart
           data={data}
           yAxisWidth={80}
-          height="300px"
+          height="90%"
           categories={["production", "consumption"]}
           colors={["blue", "orange"]}
           stack

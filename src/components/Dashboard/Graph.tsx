@@ -159,7 +159,7 @@ const Graph: React.FC<GraphProps> = ({
   }, [condition, indexDay]); // eslint-disable-line
 
   return (
-    <Card>
+    <Card height="100%" borderRadius="3xl">
       <CardHeader pb="0">
         <Flex padding={2} justifyContent={"space-between"}>
           <Heading as="h4" fontWeight="medium" size="md">

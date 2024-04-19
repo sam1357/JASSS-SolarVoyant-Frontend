@@ -80,7 +80,7 @@ const SliderOptionalToggle: React.FC<CustomUserDataContainerProps> = ({
                   <CustomFormControlOnChange
                     errors={{}}
                     name={quarter}
-                    label={`Quarter ${index + 1}`}
+                    label={`Q${index + 1} (W)`}
                     register={() => {}}
                     onChange={handleInputChange}
                   />

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Box, Button, ButtonGroup, useToast } from "@chakra-ui/react";
+import { Box, Button, ButtonGroup, Progress, useToast } from "@chakra-ui/react";
 import { Session } from "@src/interfaces";
 import { Api } from "@utils/Api";
 import SliderToggle from "../SliderToggle";
@@ -41,6 +41,7 @@ const SetLocation: React.FC<SetLocationProps> = ({ session, onComplete, setStep 
   });
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [topLoading, setTopLoading] = useState(false);
 
   const handleEnergyConsumptionChange = (data: React.SetStateAction<{}>) => {
     setEnergyConsumption((prev) => ({ ...prev, ...data }));
@@ -119,8 +120,9 @@ const SetLocation: React.FC<SetLocationProps> = ({ session, onComplete, setStep 
             duration: 4000,
             isClosable: true,
           });
-          onComplete();
+          setTopLoading(true);
           router.push("/dashboard/overview");
+          onComplete();
         }
       });
     }
@@ -147,6 +149,16 @@ const SetLocation: React.FC<SetLocationProps> = ({ session, onComplete, setStep 
           </Button>
         </ButtonGroup>
       </Box>
+      <Progress
+        position="absolute"
+        top={14}
+        left={0}
+        size="xs"
+        isIndeterminate
+        display={topLoading ? "block" : "none"}
+        w="100%"
+        zIndex={1}
+      />
     </Box>
   );
 };

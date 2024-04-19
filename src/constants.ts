@@ -55,3 +55,4 @@ export const HOURS_IN_DAY = 24;
 
 export const LIBRARIES = ["places"];
 export const DEFAULT_NOTIF_LIMIT = 20;
+export const MULTIPLICATION_OFFSET = 15;

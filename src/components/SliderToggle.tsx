@@ -93,7 +93,7 @@ const SliderToggle: React.FC<CustomUserDataContainerProps> = ({ onEnergyConsumpt
                   <CustomFormControlOnChange
                     errors={{}}
                     name="quarter1C"
-                    label="Quarter 1"
+                    label="Q1 (W)"
                     register={() => {}}
                     onChange={handleInputChange}
                   />
@@ -102,7 +102,7 @@ const SliderToggle: React.FC<CustomUserDataContainerProps> = ({ onEnergyConsumpt
                   <CustomFormControlOnChange
                     errors={{}}
                     name="quarter2C"
-                    label="Quarter 2"
+                    label="Q2 (W)"
                     register={() => {}}
                     onChange={handleInputChange}
                   />
@@ -111,7 +111,7 @@ const SliderToggle: React.FC<CustomUserDataContainerProps> = ({ onEnergyConsumpt
                   <CustomFormControlOnChange
                     errors={{}}
                     name="quarter3C"
-                    label="Quarter 3"
+                    label="Q3 (W)"
                     register={() => {}}
                     onChange={handleInputChange}
                   />
@@ -120,7 +120,7 @@ const SliderToggle: React.FC<CustomUserDataContainerProps> = ({ onEnergyConsumpt
                   <CustomFormControlOnChange
                     errors={{}}
                     name="quarter4C"
-                    label="Quarter 4"
+                    label="Q4 (W)"
                     register={() => {}}
                     onChange={handleInputChange}
                   />
