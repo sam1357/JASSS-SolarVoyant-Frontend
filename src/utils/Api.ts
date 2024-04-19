@@ -1,6 +1,5 @@
 import {
   addDays,
-  calculateProdCoefficientVals,
   capitalizeFirstLetter,
   fetchQuarterlyDataAndUpdateUserData,
   formatDate,
@@ -8,7 +7,6 @@ import {
   getAllDataOfUser,
   getChoroplethCondition,
   getHourlyEnergyDataOfWeek,
-  handleCoefficientCalculation,
 } from "./utils";
 import LambdaInvoker from "./lambdaInvoker";
 import {
@@ -20,7 +18,6 @@ import {
   EVENING_HOUR_CUTOFF,
   HOURS_IN_WEEK,
   HOURS_IN_DAY,
-  MULTIPLICATION_OFFSET,
 } from "@src/constants";
 import {
   Attributes,

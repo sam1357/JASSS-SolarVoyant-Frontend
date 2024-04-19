@@ -21,7 +21,7 @@ export default async function DashboardPage() {
   const weeklyOverviewGraphData: AverageDailyInWeekWeatherData =
     await Api.getDailyAverageConditionsDataOfWeek("Kensington");
   const weeklyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(session?.user?.id, "day");
-  
+
   let insightData: NextWeekHourlyData | undefined;
   // Get Insights Data
   if (Object.keys(store.getState().insightData).length === 0) {

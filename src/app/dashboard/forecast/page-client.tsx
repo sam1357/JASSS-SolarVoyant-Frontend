@@ -88,11 +88,7 @@ export default function ForecastPageClient({
           pr={{ base: 0, md: 1, xl: 2 }}
           overflowX="auto"
         >
-          <Grid
-            templateRows="repeat(4, 1fr)"
-            templateColumns="repeat(8, 1fr)"
-            gap={6}
-          >
+          <Grid templateRows="repeat(4, 1fr)" templateColumns="repeat(8, 1fr)" gap={6}>
             <GridItem rowSpan={{ base: 2, lg: 1 }} colSpan={{ base: 12, lg: 8 }} h="100%">
               {weatherData && (
                 <Insights data={weatherData} isWeekly={false} selectedCard={selectedCard} />

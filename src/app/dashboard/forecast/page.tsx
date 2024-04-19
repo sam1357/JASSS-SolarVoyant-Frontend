@@ -18,10 +18,10 @@ export default async function ForecastPage() {
     insightData = await Api.getWeekWeatherData(true, userSuburb);
     store.dispatch(setInsightData(insightData));
   }
-  
+
   // Get Week Weather Codes
-  const weekWeatherCodes: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek(userSuburb); 
-  
+  const weekWeatherCodes: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek(userSuburb);
+
   // Get Energy Data for Forecast Cards
   const dailyEnergyData: energyDataObj = await Api.getEnergyDataOfWeek(userId, "day");
 
