@@ -1,20 +1,7 @@
 "use client";
-import {
-  Card,
-  CardBody,
-  Box,
-  Heading,
-  Text,
-  Image,
-  Center,
-  Flex,
-  Divider,
-  Button,
-  Link,
-} from "@chakra-ui/react";
+import { Card, CardBody, Box, Heading, Text, Image, Center, Flex, Divider } from "@chakra-ui/react";
 import { getFormattedDate } from "./utils";
 import { useEffect, useState } from "react";
-import { IoArrowForward } from "react-icons/io5";
 import { currentWeatherData } from "@src/interfaces";
 
 interface StatsCardProps {

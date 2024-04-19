@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex, Grid, GridItem, Heading, Stack, useBreakpoint, VStack } from "@chakra-ui/react";
+import { Box, Grid, GridItem, Heading, Stack, useBreakpoint } from "@chakra-ui/react";
 import Graph, { DAILY_CONDITIONS } from "@components/Dashboard/Graph";
 import StatsCard from "@components/Dashboard/StatsCard";
 import Insights from "@src/components/Dashboard/Insights";
