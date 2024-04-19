@@ -2,7 +2,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@src/authOptions";
 import { energyDataObj, NextWeekHourlyData, WeekWeatherCodes } from "@src/interfaces";
 import { Api } from "@utils/Api";
-import store, { setInsightData } from "@src/store";
 import ForecastPageClient from "@app/dashboard/forecast/page-client";
 import { getAllDataOfUser } from "@src/utils/utils";
 
@@ -12,12 +11,7 @@ export default async function ForecastPage() {
   let userId = session?.user?.id;
   let userSuburb: string = (await getAllDataOfUser(userId)).suburb;
 
-  // Get Insights Data
-  let insightData: NextWeekHourlyData | undefined = undefined;
-  if (Object.keys(store.getState().insightData).length === 0) {
-    insightData = await Api.getWeekWeatherData(true, userSuburb);
-    store.dispatch(setInsightData(insightData));
-  }
+  const insightData: NextWeekHourlyData = await Api.getWeekWeatherData(true, userSuburb);
 
   // Get Week Weather Codes
   const weekWeatherCodes: WeekWeatherCodes = await Api.getWeatherCodeDataOfWeek(userSuburb);
