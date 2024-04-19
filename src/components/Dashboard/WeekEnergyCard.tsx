@@ -14,7 +14,6 @@ const WeekEnergyCard: React.FC<WeekEnergyCardProps> = ({ energyDataName, weekEne
   const [unit, setUnit] = useState("");
 
   const { colorMode } = useColorMode();
-
   useEffect(() => {
     // Get the name of the day of the week
     const getDataName = () => {
@@ -55,7 +54,7 @@ const WeekEnergyCard: React.FC<WeekEnergyCardProps> = ({ energyDataName, weekEne
       setUnit(unit);
     };
     getUnit();
-  }, []); // eslint-disable-line
+  }, [weekEnergyData]); // eslint-disable-line
 
   let netColor: string;
   if (dataName === "Net Energy") {
@@ -73,13 +72,13 @@ const WeekEnergyCard: React.FC<WeekEnergyCardProps> = ({ energyDataName, weekEne
   }
 
   return (
-    <Card borderRadius="3xl" h="175px" minW="200px" w="25%" backgroundColor={netColor}>
+    <Card borderRadius="3xl" h="210px" backgroundColor={netColor}>
       <VStack display="flex" justifyContent="center" alignContent="center" pt={2} h="100%">
         <Heading fontSize="2xl" fontWeight={200}>
           {dataName}
         </Heading>
         <HStack>
-          <Heading fontSize="7xl" fontWeight={350} p={1}>
+          <Heading fontSize="6xl" fontWeight={350} p={1}>
             {val.toFixed(2)} {unit}
           </Heading>
         </HStack>

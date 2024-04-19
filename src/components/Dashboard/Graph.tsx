@@ -159,15 +159,15 @@ const Graph: React.FC<GraphProps> = ({
   }, [condition, indexDay]); // eslint-disable-line
 
   return (
-    <Card height="100%" borderRadius="3xl">
+    <Card borderRadius={"3xl"} h="100%">
       <CardHeader pb="0">
         <Flex padding={2} justifyContent={"space-between"}>
-          <Heading as="h4" fontWeight="medium" size="md">
+          <Heading fontSize={"3xl"} fontWeight="medium" size="md">
             {condition !== "generation_consumption"
               ? `${getAttributeName(condition)} (${
                   schema.find((item) => item.value === condition)?.unit
                 }) over Time`
-              : "Generation VS Consumption"}
+              : "Production VS Consumption"}
           </Heading>
           <Box>
             <ConditionSelector
