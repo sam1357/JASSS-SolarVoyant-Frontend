@@ -452,3 +452,9 @@ export function capitalise(suburb: string): string {
   });
   return capitalisedWords.join(" ");
 }
+
+export const findSuburbName = (terms: any[]) => {
+  // look for the object with NSW in terms, then suburb is the previous object
+  const suburb = terms.find((term) => term.value === "NSW");
+  return terms[terms.indexOf(suburb) - 1].value;
+};

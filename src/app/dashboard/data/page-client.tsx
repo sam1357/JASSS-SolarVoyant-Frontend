@@ -42,6 +42,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import transformQuarterlyConsumption from "@src/utils/transformQuarterlyConsumption";
+import { findSuburbName } from "@src/utils/utils";
 
 interface EnergyDataSubmitValues {
   surface_area: number;
@@ -131,12 +132,6 @@ export default function EnergyDataPageClient({ session }: { session: Session }) 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
 
-  const findSuburbName = (terms: any[]) => {
-    // look for the object with NSW in terms, then suburb is the previous object
-    const suburb = terms.find((term) => term.value === "NSW");
-    return terms[terms.indexOf(suburb) - 1].value;
-  };
-
   const handleSolarPanelTabChange = (index: number) => {
     setSolarPanelTab(index);
     resetField("surface_area", { defaultValue: userData.surface_area });
@@ -169,6 +164,18 @@ export default function EnergyDataPageClient({ session }: { session: Session }) 
         position: "top",
         duration: 4000,
         isClosable: true,
+      });
+      return;
+    }
+
+    if (!selectedPlace.value.terms.some((e) => e.value === "NSW")) {
+      toast({
+        title: "Error",
+        description: "Please select a place in New South Wales.",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+        position: "top",
       });
       return;
     }
@@ -269,7 +276,7 @@ export default function EnergyDataPageClient({ session }: { session: Session }) 
         overflowX="hidden"
         overflowY="hidden"
       >
-        <Box borderWidth="1px" borderRadius="lg" w="95%" h="90%" p={14}>
+        <Box borderWidth="1px" borderRadius="lg" w="95%" h="90%" p={{ base: 6, lg: 14 }}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack gap={4}>
               <Heading as="h1" size="lg">
@@ -348,7 +355,7 @@ export default function EnergyDataPageClient({ session }: { session: Session }) 
               <Divider />
               <Stack>
                 <Heading as="h2" size="md">
-                  Quarterly Energy Production
+                  Quarterly Energy Production (W)
                 </Heading>
                 <Text>Enter your estimated production values over the past 4 quarters.</Text>
               </Stack>
@@ -359,7 +366,7 @@ export default function EnergyDataPageClient({ session }: { session: Session }) 
                       <CustomFormControl
                         errors={errors}
                         name={quarter}
-                        label={`Q${index + 1}`}
+                        label={`Q${index + 1} (W)`}
                         defaultValue={userData[`q${index + 1}_w`] as string}
                         register={register}
                       />
@@ -370,7 +377,7 @@ export default function EnergyDataPageClient({ session }: { session: Session }) 
               <Divider />
               <Stack>
                 <Heading as="h2" size="md">
-                  Quarterly Energy Consumption
+                  Quarterly Energy Consumption (W)
                 </Heading>
                 <Text>Enter your estimated consumption values over the past 4 quarters.</Text>
               </Stack>
@@ -410,7 +417,7 @@ export default function EnergyDataPageClient({ session }: { session: Session }) 
                             <CustomFormControl
                               errors={errors}
                               name={quarter}
-                              label={`Q${index + 1}`}
+                              label={`Q${index + 1} (W)`}
                               defaultValue={consumption[index].toString()}
                               register={register}
                             />

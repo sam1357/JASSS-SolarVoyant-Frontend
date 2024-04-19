@@ -1,6 +1,6 @@
 "use client";
 
-import { AbsoluteCenter, Box, Card, CardBody, CardHeader, Center, Flex, Heading, useDisclosure } from "@chakra-ui/react";
+import { Box, Card, CardHeader, Flex, Heading, useDisclosure } from "@chakra-ui/react";
 import { ConditionSelector } from "../Choropleth/ConditionSelector";
 import {
   AverageDailyInWeekWeatherData,
@@ -179,11 +179,11 @@ const Graph: React.FC<GraphProps> = ({
           </Box>
         </Flex>
       </CardHeader>
-        {condition !== "generation_consumption" ? (
-          <WeatherGraph data={formattedWeatherData} />
-        ) : (
-          <EnergyGraph data={formattedEnergyData} />
-        )}
+      {condition !== "generation_consumption" ? (
+        <WeatherGraph data={formattedWeatherData} />
+      ) : (
+        <EnergyGraph data={formattedEnergyData} />
+      )}
     </Card>
   );
 };

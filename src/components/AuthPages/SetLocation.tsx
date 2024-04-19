@@ -7,6 +7,7 @@ import { Api } from "@utils/Api";
 import { LoadScriptNext } from "@react-google-maps/api";
 import { LIBRARIES } from "@src/constants";
 import Autocomplete from "@components/Choropleth/Autocomplete";
+import { findSuburbName } from "@src/utils/utils";
 
 interface SetLocationProps {
   session: Session;
@@ -35,8 +36,21 @@ const SetLocation: React.FC<SetLocationProps> = ({ session, heading, subheading,
       return;
     }
 
+    if (!selectedPlace.value.terms.some((e) => e.value === "NSW")) {
+      toast({
+        title: "Error",
+        description: "Please select a place in New South Wales.",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+        position: "top",
+      });
+      setLoading(false);
+      return;
+    }
+
     const info = {
-      suburb: selectedPlace.value.terms[2].value,
+      suburb: findSuburbName(selectedPlace.value.terms),
     };
 
     if (session?.user?.email && session?.user?.id) {

@@ -20,6 +20,7 @@ import {
   EVENING_HOUR_CUTOFF,
   HOURS_IN_WEEK,
   HOURS_IN_DAY,
+  MULTIPLICATION_OFFSET,
 } from "@src/constants";
 import {
   Attributes,
@@ -492,14 +493,11 @@ export class Api {
     await fetchQuarterlyDataAndUpdateUserData(user, userId);
 
     // (3) Calculate Prediction Coefficients and Write to User
-    await handleCoefficientCalculation(user, userId);
-
-    if (!(user.q1_w === "-1" || user.q2_w === "-1" || user.q3_w === "-1" || user.q4_w === "-1")) {
-      await calculateProdCoefficientVals(user, userId);
-    }
+    user = await getAllDataOfUser(userId);
 
     // (4) Retrieve Energy Data
     let res: hourlyEnergyDataObj = await getHourlyEnergyDataOfWeek(user);
+
     // (5) Apply the provided time unit
     let energyDataRes: energyDataObj;
 
