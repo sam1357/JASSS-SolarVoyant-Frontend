@@ -47,11 +47,18 @@ const DayEnergyCard: React.FC<dayEnergyCardProps> = ({
   return (
     <Card borderRadius="3xl" h="175px" minW="200px" w="25%">
       <VStack display="flex" justifyContent="center" alignContent="center" pt={2} h="100%">
-        <Heading fontSize={{ base: 's', sm: 's', md: 's', lg: 'm', xl: 'xl', '2xl': '2xl'}} fontWeight={200}>
+        <Heading
+          fontSize={{ base: "s", sm: "s", md: "s", lg: "m", xl: "xl", "2xl": "2xl" }}
+          fontWeight={200}
+        >
           {dataName}
         </Heading>
         <HStack>
-          <Heading fontSize={{ base: 'xl', sm: 'xl', md: 'xl', lg: '3xl', xl: '5xl', '2xl': '7xl'}} fontWeight={350} p={1}>
+          <Heading
+            fontSize={{ base: "xl", sm: "xl", md: "xl", lg: "3xl", xl: "5xl", "2xl": "7xl" }}
+            fontWeight={350}
+            p={1}
+          >
             {val.toFixed(2)} w
           </Heading>
         </HStack>

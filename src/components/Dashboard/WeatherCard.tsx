@@ -15,7 +15,14 @@ interface WeatherCardProps {
 
 type Index = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-const WeatherCard: React.FC<WeatherCardProps> = ({ index, codeData, isActive, onClick, rawNetEnergy, percNetEnergy }) => {
+const WeatherCard: React.FC<WeatherCardProps> = ({
+  index,
+  codeData,
+  isActive,
+  onClick,
+  rawNetEnergy,
+  percNetEnergy,
+}) => {
   const [day, setDay] = useState("");
 
   useEffect(() => {
@@ -36,7 +43,7 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ index, codeData, isActive, on
       textColor={isActive ? "white" : "auto"}
       onClick={onClick}
       cursor="pointer"
-      minW="130px"
+      minW="140px"
       maxW="180px"
       w="100%"
     >

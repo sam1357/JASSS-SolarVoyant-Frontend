@@ -9,6 +9,7 @@ import {
   HStack,
   SimpleGrid,
   AbsoluteCenter,
+  useBreakpoint,
 } from "@chakra-ui/react";
 import { getAttributeName } from "./utils";
 import { useEffect, useState } from "react";
@@ -36,6 +37,9 @@ const GaugeCard: React.FC<GaugeCardProps> = ({ data, attribute, labels, inverse 
   const [title, setTitle] = useState("");
   const { colorMode } = useColorMode();
   const gaugeColour = colorMode === "light" ? colors.gray[200] : colors.gray[700];
+  const breakpoint = useBreakpoint();
+
+  const gaugeWidth = ["md", "sm", "base"].includes(breakpoint) ? "200px" : "230px";
 
   const getStatus = (value: number) => {
     if (value < labels.low.limit) {
@@ -97,57 +101,62 @@ const GaugeCard: React.FC<GaugeCardProps> = ({ data, attribute, labels, inverse 
 
   return (
     <Card borderRadius="3xl" width="100%" height="100%" minW="250px" align="center">
-      <AbsoluteCenter axis='vertical'>
-      <CardBody>
-        <SimpleGrid columns={{ xl: 1, "2xl": 2 }} alignItems="center" justifyContent="center" justifyItems="center">
-          <VStack display="flex" justifyContent="center" pt={2}>
-            <Heading fontSize="2xl">{title}</Heading>
-            <HStack>
-              <Heading fontSize="4xl" p={1}>
-                {data[attribute]}
-              </Heading>
-              <Heading fontSize="lg" pt={1}>
-                {data.units[attribute]}
-              </Heading>
-            </HStack>
-          </VStack>
-          <Box display="flex" justifyContent="center">
-            <Box maxW="250px">
-              <GaugeComponent
-                type="semicircle"
-                arc={{
-                  width: 0.15,
-                  cornerRadius: 0,
-                  padding: 0.003,
-                  subArcs,
-                }}
-                labels={{
-                  valueLabel: {
-                    formatTextValue: () => getStatus(value),
-                    style: {
-                      fill: labelColour,
-                      textShadow: "none",
-                      fontWeight: 700,
+      <AbsoluteCenter axis="vertical">
+        <CardBody>
+          <SimpleGrid
+            columns={{ xl: 1, "2xl": 2 }}
+            alignItems="center"
+            justifyContent="center"
+            justifyItems="center"
+          >
+            <VStack display="flex" justifyContent="center" pt={2}>
+              <Heading fontSize="2xl">{title}</Heading>
+              <HStack>
+                <Heading fontSize="3xl" p={1}>
+                  {data[attribute]}
+                </Heading>
+                <Heading fontSize="lg" pt={1}>
+                  {data.units[attribute]}
+                </Heading>
+              </HStack>
+            </VStack>
+            <Box display="flex" justifyContent="center">
+              <Box maxW="250px">
+                <GaugeComponent
+                  type="semicircle"
+                  arc={{
+                    width: 0.15,
+                    cornerRadius: 0,
+                    padding: 0.003,
+                    subArcs,
+                  }}
+                  labels={{
+                    valueLabel: {
+                      formatTextValue: () => getStatus(value),
+                      style: {
+                        fill: labelColour,
+                        textShadow: "none",
+                        fontWeight: 700,
+                      },
                     },
-                  },
-                  tickLabels: {
-                    type: "outer",
-                  },
-                }}
-                pointer={{
-                  elastic: false,
-                  type: "arrow",
-                  width: 15,
-                }}
-                value={clampedValue}
-                minValue={labels.minimum}
-                maxValue={labels.maximum}
-              />
+                    tickLabels: {
+                      type: "outer",
+                    },
+                  }}
+                  pointer={{
+                    elastic: false,
+                    type: "arrow",
+                    width: 15,
+                  }}
+                  value={clampedValue}
+                  minValue={labels.minimum}
+                  maxValue={labels.maximum}
+                  style={{ width: gaugeWidth }}
+                />
+              </Box>
             </Box>
-          </Box>
-        </SimpleGrid>
-      </CardBody>
-
+          </SimpleGrid>
+        </CardBody>
       </AbsoluteCenter>
     </Card>
   );
