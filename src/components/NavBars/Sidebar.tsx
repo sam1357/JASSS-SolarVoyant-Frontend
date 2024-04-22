@@ -163,10 +163,12 @@ export default function Sidebar() {
   const [isHovered, setIsHovered] = useState(false);
   const [isPinned, setIsPinned] = useState(false);
 
+  // Show the sidebar when the user hovers over it
   useEffect(() => {
     if (isHovered) {
       onOpen();
     } else {
+      // Close the sidebar after a delay if it is not pinned
       const timeoutId = setTimeout(() => {
         if (!isPinned) {
           onClose();
@@ -176,6 +178,7 @@ export default function Sidebar() {
     }
   }, [isHovered, isPinned, onOpen, onClose]);
 
+  // Toggle the sidebar pin
   const togglePin = () => {
     setIsPinned(!isPinned);
     toast({

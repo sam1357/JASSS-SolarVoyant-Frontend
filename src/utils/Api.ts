@@ -42,7 +42,7 @@ import {
   hourlyEnergyDataObj,
   energyWithTimeStamp,
 } from "@src/interfaces";
-import { ErrorWithStatus } from "./ErroWithStatus";
+import { ErrorWithStatus } from "./ErrorWithStatus";
 import { getCurrentHour } from "@components/Dashboard/utils";
 
 export class Api {
@@ -515,11 +515,13 @@ export class Api {
         let currProd = res.energy_production_hourly[i];
         let currCons = res.energy_consumption_hourly[i];
 
+        // Add each hour's value to the array
         let currProdEntry: energyWithTimeStamp = {
           value: currProd,
           timeStamp: timeStamp,
         };
 
+        // Add each hour's value to the array
         prodHourly.push(currProdEntry);
         let currConsEntry: energyWithTimeStamp = {
           value: currCons,
@@ -527,9 +529,11 @@ export class Api {
         };
         consHourly.push(currConsEntry);
 
+        // Calculate Net Energy
         if (currProd !== 0) {
           let netEnergyVal = parseFloat((((currProd - currCons) / currProd) * 100).toFixed(3));
 
+          // Add each hour's value to the array
           let currNetEnergyEntry: energyWithTimeStamp = {
             value: netEnergyVal,
             timeStamp: timeStamp,
@@ -537,6 +541,7 @@ export class Api {
           netEnergyHourly.push(currNetEnergyEntry);
         }
 
+        // Add each hour's value to the array
         let currNetEnergyRawEntry: energyWithTimeStamp = {
           value: currProd - currCons,
           timeStamp: timeStamp,
@@ -583,12 +588,14 @@ export class Api {
         };
         energyProdSum.push(prodEntry);
 
+        // Add each day's value to the array
         let consEntry: energyWithTimeStamp = {
           value: consSum,
           timeStamp: timeStamp,
         };
         energyConsSum.push(consEntry);
 
+        // Calculate Net Energy
         let netEnergyVal = parseFloat((((prodSum - consSum) / prodSum) * 100).toFixed(3));
         let netEnergyEntry: energyWithTimeStamp = {
           value: netEnergyVal,
@@ -596,6 +603,7 @@ export class Api {
         };
         netEnergyPerc.push(netEnergyEntry);
 
+        // Add each day's value to the array
         let netEnergyRawEntry: energyWithTimeStamp = {
           value: prodSum - consSum,
           timeStamp: timeStamp,
@@ -615,6 +623,7 @@ export class Api {
     } else {
       let timeStamp = await generateTimeStamp(0, 0);
 
+      // Calculate production and consumption total for each day
       let prodSum = 0;
       res.energy_production_hourly.forEach((e: number) => (prodSum += e));
 
@@ -625,6 +634,7 @@ export class Api {
       prodSum /= HOURS_IN_WEEK;
       consSum /= HOURS_IN_WEEK;
 
+      // Calculate Net Energy
       let netEnergyVal = parseFloat((((prodSum - consSum) / prodSum) * 100).toFixed(3));
       let netEnergyRawVal = prodSum - consSum;
       energyDataRes = {
@@ -650,7 +660,13 @@ export class Api {
     return energyDataRes;
   }
 
-  // HELPER FUNCTION for getDailyAverageConditionsOfWeekData
+  /**
+   * Gets the energy data for the current day
+   * @param start_day_offset The start day offset
+   * @param end_day_offset  The end day offset
+   * @param suburb The suburb to get data for
+   * @returns {Promise<energyDataObj>} - The energy data for the current day
+   */
   static async getAverageWeatherData(
     start_day_offset: number,
     end_day_offset: number,
@@ -684,7 +700,13 @@ export class Api {
     return await res.json();
   }
 
-  // HELPER FUNCTION for getWeekWeatherCodeData
+  /**
+   * Gets the energy data for the current day
+   * @param start_day_offset The start day offset
+   * @param end_day_offset The end day offset
+   * @param suburb The suburb to get data for
+   * @returns {Promise<AnalyseReturnObject>} - The energy data for the current day
+   */
   static async getModeWeatherCode(
     start_day_offset: number,
     end_day_offset: number,
@@ -712,7 +734,14 @@ export class Api {
     return await res.json();
   }
 
-  // HELPER FUNCTION for all Data Retrieval Calls (excl. weather codes)
+  /**
+   * Retrieves weather data for a given suburb
+   * @param start_offset The start day offset
+   * @param end_offset The end day offset
+   * @param attributes The attributes to retrieve
+   * @param suburb The suburb to get data for
+   * @returns {Promise<RetrieveReturnObject>} - The weather data for the given suburb
+   */
   static async retrieveWeatherData(
     start_offset: number,
     end_offset: number,
@@ -736,7 +765,11 @@ export class Api {
     return await res.json();
   }
 
-  // HELPER FUNCTION for all weather code data retrieval calls
+  /**
+   * Retrieves WMO (World Meteorological Organization) data.
+   *
+   * @returns {Promise<WmoData[]>} A promise that resolves to an array of WMO data.
+   */
   static async retrieveWmoData(): Promise<WmoData[]> {
     const lambdaInvoker = new LambdaInvoker();
     let res = await lambdaInvoker.invokeLambda(
@@ -749,6 +782,12 @@ export class Api {
     return await res.json();
   }
 
+  /**
+   * Retrieves notifications for a specific user.
+   *
+   * @param {string} userID The ID of the user for whom to retrieve notifications.
+   * @returns {Promise<Response>} A promise that resolves to the response containing the user's notifications.
+   */
   static async getUserNotifications(userID: string): Promise<Response> {
     const res = await fetch(`/api/notifications?userID=${userID}`, {
       method: "GET",
@@ -758,6 +797,12 @@ export class Api {
     return res;
   }
 
+  /**
+   * Deletes notifications for a specific user.
+   *
+   * @param {string} userID The ID of the user for whom to delete notifications.
+   * @returns {Promise<Response>} A promise that resolves to the response indicating success or failure of the deletion.
+   */
   static async deleteUserNotifications(userID: string): Promise<Response> {
     const res = await fetch(`/api/notifications?userID=${userID}`, {
       method: "DELETE",

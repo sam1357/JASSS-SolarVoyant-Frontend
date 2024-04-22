@@ -288,12 +288,13 @@ export async function handleCoefficientCalculation(user: any, userId: string): P
 /**
  * Calculate prod coefficient for energy generation prediction
  * @param user
- * @returns
+ * @returns void
  */
 export async function calculateProdCoefficientVals(user: any, userId: string): Promise<void> {
   const prod_coefficients: number[] = [];
 
   let predictedGenerationQ1;
+  // Calculate the predicted generation for Q1 and each quarter
   if (parseFloat(user.q1_t) > 25) {
     predictedGenerationQ1 =
       parseFloat(user.q1_r) *
@@ -333,6 +334,7 @@ export async function calculateProdCoefficientVals(user: any, userId: string): P
     predictedGenerationQ4 = parseFloat(user.q4_r);
   }
 
+  // Calculate the production coefficients
   prod_coefficients.push(predictedGenerationQ1 / parseFloat(user.q1_w));
   prod_coefficients.push(predictedGenerationQ2 / parseFloat(user.q2_w));
   prod_coefficients.push(predictedGenerationQ3 / parseFloat(user.q3_w));
@@ -343,6 +345,11 @@ export async function calculateProdCoefficientVals(user: any, userId: string): P
   }
 }
 
+/**
+ * Fetch the quarterly data and update the user data
+ * @param user The user object
+ * @param userId The user ID
+ */
 export async function fetchQuarterlyDataAndUpdateUserData(
   user: any,
   userId: string
@@ -374,6 +381,12 @@ export async function fetchQuarterlyDataAndUpdateUserData(
   }
 }
 
+/**
+ * Retrieves hourly energy data of the week for a user.
+ *
+ * @param {any} user The user object.
+ * @returns {Promise<hourlyEnergyDataObj>} A promise that resolves to the hourly energy data of the week.
+ */
 export async function getHourlyEnergyDataOfWeek(user: any): Promise<hourlyEnergyDataObj> {
   const lambdaInvoker = new LambdaInvoker();
   let res = await lambdaInvoker.invokeLambda(
@@ -389,6 +402,12 @@ export async function getHourlyEnergyDataOfWeek(user: any): Promise<hourlyEnergy
   return await res.json();
 }
 
+/**
+ * Retrieves all data of a user.
+ *
+ * @param {any} userId The ID of the user.
+ * @returns {Promise<fullUserObj>} A promise that resolves to the full user object.
+ */
 export async function getAllDataOfUser(userId: any): Promise<fullUserObj> {
   const lambdaInvoker = new LambdaInvoker();
   let res = await lambdaInvoker.invokeLambda(
@@ -402,6 +421,13 @@ export async function getAllDataOfUser(userId: any): Promise<fullUserObj> {
   return (await res.json()).data;
 }
 
+/**
+ * Sets data of a user.
+ *
+ * @param {any} userId The ID of the user.
+ * @param {any} setFields The fields to set for the user.
+ * @returns {Promise<any>} A promise that resolves when the operation is completed.
+ */
 export async function setDataOfUser(userId: any, setFields: any): Promise<any> {
   const lambdaInvoker = new LambdaInvoker();
 
@@ -420,6 +446,13 @@ export async function setDataOfUser(userId: any, setFields: any): Promise<any> {
   return await res.json();
 }
 
+/**
+ * Generates a timestamp based on date and hour offsets.
+ *
+ * @param {number} dateOffset The offset in days from the current date.
+ * @param {number} hourOffset The offset in hours from midnight.
+ * @returns {Promise<string>} A promise that resolves to the generated timestamp.
+ */
 export async function generateTimeStamp(dateOffset: number, hourOffset: number): Promise<string> {
   // Convert Current Date to AEST
   let currentDate = new Date();
@@ -437,6 +470,7 @@ export async function generateTimeStamp(dateOffset: number, hourOffset: number):
   let timestamp = dateStr.replace(/\..*/, "+10:00");
   return timestamp;
 }
+
 /**
  * Capitalises a suburb name as a proper noun. For example surry hills -> Surry Hills
  * @param suburb the suburb to capitalise
@@ -453,6 +487,12 @@ export function capitalise(suburb: string): string {
   return capitalisedWords.join(" ");
 }
 
+/**
+ * Finds the suburb name based on an array of terms.
+ *
+ * @param {any[]} terms An array of terms.
+ * @returns {string} The suburb name.
+ */
 export const findSuburbName = (terms: any[]) => {
   // look for the object with NSW in terms, then suburb is the previous object
   const suburb = terms.find((term) => term.value === "NSW");

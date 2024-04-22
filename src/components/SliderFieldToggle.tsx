@@ -24,6 +24,7 @@ import { Api } from "@utils/Api";
 import CustomSlider from "./CustomSlider";
 import getSliderLabelByValue from "@src/utils/getSliderLabelByValue";
 
+// Custom user data container props
 interface CustomUserDataContainerProps {
   session: Session;
   heading: string;
@@ -32,10 +33,12 @@ interface CustomUserDataContainerProps {
   setStep: (step: number) => void; // eslint-disable-line
 }
 
+// Surface area schema
 const surfaceAreaSchema = yup.object({
   surface_area: yup.string().required("Surface area is required."),
 });
 
+// Slider field toggle component
 const SliderFieldToggle: React.FC<CustomUserDataContainerProps> = ({
   session,
   heading,
@@ -47,6 +50,7 @@ const SliderFieldToggle: React.FC<CustomUserDataContainerProps> = ({
   const [sliderValue, setSliderValue] = useState(50);
   const [activeTab, setActiveTab] = useState(0);
 
+  // User form
   const {
     register: registerUser,
     handleSubmit: handleSubmitUser,
@@ -55,6 +59,7 @@ const SliderFieldToggle: React.FC<CustomUserDataContainerProps> = ({
     resolver: yupResolver(surfaceAreaSchema),
   });
 
+  // Handle user submit
   const onUserSubmit = async (data: { surface_area: string }) => {
     let info: { surface_area: string } = { surface_area: "" };
     if (activeTab === 0) {
@@ -63,9 +68,11 @@ const SliderFieldToggle: React.FC<CustomUserDataContainerProps> = ({
       info = { surface_area: data.surface_area };
     }
 
+    // Set user data
     if (session?.user?.email && session?.user?.id) {
       await Api.setUserData(session.user.id, info).then(async (res) => {
         if (res?.status !== 200) {
+          // Handle error
           toast({
             title: "Error",
             description: (await res.json()).error,

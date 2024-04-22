@@ -32,6 +32,7 @@ const DayEnergyCard: React.FC<dayEnergyCardProps> = ({
     };
     getDataName();
 
+    // Get the value of the energy
     const getVal = () => {
       let val = 0;
       if (energyDataName === "prod") {

@@ -31,6 +31,7 @@ export default function OverviewPageClient({
   energyCardsData,
 }: OverviewPageClientProps) {
   const breakpoint = useBreakpoint();
+
   return (
     <Box width={"100%"} padding={5}>
       <Box paddingStart={5} paddingBottom={5}>

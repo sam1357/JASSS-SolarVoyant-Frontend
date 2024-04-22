@@ -106,34 +106,43 @@ const Graph: React.FC<GraphProps> = ({
 
   useEffect(() => {
     let dataValues: number[] = [];
+    // If the condition is not generation_consumption
     if (condition !== "generation_consumption") {
       if (dailyWeatherData) {
+        // Get the values for the condition
         dataValues = Object.values(dailyWeatherData)
           .map((values) => values[condition])
           .slice(0, -1); // Remove the last value
       } else if (hourlyWeatherData && indexDay !== undefined) {
         const day: DayConditions[] = hourlyWeatherData[indexDay];
+        // Get the values for the condition
         for (let i = 0; i < 24; i++) {
           if (day[i] && (day[i] as any)[condition] !== undefined) {
             dataValues.push((day[i] as any)[condition]);
           }
         }
       }
+
+      // Adjust the values based on the unit
       const newData = dataValues.map((value, i) => {
         let adjustedValue = value;
         const conditionUnit = schema.find((item) => item.value === condition)?.unit;
         if (conditionUnit === "hrs") {
           adjustedValue /= SECONDS_IN_HOUR;
         }
+
         return {
           date: dailyWeatherData ? getShortDate(i) : getTime(i),
           value: adjustedValue,
         };
       });
+
       setFormattedWeatherData(newData);
     } else {
       let prodDataValues: number[] | undefined = [];
       let consDataValues: number[] | undefined = [];
+
+      // Get the values for the condition
       if (weeklyEnergyData) {
         prodDataValues = Object.values(weeklyEnergyData.production).map((values) => values.value);
         consDataValues = Object.values(weeklyEnergyData.consumption).map((values) => values.value);
@@ -147,13 +156,18 @@ const Graph: React.FC<GraphProps> = ({
           .map((values) => values.value)
           .slice(start, finish);
       }
+
+      // Round the values
       prodDataValues = prodDataValues.map((value) => parseFloat(value.toFixed(0)));
       consDataValues = consDataValues.map((value) => parseFloat(value.toFixed(0)));
+
+      // Adjust the values based on the unit
       let newData = prodDataValues.map((prodValue, i) => ({
         date: weeklyEnergyData ? getShortDate(i) : getTime(i),
         production: prodValue,
         consumption: consDataValues[i],
       }));
+
       setFormattedEnergyData(newData);
     }
   }, [condition, indexDay]); // eslint-disable-line

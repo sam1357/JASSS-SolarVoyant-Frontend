@@ -15,12 +15,14 @@ export interface Step1Props {
   setEmail: (email: string) => void; // eslint-disable-line
 }
 
+// Step 1 schema
 export const Step1Schema = yup
   .object({
     email: yup.string().required("Email is required.").email("Email is invalid."),
   })
   .required();
 
+// Send email to the user
 export const sendEmail = async (data: Step1Value) => {
   const res = await fetch(`/api/auth/forgot-password`, {
     method: "POST",
@@ -38,10 +40,12 @@ export const Step1: React.FC<Step1Props> = ({ increaseStep, setEmail }) => {
     formState: { errors, isSubmitting },
   } = useForm<Step1Value>({ resolver: yupResolver(Step1Schema) });
 
+  // Send email to the user
   const onSubmit = async (data: Step1Value) => {
     let res: any = await sendEmail(data);
 
     if (res?.status !== 200) {
+      // Handle error
       const resBody = await res.json();
       toast({
         title: "Error",
@@ -52,6 +56,7 @@ export const Step1: React.FC<Step1Props> = ({ increaseStep, setEmail }) => {
         isClosable: true,
       });
     } else {
+      // Move to the next step
       increaseStep(1);
       setEmail(data.email);
     }

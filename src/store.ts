@@ -2,6 +2,7 @@ import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { LastClickedFeature, State } from "@interfaces/state";
 import { ChoroplethColourValueMapping, NextWeekHourlyData } from "./interfaces";
 
+// Define initial state for the map slice
 const initialState: State = {
   lastClickedFeature: {},
   suburbsData: {},
@@ -9,6 +10,7 @@ const initialState: State = {
   insightData: {},
 };
 
+// Create a slice for managing map-related state
 const slice = createSlice({
   name: "map",
   initialState,
@@ -28,9 +30,11 @@ const slice = createSlice({
   },
 });
 
+// Extract action creators
 export const { setLastClickedFeature, setSuburbsData, setChoroplethMapping, setInsightData } =
   slice.actions;
 
+// Configure Redux store with the map slice reducer
 const store = configureStore({
   reducer: slice.reducer,
 });

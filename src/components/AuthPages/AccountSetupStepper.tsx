@@ -37,11 +37,13 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
   const locationHeading = "Where is your solar-powered home located?";
   const locationSubheading = "Enter an address or suburb within NSW";
 
+  // Custom hook to manage steps
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: 3,
   });
 
+  // Function to handle completion of a step
   const handleCompleteStep = () => {
     if (activeStep < steps.length - 1) {
       setActiveStep((prevStep) => prevStep + 1);

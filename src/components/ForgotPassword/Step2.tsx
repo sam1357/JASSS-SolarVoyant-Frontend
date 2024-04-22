@@ -28,6 +28,7 @@ export interface Step2Props {
   email: string;
 }
 
+// Step 2 schema
 export const Step2Schema = yup
   .object({
     token: yup.string().required("Token is required."),
@@ -44,7 +45,9 @@ export const Step2: React.FC<Step2Props> = ({ increaseStep, setToken, email }) =
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement>(null);
 
+  // Submit the token
   const onSubmit = async (data: Step2Value) => {
+    // Move to the next step
     increaseStep(2);
     setToken(data.token);
   };

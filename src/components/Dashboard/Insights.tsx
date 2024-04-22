@@ -29,18 +29,21 @@ interface InsightsProps {
   selectedCard: number;
 }
 
+// Add index to each item in the array
 const addIndex = (array: any) => {
   return array.map((item: any, index: number) => {
     return { ...item, index };
   });
 };
 
+// Get hours with low precipitation
 const getLowPrecipHours = (hourlyData: HourlyConditions[]) => {
   return hourlyData
     .filter((hour: any) => hour.precipitation_probability < LOW_PRECIP_THRESHOLD)
     .map((hour: any) => hour.index);
 };
 
+// Process daily data
 const processDailyData = (data: NextWeekHourlyData, selectedDay: number): InsightProcessedData => {
   const hourlyData = addIndex(Object.values(data[selectedDay]));
 
@@ -55,6 +58,7 @@ const processDailyData = (data: NextWeekHourlyData, selectedDay: number): Insigh
   const timeFrame: Timeframes[] = [];
   let start = 0;
   let end = 0;
+  // loop through the array of hours with low precipitation
   for (let i = 0; i < fullLowPrecipHours.length; i++) {
     if (fullLowPrecipHours[i] - fullLowPrecipHours[i - 1] === 1) {
       end = i;
@@ -85,9 +89,12 @@ const processWeeklyData = (data: NextWeekHourlyData): InsightProcessedData => {
       (hour: any) => hour.weather_code >= SEVERE_WEATHER_THRESHOLD
     );
 
+    // get index of days with severe weather
     if (severeWeatherData.length > 0) {
       severeWeather.push(i);
     }
+
+    // get index of days with low precipitation
     const lowPrecipHours = getLowPrecipHours(hourlyData.slice(7, 23) as any);
     if (lowPrecipHours.length >= 2) {
       lowPrecipitation.push(i);
@@ -100,17 +107,22 @@ const processWeeklyData = (data: NextWeekHourlyData): InsightProcessedData => {
   };
 };
 
+// Insights component
 const Insights: React.FC<InsightsProps> = ({ data, isWeekly, selectedCard }) => {
+  // Format the insights based on the data
   const format = isWeekly ? "Weekly" : "Daily";
   let insights: string[] = [];
 
+  // Process the data and generate insights
   if (!isWeekly) {
     const processedInsights: InsightProcessedData = processDailyData(
       data as NextWeekHourlyData,
       selectedCard
     );
+    // Generate insights based on the processed data
     insights = generateInsightsDaily(processedInsights);
   } else {
+    // Process the data and generate insights
     const processedInsights: InsightProcessedData = processWeeklyData(data as NextWeekHourlyData);
     insights = generateInsightsWeekly(processedInsights);
   }

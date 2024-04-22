@@ -30,6 +30,7 @@ interface LoginSubmitValues {
   password: string;
 }
 
+// schema based input validation
 const schema = yup
   .object({
     email: yup.string().required("Email is required.").email("Please provide a valid email."),
@@ -49,6 +50,7 @@ export default function LoginPageClient() {
   } = useForm<LoginSubmitValues>({ resolver: yupResolver(schema) });
 
   const onSubmit = async (data: LoginSubmitValues) => {
+    // utilise next-auth to signin
     await signIn("credentials", {
       email: data.email,
       password: data.password,

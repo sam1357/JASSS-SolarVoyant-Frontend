@@ -29,6 +29,7 @@ interface GaugeCardProps {
   inverse?: boolean;
 }
 
+// Clamp the value between the minimum and maximum
 const clamp = (value: number, min: number, max: number) => {
   return Math.min(Math.max(value, min), max);
 };
@@ -39,8 +40,10 @@ const GaugeCard: React.FC<GaugeCardProps> = ({ data, attribute, labels, inverse 
   const gaugeColour = colorMode === "light" ? colors.gray[200] : colors.gray[700];
   const breakpoint = useBreakpoint();
 
+  // Set the width of the gauge based on the breakpoint
   const gaugeWidth = ["md", "sm", "base"].includes(breakpoint) ? "200px" : "230px";
 
+  // Get the status of the gauge based on the value
   const getStatus = (value: number) => {
     if (value < labels.low.limit) {
       return labels.low.label;
@@ -51,6 +54,7 @@ const GaugeCard: React.FC<GaugeCardProps> = ({ data, attribute, labels, inverse 
     }
   };
 
+  // Get the colour of the gauge based on the value
   const getColour = (value: number, inverse: boolean) => {
     if (inverse) {
       if (value < labels.low.limit) {
@@ -71,13 +75,16 @@ const GaugeCard: React.FC<GaugeCardProps> = ({ data, attribute, labels, inverse 
     }
   };
 
+  // Get the colour of the label
   const labelColour = getColour(data[attribute] as number, inverse);
   const value = data[attribute] as number;
+  // Clamp the value between the minimum and maximum
   let clampedValue = clamp(value, labels.minimum, labels.maximum);
   if (clampedValue === labels.minimum) {
     clampedValue *= 1.001;
   }
 
+  // Set the sub arcs for the gauge
   const subArcs = [
     {
       limit: clampedValue,
@@ -90,6 +97,7 @@ const GaugeCard: React.FC<GaugeCardProps> = ({ data, attribute, labels, inverse 
     },
   ];
 
+  // Set the title of the gauge
   useEffect(() => {
     // for formatted date
     const getFormattedAttribute = () => {

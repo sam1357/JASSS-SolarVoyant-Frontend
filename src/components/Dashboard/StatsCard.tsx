@@ -1,4 +1,5 @@
 "use client";
+
 import { Card, CardBody, Box, Heading, Text, Image, Center, Flex, Divider } from "@chakra-ui/react";
 import { getFormattedDate } from "./utils";
 import { useEffect, useState } from "react";

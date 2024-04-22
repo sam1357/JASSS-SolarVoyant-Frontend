@@ -4,6 +4,7 @@ import { Api } from "@src/utils/Api";
 
 export const authOptions = {
   providers: [
+    // Configure credentials provider
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -11,6 +12,7 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        // Authenticate user using email and password
         const res = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -20,6 +22,7 @@ export const authOptions = {
           }),
         });
 
+        // Handle authentication response
         const resBody = await res.json();
         if (res.status !== 200) {
           throw new Error(resBody.error);
@@ -43,6 +46,7 @@ export const authOptions = {
   callbacks: {
     async signIn({ user, account }: { account: any; user: any }) {
       if (account.provider === "google") {
+        // Handle OAuth sign in
         const res = await Api.handleOauth(user.email, account.provider, user.name);
 
         if (res.status !== 200) {
