@@ -32,6 +32,8 @@ const GooglePlacesAutocomplete: React.ForwardRefRenderFunction<
   const [sessionToken, setSessionToken] = useState<
     google.maps.places.AutocompleteSessionToken | undefined
   >(undefined);
+
+  // Fetch suggestions from Google Places API based on the input value
   const fetchSuggestions = useDebouncedCallback(
     (
       value: string,
@@ -57,6 +59,7 @@ const GooglePlacesAutocomplete: React.ForwardRefRenderFunction<
         }
       );
     },
+    // use the debounce time provided to reduce the number of API calls
     debounce
   );
   const [localDefaultValue, setLocalDefaultValue] = useState<string | undefined>(defaultValue);
@@ -73,6 +76,7 @@ const GooglePlacesAutocomplete: React.ForwardRefRenderFunction<
     setSessionToken(new google.maps.places.AutocompleteSessionToken());
   };
 
+  // Expose the session token and a function to refresh it
   useImperativeHandle(
     ref,
     () => ({
@@ -86,10 +90,12 @@ const GooglePlacesAutocomplete: React.ForwardRefRenderFunction<
     [sessionToken]
   );
 
+  // Initialize the service when the component mounts
   useEffect(() => {
     initializeService();
   }, []);
 
+  // Reset the component when the reset trigger changes
   useEffect(() => {
     setLocalDefaultValue(defaultValue);
     setSearchValue("");
@@ -99,6 +105,7 @@ const GooglePlacesAutocomplete: React.ForwardRefRenderFunction<
   const [searchValue, setSearchValue] = useState<string>("");
   const [searchSelection, setSearchSelection] = useState<GooglePlacesAutocompleteOption | null>();
 
+  // Handle the input value change in the search bar
   const handleSearchInput = (e: any, { action }: { action: any }) => {
     if (["menu-close", "set-value"].includes(action) && e.length > 0) {
       setSearchValue(e);
@@ -111,6 +118,7 @@ const GooglePlacesAutocomplete: React.ForwardRefRenderFunction<
     }
   };
 
+  // Handle the selection of a suggestion
   const handleSearchSelection = (value: any, { action }: { action: string }) => {
     if (action === "clear") {
       setSearchSelection(null);

@@ -44,6 +44,7 @@ import { useForm } from "react-hook-form";
 import transformQuarterlyConsumption from "@src/utils/transformQuarterlyConsumption";
 import { findSuburbName } from "@src/utils/utils";
 
+// EnergyDataSubmitValues interface for form values
 interface EnergyDataSubmitValues {
   surface_area: number;
   q1p: number;
@@ -58,6 +59,7 @@ interface EnergyDataSubmitValues {
   upper_limit: number;
 }
 
+// Validation schema for form values
 const schema = yup
   .object({
     surface_area: yup.number().required("Surface area is required.").typeError("Must be a number."),
@@ -132,11 +134,13 @@ export default function EnergyDataPageClient({ session }: { session: Session }) 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
 
+  // Handle tab change for solar panel size
   const handleSolarPanelTabChange = (index: number) => {
     setSolarPanelTab(index);
     resetField("surface_area", { defaultValue: userData.surface_area });
   };
 
+  // Handle tab change for consumption values
   const handleConsumptionTabChange = (index: number) => {
     setConsumptionTab(index);
     if (index === 0) {
@@ -147,6 +151,7 @@ export default function EnergyDataPageClient({ session }: { session: Session }) 
     }
   };
 
+  // Form handling with react-hook-form
   const {
     handleSubmit,
     register,
@@ -155,6 +160,7 @@ export default function EnergyDataPageClient({ session }: { session: Session }) 
     formState: { errors, isSubmitting },
   } = useForm<EnergyDataSubmitValues>({ resolver: yupResolver(schema) });
 
+  // Submit handler for form
   const onSubmit = async (data: EnergyDataSubmitValues) => {
     if (!selectedPlace) {
       toast({
@@ -180,9 +186,11 @@ export default function EnergyDataPageClient({ session }: { session: Session }) 
       return;
     }
 
+    // Check if the user has selected a custom value for solar panel size
     let surfaceArea = solarPanelTab === 0 ? sliderValue : data.surface_area;
     const useValue = consumptionTab === 0 ? "householdMembers" : "custom";
 
+    // Transform consumption values based on user input
     let consumptionValues = transformQuarterlyConsumption({
       use: useValue,
       householdMembers: householdMembers.toString(),
@@ -192,6 +200,7 @@ export default function EnergyDataPageClient({ session }: { session: Session }) 
       quarter4C: data.q4c,
     });
 
+    // Create a new user data object with updated values and send it to the API
     const res = await Api.setUserData(session?.user?.id as string, {
       suburb: findSuburbName(selectedPlace?.value.terms),
       surface_area: surfaceArea,
@@ -208,6 +217,7 @@ export default function EnergyDataPageClient({ session }: { session: Session }) 
       upper_limit: data.upper_limit,
     });
 
+    // Show toast message based on API response
     if (res.ok) {
       toast({
         title: "Success",
@@ -230,6 +240,7 @@ export default function EnergyDataPageClient({ session }: { session: Session }) 
     }
   };
 
+  // Fetch user data on component mount
   useEffect(() => {
     async function fetchData() {
       const res = await Api.getUserData(
@@ -257,6 +268,7 @@ export default function EnergyDataPageClient({ session }: { session: Session }) 
     }
   }, [userData]);
 
+  // Reset form fields
   const resetForm = () => {
     reset();
     setAutocompleteReset(!autocompleteReset);

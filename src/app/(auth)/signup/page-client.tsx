@@ -24,6 +24,7 @@ import { Api } from "@utils/Api";
 import CustomFormControl from "@components/AuthPages/CustomFormControl";
 import { signIn } from "next-auth/react";
 
+// Define the shape of form values
 interface RegisterSubmitValues {
   username: string;
   email: string;
@@ -31,6 +32,7 @@ interface RegisterSubmitValues {
   confirmPassword: string;
 }
 
+// Yup schema for form validation
 const schema = yup
   .object({
     username: yup
@@ -53,6 +55,7 @@ export default function SignupPageClient() {
   const toast = useToast();
   const router = useRouter();
 
+  // Form handling using react-hook-form
   const {
     handleSubmit,
     register,
@@ -62,6 +65,7 @@ export default function SignupPageClient() {
   const onSubmit = async (data: RegisterSubmitValues) => {
     await Api.register(data.username, data.email, data.password).then(async (res) => {
       if (res?.status !== 200) {
+        // If registration fails, show error toast
         toast({
           title: "Error",
           description: (await res.json()).error,
@@ -71,6 +75,7 @@ export default function SignupPageClient() {
           isClosable: true,
         });
       } else {
+        // If registration is successful, sign in and redirect
         await signIn("credentials", {
           email: data.email,
           password: data.password,
@@ -93,6 +98,7 @@ export default function SignupPageClient() {
     });
   };
 
+  // Render the component
   return (
     <Grid templateColumns="repeat(3, 1fr)" minHeight={"100%"}>
       <Hide below="md">

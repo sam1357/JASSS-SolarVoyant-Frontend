@@ -32,6 +32,8 @@ const SetLocation: React.FC<SetLocationProps> = ({ session, onComplete, setStep 
     householdMembers: "2",
     use: "householdMembers",
   });
+
+  // Energy generation state
   const [energyGeneration, setEnergyGeneration] = useState<EnergyGeneration>({
     q1: "",
     q2: "",
@@ -43,10 +45,12 @@ const SetLocation: React.FC<SetLocationProps> = ({ session, onComplete, setStep 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [topLoading, setTopLoading] = useState(false);
 
+  // Function to handle change in energy consumption
   const handleEnergyConsumptionChange = (data: React.SetStateAction<{}>) => {
     setEnergyConsumption((prev) => ({ ...prev, ...data }));
   };
 
+  // Function to handle change in energy generation
   const handleEnergyGenerationChange = (data: React.SetStateAction<{}>) => {
     setEnergyGeneration((prev) => ({ ...prev, ...data }));
   };
@@ -89,6 +93,7 @@ const SetLocation: React.FC<SetLocationProps> = ({ session, onComplete, setStep 
 
     const useDefault = energyGeneration.use === "easy";
 
+    // User data to be sent to the API
     const info = {
       quarterly_energy_consumption: consumptionData,
       q1_w: useDefault ? "1000" : energyGeneration.q1,
@@ -99,6 +104,7 @@ const SetLocation: React.FC<SetLocationProps> = ({ session, onComplete, setStep 
       receive_emails: "true",
     };
 
+    // Sending user data to the API
     if (session?.user?.email && session?.user?.id) {
       await Api.setUserData(session.user.id, info).then(async (res) => {
         if (res?.status !== 200) {

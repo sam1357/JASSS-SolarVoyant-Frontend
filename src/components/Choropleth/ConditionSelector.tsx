@@ -53,6 +53,7 @@ export const ConditionSelector: React.FC<ConditionSelectorProps> = ({
   const { label, icon } = schema.find((condition) => condition.value === selectedCondition) as any;
   const breakpoint = useBreakpointValue({ base: "base", lg: "lg", xl: "xl" });
 
+  // render value based on the breakpoint
   const renderValue =
     breakpoint !== "xl"
       ? () => icon

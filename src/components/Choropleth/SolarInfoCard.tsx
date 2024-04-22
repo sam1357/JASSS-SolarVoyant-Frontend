@@ -45,6 +45,7 @@ const SolarInfoCard: React.FC<SolarInfoCardProps> = ({
   const { label, unit } = getChoroplethCondition(condition) as ConditionsSelectorData;
   const key = `${label} ${unit}`;
 
+  // Calculate average for the suburb
   const suburbAverage =
     data.reduce((accumulator, currentValue) => accumulator + (currentValue[key] as number), 0) /
     data.length;

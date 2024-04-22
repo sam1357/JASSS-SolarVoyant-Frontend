@@ -41,6 +41,7 @@ interface PasswordFormData {
   newPassword: string;
 }
 
+// User schema
 const userSchema = yup.object({
   username: yup
     .string()
@@ -48,6 +49,7 @@ const userSchema = yup.object({
     .matches(/^[\w]+$/, "Username can only contain alphanumeric characters"),
 });
 
+// Password schema
 const passwordSchema = yup.object({
   currentPassword: yup
     .string()
@@ -63,6 +65,7 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
   const onClose = () => setIsOpen(false);
   const cancelRef = useRef<HTMLButtonElement>(null);
 
+  // User form using react-hook-form
   const {
     register: registerUser,
     handleSubmit: handleSubmitUser,
@@ -71,6 +74,7 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
     resolver: yupResolver(userSchema),
   });
 
+  // Password form using react-hook-form
   const {
     register: registerPassword,
     handleSubmit: handleSubmitPassword,
@@ -82,6 +86,7 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
   const onUserSubmit = async (data: UserEmailFormData) => {
     const info = { username: data.username };
 
+    // Update user data on the server
     if (session?.user?.email && session?.user?.id) {
       await Api.setUserData(session.user.id, info).then(async (res) => {
         if (res?.status !== 200) {
@@ -107,6 +112,7 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
     }
   };
 
+  // Handle password submit
   const onPasswordSubmit = async (data: PasswordFormData) => {
     if (session?.user?.email) {
       await Api.changePassword(session.user.email, data.currentPassword, data.newPassword).then(
@@ -135,6 +141,7 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
     }
   };
 
+  // Handle account deletion
   const onDeleteAccount = async () => {
     if (session?.user?.id) {
       await Api.deleteUser(session.user.id).then(async (res) => {

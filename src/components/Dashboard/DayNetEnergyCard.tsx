@@ -12,9 +12,11 @@ interface DayNetEnergyCardProps {
 const DayNetEnergyCard: React.FC<DayNetEnergyCardProps> = ({ dailyEnergyData, dayIndex }) => {
   const breakPoint = useBreakpoint();
 
+  // State to store raw and percentage values
   const [rawVal, setRawVal] = useState(0);
   const [percVal, setPercVal] = useState(0);
 
+  // Set raw and percentage values
   useEffect(() => {
     const getRawVal = () => {
       let rawVal = (dailyEnergyData.netRaw as energyWithTimeStamp[])[dayIndex].value;

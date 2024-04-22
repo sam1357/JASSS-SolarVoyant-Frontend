@@ -32,8 +32,10 @@ class LambdaInvoker {
         Payload: JSON.stringify(payload),
       };
 
+      // Invoke the lambda function
       const lambdaRes = await this.lambda.send(new InvokeCommand(params));
 
+      // Check if the lambda response is empty
       if (!lambdaRes || Object.keys(lambdaRes).length === 0) {
         return NextResponse.json(
           {
@@ -45,8 +47,10 @@ class LambdaInvoker {
         );
       }
 
+      // Parse the lambda response
       const summarisedRes = JSON.parse(lambdaRes?.Payload?.transformToString() as string);
 
+      // Check if the lambda response is an error
       if (!summarisedRes || summarisedRes.statusCode === 500) {
         return NextResponse.json(
           {
@@ -60,10 +64,12 @@ class LambdaInvoker {
         );
       }
 
+      // Return the lambda response
       return NextResponse.json(JSON.parse(summarisedRes.body), {
         status: summarisedRes?.statusCode,
       });
     } catch (err: any) {
+      // Handle errors
       return NextResponse.json(
         {
           error: `An error occurred when invoking lambda ${functionName}. Error: ${err.message}`,

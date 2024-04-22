@@ -38,7 +38,10 @@ export default function NotificationMenu({ session }: NotificationMenuProps) {
     async function fetchNotifications() {
       const res = await Api.getUserNotifications(session?.user?.id as string);
       if (res.status === 200) {
+        // Show a toast if there are new notifications
         const newNotifs = (await res.json()).user.fields.notifications;
+        // Check if the number of notifications has changed
+        // use previous notifications length in this fashion to avoid stale closure
         setNotifications((prevNotifications) => {
           if (prevNotifications.length !== newNotifs.length) {
             toast({
@@ -61,8 +64,10 @@ export default function NotificationMenu({ session }: NotificationMenuProps) {
     return () => clearInterval(interval);
   }, []); // eslint-disable-line
 
+  // Function to clear all notifications
   async function clearNotifications() {
     setIsLoading(true);
+    // Send a request to the server to clear notifications
     const res = await Api.deleteUserNotifications(session?.user?.id as string);
 
     if (res.status === 200) {

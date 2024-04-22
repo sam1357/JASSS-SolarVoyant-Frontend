@@ -2,10 +2,12 @@ import LambdaInvoker from "@utils/lambdaInvoker";
 import { DEFAULT_RETRIEVAL_LAMBDA, HISTORY_CUTOFF_DAY } from "@src/constants";
 import { addDays, formatDate } from "@src/utils/utils";
 
+// Handles POST request to fetch historical detailed data on this route
 export async function POST(request: Request): Promise<Response> {
   const { body, condition } = await request.json();
   const lambdaInvoker = new LambdaInvoker();
 
+  // Invoking lambda function for fetching historical detailed data
   const res = await lambdaInvoker.invokeLambda(
     {
       httpMethod: "GET",
@@ -20,8 +22,10 @@ export async function POST(request: Request): Promise<Response> {
     DEFAULT_RETRIEVAL_LAMBDA
   );
 
+  // Returning response with data from lambda invocation and status code
   const resBody = await res.json();
 
+  // Checking if data retrieval was successful
   if (res.status === 200) {
     return Response.json(resBody);
   } else {

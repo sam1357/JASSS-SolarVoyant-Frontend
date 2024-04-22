@@ -33,6 +33,7 @@ interface SurfaceAreaData {
 const SliderOptionalToggle: React.FC<CustomUserDataContainerProps> = ({
   onEnergyGenerationChange,
 }) => {
+  // Function to handle tab change in energy generation toggle
   const handleTabChange = (index: number) => {
     if (index === 0) {
       onEnergyGenerationChange({
@@ -45,6 +46,7 @@ const SliderOptionalToggle: React.FC<CustomUserDataContainerProps> = ({
     }
   };
 
+  // Function to handle input change in energy generation
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     onEnergyGenerationChange({

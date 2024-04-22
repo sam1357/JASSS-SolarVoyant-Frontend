@@ -9,12 +9,14 @@ export interface Step3Value {
   password: string;
 }
 
+// Step 3 schema
 export interface Step3Props {
   setStep: (step: number) => void; // eslint-disable-line
   token: string;
   email: string;
 }
 
+// Reset password by sending a request to the server
 export const resetPassword = async (token: string, email: string, data: Step3Value) => {
   const res = await fetch(`/api/auth/forgot-password`, {
     method: "PATCH",
@@ -24,6 +26,7 @@ export const resetPassword = async (token: string, email: string, data: Step3Val
   return res;
 };
 
+// Step 3 component
 export const Step3Schema = yup
   .object({
     password: yup
@@ -41,6 +44,7 @@ export const Step3: React.FC<Step3Props> = ({ token, email, setStep }) => {
     formState: { errors, isSubmitting },
   } = useForm<Step3Value>({ resolver: yupResolver(Step3Schema) });
 
+  // Reset password by sending a request to the server and display a toast message
   const onSubmit = async (data: Step3Value) => {
     let res: any = await resetPassword(token, email, data);
     const resBody = await res.json();

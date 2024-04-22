@@ -1,3 +1,8 @@
+/**
+ * This file contains utility functions that are used in the Dashboard component
+ * @param index The index of the day of the week
+ * @returns The day of the week
+ */
 export function getDayOfWeek(index: number) {
   if (index === 0) {
     return "Today";
@@ -16,11 +21,21 @@ export function getDayOfWeek(index: number) {
   ];
   return days[dayOfWeek];
 }
+
+/**
+ * This function returns the current hour of the day
+ * @returns The current hour of the day
+ */
 export function getCurrentHour() {
   const now: Date = new Date();
   const hour: number = now.getHours();
   return hour;
 }
+
+/**
+ * This function returns the current day of the week
+ * @returns The current day of the week
+ */
 export function getFormattedDate() {
   const months = [
     "January",
@@ -36,6 +51,7 @@ export function getFormattedDate() {
     "November",
     "December",
   ];
+
   const currentDate = new Date();
   const day = currentDate.getDate();
   const month = months[currentDate.getMonth()];
@@ -43,6 +59,11 @@ export function getFormattedDate() {
   return `${day} ${month}, ${year}`;
 }
 
+/**
+ * This function returns the short date of the day
+ * @param index The index of the day of the week
+ * @returns The short date of the day
+ */
 export function getShortDate(index: number): string {
   const newDate = new Date();
   newDate.setDate(newDate.getDate() + index);
@@ -52,11 +73,21 @@ export function getShortDate(index: number): string {
   return `${day}/${formattedMonth}`;
 }
 
+/**
+ * This function returns the time of the hour
+ * @param index The index of the hour
+ * @returns The time of the hour
+ */
 export function getTime(index: number): string {
   const formattedHour = index < 10 ? `0${index}` : index;
   return `${formattedHour}:00`;
 }
 
+/**
+ * This function returns the name of the attribute
+ * @param attribute The attribute to get the name of
+ * @returns The name of the attribute
+ */
 export function getAttributeName(attribute: string) {
   switch (attribute) {
     case "shortwave_radiation":
@@ -76,6 +107,12 @@ export function getAttributeName(attribute: string) {
       return "Generation VS Consumption";
   }
 }
+
+/**
+ * This function returns the name of the attribute
+ * @param aggregate A string of comma separated attributes
+ * @returns An array of attributes
+ */
 export function parseAttributesArray(aggregate: string): string[] {
   // potentially add validity checking later
   return aggregate.split(",").map((value) => value.trim());

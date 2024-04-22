@@ -6,6 +6,12 @@ import {
   HOUSEHOLD_5_CONSUMPTION,
 } from "@src/constants";
 
+/**
+ * Transforms quarterly consumption data based on the provided value.
+ *
+ * @param {any} value The value containing consumption data.
+ * @returns {string} Transformed quarterly consumption data.
+ */
 export default function transformQuarterlyConsumption(value: any) {
   if (value.use === "householdMembers") {
     switch (value.householdMembers) {

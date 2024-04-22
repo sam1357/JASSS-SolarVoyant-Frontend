@@ -35,7 +35,11 @@ export default function LandingPage() {
         >
           Smart Savings.
         </Heading>
-        <Wrap spacing={3}>
+        <Wrap
+          spacing={3}
+          align={{ base: "center", lg: "left" }}
+          justify={{ base: "center", lg: "left" }}
+        >
           <Heading
             as="h1"
             size="4xl"

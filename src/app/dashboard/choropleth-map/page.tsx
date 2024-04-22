@@ -14,6 +14,7 @@ export default function ChoroplethMapPage() {
   const { colorMode } = useColorMode();
   const [isLoading, setLoading] = useState(true);
 
+  // Fetching suburbs data from redux store
   const suburbsData = useSelector((state: State) => state.suburbsData);
 
   useEffect(() => {

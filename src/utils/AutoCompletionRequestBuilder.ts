@@ -1,5 +1,13 @@
 import { AutocompletionRequest } from "@interfaces/index";
 
+/**
+ * Constructs an AutocompletionRequest object for Google Maps Places Autocomplete API.
+ *
+ * @param {AutocompletionRequest} autocompletionRequest The base AutocompletionRequest object.
+ * @param {string} input The input string for autocompletion.
+ * @param {google.maps.places.AutocompleteSessionToken} [sessionToken] Optional session token for autocomplete requests.
+ * @returns {google.maps.places.AutocompletionRequest} An AutocompletionRequest object configured with the provided parameters.
+ */
 export const RequestBuilder = (
   autocompletionRequest: AutocompletionRequest,
   input: string,

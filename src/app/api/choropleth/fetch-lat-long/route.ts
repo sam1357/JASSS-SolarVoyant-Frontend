@@ -10,10 +10,13 @@ export async function POST(request: Request): Promise<Response> {
       address
     )}&key=${apiKey}`;
 
+    // Fetching latlong for the address
     const response = await fetch(geocodeUrl);
     const data = await response.json();
 
+    // Returning response with latlong and status code
     if (data.status === "OK") {
+      // Extracting latlong from the response
       const lat = data.results[0].geometry.location.lat;
       const lng = data.results[0].geometry.location.lng;
 

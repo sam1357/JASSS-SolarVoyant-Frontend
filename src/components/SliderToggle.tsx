@@ -36,6 +36,7 @@ interface surfaceAreaData {
 }
 
 const SliderToggle: React.FC<CustomUserDataContainerProps> = ({ onEnergyConsumptionChange }) => {
+  // Function to handle input change in energy consumption
   const handleInputChange = (event: { target: { name: any; value: any } }) => {
     const { name, value } = event.target;
     onEnergyConsumptionChange({
@@ -43,6 +44,7 @@ const SliderToggle: React.FC<CustomUserDataContainerProps> = ({ onEnergyConsumpt
     });
   };
 
+  // Function to handle tab change in energy consumption toggle
   const handleTabChange = (index: number) => {
     if (index === 0) {
       onEnergyConsumptionChange({

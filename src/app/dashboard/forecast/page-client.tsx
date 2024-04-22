@@ -1,5 +1,5 @@
 "use client";
-import { Box, Divider, Grid, GridItem, HStack, useBreakpoint } from "@chakra-ui/react";
+import { Box, Divider, Grid, GridItem, HStack } from "@chakra-ui/react";
 import {
   AverageDailyInWeekWeatherData,
   Conditions,
@@ -10,7 +10,7 @@ import {
 } from "@src/interfaces";
 import CardSet from "@components/Dashboard/CardSet";
 import Insights from "@components/Dashboard/Insights";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DayEnergyCard from "@src/components/Dashboard/DayEnergyCard";
 import DayNetEnergyCard from "@src/components/Dashboard/DayNetEnergyCard";
 import Graph, { HOURLY_CONDITIONS } from "@src/components/Dashboard/Graph";
@@ -22,6 +22,7 @@ interface ForecastPageClientProps {
   weekWeatherCodes: WeekWeatherCodes;
   dailyEnergyData: energyDataObj;
 }
+
 export default function ForecastPageClient({
   weatherData,
   energyData,
@@ -34,10 +35,7 @@ export default function ForecastPageClient({
     ...averageConditions[selectedCard],
     units: averageConditions.units,
   };
-  const breakPoint = useBreakpoint();
-  useEffect(() => {
-    console.log(breakPoint);
-  }, [breakPoint]);
+
   return (
     <Box width={"100%"} padding={{ base: 5, sm: 10, md: 10, lg: 20, xl: 20, "2xl": 20 }}>
       <CardSet

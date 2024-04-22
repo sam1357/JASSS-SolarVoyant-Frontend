@@ -29,6 +29,7 @@ const WeekEnergyCard: React.FC<WeekEnergyCardProps> = ({ energyDataName, weekEne
     };
     getDataName();
 
+    // Get the value of the energy
     const getVal = () => {
       let val = 0;
       if (energyDataName === "prod") {
@@ -42,6 +43,7 @@ const WeekEnergyCard: React.FC<WeekEnergyCardProps> = ({ energyDataName, weekEne
     };
     getVal();
 
+    // Get the unit of the energy
     const getUnit = () => {
       let unit = "";
       if (energyDataName === "prod") {
@@ -57,6 +59,7 @@ const WeekEnergyCard: React.FC<WeekEnergyCardProps> = ({ energyDataName, weekEne
   }, [weekEnergyData]); // eslint-disable-line
 
   let netColor: string;
+  // Set the color of the card based on the value
   if (dataName === "Net Energy") {
     if (val >= 0) {
       netColor = "green.500";
