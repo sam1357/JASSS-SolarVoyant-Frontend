@@ -91,7 +91,7 @@ const UserDataContainer: React.FC<CustomUserDataContainerProps> = ({ session }) 
   const breakpoint = useBreakpoint();
 
   return (
-    <Flex justify="center" align="center" h="95%" overflowY="hidden">
+    <Flex justify="center" align="center" h="95%" overflowY="auto">
       <Box h="auto" w="80%" p={4} borderWidth="1px" borderRadius="lg" mx={"auto"} mt={"10"}>
         <Stack width={"95%"} mt={0} mx={"auto"} spacing={1}>
           <Wrap gap={2}>

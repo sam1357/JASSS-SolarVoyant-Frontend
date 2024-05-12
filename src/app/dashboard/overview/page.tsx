@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@src/authOptions";
+import { redirect } from "next/navigation";
 import {
   AverageDailyInWeekWeatherData,
   currentWeatherData,
@@ -15,6 +16,10 @@ export default async function DashboardPage() {
 
   // Fetching data for the user
   const suburb: string = (await getAllDataOfUser(session?.user?.id)).suburb;
+
+  if (!suburb) {
+    redirect("/setup");
+  }
 
   // Fetching data for the dashboard
   const statsCardData: currentWeatherData = await Api.getCurrentWeatherData(suburb);
