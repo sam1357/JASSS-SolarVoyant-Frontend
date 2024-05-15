@@ -1,5 +1,5 @@
 import LambdaInvoker from "@utils/lambdaInvoker";
-import { DEFAULT_RETRIEVAL_LAMBDA, HISTORY_CUTOFF_DAY } from "@src/constants";
+import { DEFAULT_RETRIEVAL_LAMBDA, HISTORY_CUTOFF_DAY_CHOROPLETH } from "@src/constants";
 import { addDays, formatDate } from "@src/utils/utils";
 
 // Handles POST request to fetch historical detailed data on this route
@@ -14,7 +14,7 @@ export async function POST(request: Request): Promise<Response> {
       path: `/${process.env.STAGING_ENV}/data-retrieval/retrieve-history`,
       queryStringParameters: {
         ...body,
-        startDate: HISTORY_CUTOFF_DAY,
+        startDate: HISTORY_CUTOFF_DAY_CHOROPLETH,
         endDate: formatDate(addDays(new Date(), -2)),
         attributes: condition,
       },

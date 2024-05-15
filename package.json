@@ -14,6 +14,7 @@
     "cypress:run": "cypress run"
   },
   "dependencies": {
+    "@amcharts/amcharts4": "^4.10.38",
     "@aws-sdk/client-lambda": "^3.549.0",
     "@aws-sdk/credential-providers": "^3.556.0",
     "@chakra-ui/color-mode": "^2.2.0",
@@ -32,6 +33,7 @@
     "@saas-ui/react": "^2.6.2",
     "@saas-ui/theme": "^2.3.4",
     "chakra-react-select": "^4.7.6",
+    "date-fns": "^3.6.0",
     "date-fns-tz": "^3.0.1",
     "dotenv": "^16.4.5",
     "next": "14.1.4",
@@ -48,6 +50,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@types/d3-fetch": "^3.0.7",
     "@types/google.maps": "^3.55.7",
     "@types/node": "^20",
     "@types/numeric": "^1.2.6",

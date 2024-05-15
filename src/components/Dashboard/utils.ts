@@ -1,3 +1,6 @@
+import { CUR_TIMEZONE } from "@src/constants";
+import { toZonedTime } from "date-fns-tz";
+
 /**
  * This file contains utility functions that are used in the Dashboard component
  * @param index The index of the day of the week
@@ -27,7 +30,7 @@ export function getDayOfWeek(index: number) {
  * @returns The current hour of the day
  */
 export function getCurrentHour() {
-  const now: Date = new Date();
+  const now: Date = toZonedTime(new Date(), CUR_TIMEZONE);
   const hour: number = now.getHours();
   return hour;
 }

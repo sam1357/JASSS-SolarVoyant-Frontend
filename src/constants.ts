@@ -15,6 +15,7 @@ export const DEFAULT_RETRIEVAL_LAMBDA = "jasss_retrieval_lambda";
 export const DEFAULT_ANALYTICS_LAMBDA = "jasss_analytics_lambda";
 
 export const HISTORY_CUTOFF_DAY = "2024-03-05";
+export const HISTORY_CUTOFF_DAY_CHOROPLETH = "2024-04-05";
 
 export const NAVBAR_HEIGHT = 56;
 

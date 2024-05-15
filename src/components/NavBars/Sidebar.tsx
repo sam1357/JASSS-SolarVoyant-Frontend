@@ -37,6 +37,7 @@ import { PiPushPinSlashLight } from "react-icons/pi";
 import { PiPushPinFill } from "react-icons/pi";
 import { IconContext } from "react-icons/lib";
 import { colors } from "@src/styles/colours";
+import { SlEnergy } from "react-icons/sl";
 import Link from "next/link";
 
 // can't be put in constants because of the icons because XML
@@ -47,6 +48,7 @@ const DASHBOARD_PAGES = [
     href: "/dashboard/forecast",
     icon: <BiSolidBarChartAlt2 />,
   },
+  { name: "Energy Insights", href: "/dashboard/energy-insights", icon: <SlEnergy /> },
   {
     name: "Choropleth Map",
     href: "/dashboard/choropleth-map",
